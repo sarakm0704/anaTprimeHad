@@ -25,11 +25,11 @@ crab submit -c crab_mc.py
 Training via simple DNN is available with ```training.py```
 Evaluation and extracting feature informations with ```ecid_afterTraining.py```
 
-- ```training.py```
+- ```training.py```<br>
 > This has no option yet. Can be handled by changing input / structure itself. 
 
-- ```ecid_afterTraining.py```
-do **E**valuation and extract **C**orrelations, **I**mportance, ***D*istributions of features after training
+- ```ecid_afterTraining.py```<br>
+do **E**valuation and extract **C**orrelations, **I**mportance, **D**istributions of features after training
 
 ```
 python ecid_afterTraining -e -i -c -d (or -t)

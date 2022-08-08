@@ -332,7 +332,7 @@ if __name__ == '__main__':
                       default=False,
                       help='Extract Correlation matrices')
 
-    parser.add_option("-v", "--inputvar", dest="vars",
+    parser.add_option("-d", "--vardist", dest="vars",
                       action = 'store_true',
                       default=False,
                       help='Draw Input variable Distributions')

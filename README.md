@@ -23,12 +23,12 @@ crab submit -c crab_mc.py
 ## NN workflow
 
 Training via simple DNN is available with ```training.py```
-Evaluation and extracting feature informations with ```ecid_afterTraining```
+Evaluation and extracting feature informations with ```ecid_afterTraining.py```
 
 - ```training.py```
 > This has no option yet. Can be handled by changing input / structure itself. 
 
-- ```ecid_afterTraining```
+- ```ecid_afterTraining.py```
 do **E**valuation and extract **C**orrelations, **I**mportance, ***D*istributions of features after training
 
 ```

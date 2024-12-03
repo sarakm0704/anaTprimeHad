@@ -11,6 +11,13 @@
 #include "Math/GenVector/VectorUtil.h"
 #include "Math/GenVector/Rotation3D.h"
 #include "Math/Math.h"
+#include "correction.h"
+
+#include "TRandom2.h"
+
+#include <bitset>
+
+using namespace std;
 
 // Utility function to generate fourvector objects for thigs that pass selections
 
@@ -46,6 +53,96 @@ floats weightv(floats &x, float evWeight)
 	const int nsize = x.size();
 	floats weightvector(nsize, evWeight);
 	return weightvector;
+}
+
+floats getsysJERC(std::unique_ptr<correction::CorrectionSet> &jercfname, floats &pts, floats &etas, string &tag)
+{
+        floats Xvars;
+        //for (auto i=0; i<etas.size(); i++){
+        for (unsigned int i=0; i<etas.size(); i++){
+            float w = 0.0;
+            if(pts[i] > 9.0 && pts[i] < 6538.0 && abs(etas[i]) < 5.4){
+                w = jercfname->at(tag)->evaluate({float(etas[i]), float(pts[i])});
+            }
+            Xvars.emplace_back(w);
+        }
+        return Xvars;
+}
+
+floats JERCSF(std::unique_ptr<correction::CorrectionSet> &jercfname, string tag, string wp, floats &etas)
+{
+        floats Xvars;
+        //for (auto i=0; i<etas.size(); i++){
+        for (unsigned int i=0; i<etas.size(); i++){
+                float w = jercfname->at(tag)->evaluate({float(etas[i]),wp});
+                Xvars.emplace_back(w);
+        }
+        return Xvars;
+}
+
+float getmetsmear(float &met, float &metphi, floats jetptsbefore, floats jetptsafter, floats jetphis)
+{
+        auto metx = met * cos(metphi);
+        auto mety = met * sin(metphi);
+        //for (auto j=0; j<jetptsbefore.size(); j++){
+        for (unsigned int j=0; j<jetptsbefore.size(); j++){
+                if(jetptsafter[j] > 15.0){
+                        metx -= (jetptsafter[j] - jetptsbefore[j])*cos(jetphis[j]);
+                        mety -= (jetptsafter[j] - jetptsbefore[j])*sin(jetphis[j]);
+                }
+        }
+        return float(sqrt(metx*metx + mety*mety));
+}
+
+floats JERCptResolution(std::unique_ptr<correction::CorrectionSet> &jercfname, string tag, floats &etas, floats &pts, floats &rhos)
+{
+        floats Xvars;
+        //for (auto i=0; i<pts.size(); i++){
+        for (unsigned int i=0; i<pts.size(); i++){
+                float w = jercfname->at(tag)->evaluate({float(etas[i]),float(pts[i]),float(rhos[i])});
+                Xvars.emplace_back(w);
+        }
+        return Xvars;
+}
+
+floats GenMatchJetPt(floats &JetsPt, floats &JetsEta, floats &JetsPhi, floats &JetsMass, floats &genJetsPt, floats &genJetsEta, floats &genJetsPhi, floats &genJetsMass, floats &ptresolution)
+{
+        float MatchgenJet_pt = -99.0;
+        float mindR = 99.0;
+        floats Xvars;
+        //for(int i = 0; i < JetsPt.size(); i++){
+        for(unsigned int i = 0; i < JetsPt.size(); i++){
+                mindR = 99.0;
+                MatchgenJet_pt = -99.0;
+                for(unsigned int j = 0; j < genJetsPt.size(); j++){
+                       float dr = ROOT::VecOps::DeltaR<float>(JetsEta[i], genJetsEta[j], JetsPhi[i], genJetsPhi[j]);
+                       if(dr < 0.2 && abs(JetsPt[i]-genJetsPt[j])<3*JetsPt[i]*ptresolution[i]){
+                              if(dr < mindR){
+                                     MatchgenJet_pt = genJetsPt[j];
+                              } 
+                       }
+                }
+                Xvars.emplace_back(MatchgenJet_pt);
+        }
+        return Xvars;
+}
+
+floats getcJER(floats &JetsPt, floats &genJetsPt, floats &SF, floats &ptresolution)
+{
+        float w = 1.0;
+        floats Xvars;
+        //for(int i = 0; i < JetsPt.size(); i++){
+        for(unsigned int i = 0; i < JetsPt.size(); i++){
+                if(genJetsPt[i] > -9.0){
+                       w = 1 + (SF[i]-1)*(JetsPt[i]-genJetsPt[i])/JetsPt[i];
+                }
+                else{
+                       Double_t randm = gRandom->Gaus(0,ptresolution[i]);
+                       w = 1 + randm*TMath::Sqrt(TMath::Max(SF[i]*SF[i] - 1.0, 0.0));
+                }
+                Xvars.emplace_back(w);
+        }
+        return Xvars;
 }
 
 floats sphericity(FourVectorVec &p)
@@ -119,6 +216,48 @@ ints good_idx(ints good)
         return out;
 }
 
+float topPtWeight(floats &genpts, ints &genid, ints &genflag)
+{
+        float wtop = 1.0;
+        float wtopbar = -1.0;
+        bool top = false;
+        bool topbar = false;
+        //for(int i = 0; i < genpts.size(); i++){
+        for(unsigned int i = 0; i < genpts.size(); i++){
+                //cout<<bitset<16>(genflag[i])<<endl;
+                //cout<<bitset<16>(genflag[i])[0]<<endl;
+                //cout<<"genflag "<<genflag[i]<<endl;
+                if(genid[i] == 6 && bitset<16>(genflag[i])[13]==1){
+                       //cout<<bitset<16>(genflag[i])<<endl;
+                //if(genid[i] == 6 && genflag[i] > 8192 && genflag[i] < 16384){
+                       top = true;
+                       if(genpts[i] < 500){
+                //           cout<<"top lhe pt is "<<genpts[i]<<endl;
+                           wtop = TMath::Exp(0.0615 - 0.0005*genpts[i]);
+                       }
+                       else{
+                           wtop = TMath::Exp(0.0615 - 0.0005*500);
+                       }
+                }
+                if(genid[i] == -6 && bitset<16>(genflag[i])[13]==1){
+                       //cout<<bitset<16>(genflag[i])<<endl;
+                       topbar = true;
+                 //      cout<<"topbar lhe pt is "<<genpts[i]<<endl;
+                       if(genpts[i] < 500){
+                            wtopbar = TMath::Exp(0.0615 - 0.0005*genpts[i]);
+                       }
+                       else{
+                            wtopbar = TMath::Exp(0.0615 - 0.0005*500);
+                       }
+                }
+        }
+        if(top == true && topbar == true){
+                return TMath::Sqrt(wtop*wtopbar);
+        }
+        else{
+                return 1.0;
+        }
+}
 
 floats chi2(float smtop_mass, float smw_mass, float lfvtop_mass)
 {
@@ -307,6 +446,19 @@ float calculate_RelHT( FourVector &top, FourVector& higgs, float ht ){
         //return (top.Pt() + higgs.Pt()) / ht;
 }
 
+float calculate_newRelHT( FourVector &top, FourVector& higgs, float oj_pt, float ht ){
+ 
+        //std::cout << "Whats happening" << std::endl;
+        //std::cout << "top " << top << " higgs: " << higgs << " ht: " << ht << std::endl;
+
+        float out = 0;
+        if ( top.Pt() < 10E+20 && !isnan(top.Pt()) && !isinf(top.Pt()) && !isnan(higgs.Pt()) && !isinf(higgs.Pt()) ) out = (top.Pt() + higgs.Pt() + oj_pt) / ht;
+        //std::cout<< "so at the end: " << out << std::endl;
+        
+        return out;
+        //return (top.Pt() + higgs.Pt()) / ht;
+}
+
 FourVector sum_4vec( FourVector &p1, FourVector &p2){
         return p1+p2;
 }
@@ -391,31 +543,38 @@ floats Tprime_reconstruction(FourVectorVec &jets, FourVectorVec &bjets){
     floats out;
     float hj1_idx=-1, hj2_idx=-1, wj1_idx=-1, wj2_idx=-1, tjb_idx=-1, oj_idx=-1;
 
-    float tmpH_mass, tmpW_mass, tmpTop_mass;
+    float tmpH_mass=-1, tmpW_mass=-1, tmpTop_mass=-1;
     float H_mass, W_mass, Top_mass;
+    float secondTop_mass=-1, secondW_mass=-1, Tprime_mass=-1, WH_mass=-1;
     float Chi2_H, Chi2_W, Chi2_Top;
-    float Chi2_max=FLT_MAX;
+    float Chi2_max=-1;
     float Chi2_min=FLT_MAX;
     float Chi2_min_H=FLT_MAX, Chi2_min_W=FLT_MAX, Chi2_min_Top=FLT_MAX;
+
+    float hb1_e=-1, hb2_e=-1, tb_e=-1;
 
     // Mass and Width - 2018UL
     //const float trueSenario_mass;
     const float trueH_mass = 120.2;
-    const float trueZ_mass = 90.9;
+    //const float trueZ_mass = 90.9;
     const float trueTop_mass = 175.9;
     const float trueW_mass = 83.9;
 
     const float widthH = 14.3;
-    const float widthZ = 11.3;
+    //const float widthZ = 11.3;
     const float widthTop = 17.2;
     const float widthW = 10.8;
+    
+    //cout << "number of jets: " << jets.size() << " number of bjets: " << bjets.size() << endl;
 
     // making jet paring for candidates
 
     // 1) H/Z candiates
     // loop on all selected b-tag jets,
     for(unsigned int b1 = 0; b1<bjets.size()-1; b1++){
+	//cout << "b1: " << bjets[b1].E() << endl;
         for(unsigned int b2 = b1+1; b2<bjets.size(); b2++){
+	    //cout << "b2: " << bjets[b2].E() << endl;
             // select two jets, to make a H/Z candidate
             // and evaluate H/Z Chi2 - minimize before carrying on the loop
             tmpH_mass = (bjets[b1]+bjets[b2]).M();
@@ -425,6 +584,9 @@ floats Tprime_reconstruction(FourVectorVec &jets, FourVectorVec &bjets){
                 hj1_idx = b1;
                 hj2_idx = b2;
                 H_mass = tmpH_mass;
+
+		        hb1_e = bjets[b1].E();
+	            hb2_e = bjets[b2].E();
             }
         }
     }
@@ -432,10 +594,15 @@ floats Tprime_reconstruction(FourVectorVec &jets, FourVectorVec &bjets){
     // 2) W candidate
     // loop on all selected jets,
     for(unsigned int j1 = 0; j1<jets.size()-1; j1++){
+	//cout << "j1: " << jets[j1].E() << endl;
         // reject the jets used for the H/Z candidate,
-        if (jets[j1].Pt() == bjets[hj1_idx].Pt() || jets[j1].Pt() == bjets[hj2_idx].Pt()) continue;
+        // why not pT - this algorithm messed up when it has jets with the same pT - 23/46973 entries
+        if (jets[j1].E() == bjets[hj1_idx].E() || jets[j1].E() == bjets[hj2_idx].E()) continue;
+        //cout << "I'm not higgs candidates" << endl;
         for(unsigned int j2 = j1+1; j2<jets.size(); j2++){
-            if (jets[j2].Pt() == bjets[hj1_idx].Pt() || jets[j2].Pt() == bjets[hj2_idx].Pt()) continue;
+	    //cout << "j2: " << jets[j2].E() << endl;
+            if (jets[j2].E() == bjets[hj1_idx].E() || jets[j2].E() == bjets[hj2_idx].E()) continue;
+            //cout << "I'm not higgs candidates" << endl;
             // select two jets, to make a W candidate
             // and evaluate W Chi2
             tmpW_mass = (jets[j1]+jets[j2]).M();
@@ -444,9 +611,11 @@ floats Tprime_reconstruction(FourVectorVec &jets, FourVectorVec &bjets){
             // 3) Top candidate
             // loop on all selected b-jets
             for(unsigned int b = 0; b<bjets.size(); b++){
+	        //cout << "b: " << bjets[b].E() << endl;
                 // reject the jets used for the H/Z/W candidate,
                 if (b == hj1_idx || b == hj2_idx) continue;
-                if (bjets[b].Pt() == jets[j1].Pt() || bjets[b].Pt() == jets[j2].Pt()) continue;
+                if (bjets[b].E() == jets[j1].E() || bjets[b].E() == jets[j2].E()) continue;
+                //cout << "and I am not candidated b-jets" << endl;
                 // select one b-tagged jet
                 // and combine it with the W candidate
                 // and evaluate the Top Chi2
@@ -462,14 +631,50 @@ floats Tprime_reconstruction(FourVectorVec &jets, FourVectorVec &bjets){
                     tjb_idx = b;
                     Top_mass = tmpTop_mass;
                     W_mass = tmpW_mass;
+		
+                    tb_e = bjets[b].E();
                 } // chi2 minimization
             } // top bjet loop
         } // second W jet combi
-        if (j1 != wj1_idx && j1 != wj2_idx && j1 != tjb_idx) oj_idx = j1;
+	// last try
+        //if (j1 != wj1_idx && j1 != wj2_idx && j1 != tjb_idx) oj_idx = j1;
     } // first W jet combi
+
+    // I think this is inevitable
+    // Assigning the last jet
+    for(unsigned int j = 0; j<jets.size(); j++){
+        if (j != wj1_idx && j != wj2_idx && jets[j].E() != hb1_e && jets[j].E() != hb2_e && jets[j].E() != tb_e){
+            //cout << "The last piece: " << jets[j].E() << endl;
+            oj_idx = j;
+            break;
+        }
+    }
 
     Chi2_min = Chi2_min_Top + Chi2_min_W + Chi2_min_H;
     Chi2_max = std::max({Chi2_min_Top, Chi2_min_W, Chi2_min_H});
+
+    // when everything is assigned
+    if (hj1_idx != -1 && hj2_idx != -1 && wj1_idx != -1 && wj2_idx != -1 && tjb_idx != -1 && oj_idx != -1){
+        secondTop_mass = (bjets[hj1_idx]+bjets[hj2_idx]+jets[oj_idx]).M();
+        Tprime_mass = (bjets[hj1_idx]+bjets[hj2_idx]+jets[wj1_idx]+jets[wj2_idx]+bjets[tjb_idx]).M();
+        WH_mass = (bjets[hj1_idx]+bjets[hj2_idx]+jets[wj1_idx]+jets[wj2_idx]).M();
+        float W1 = abs((bjets[hj1_idx]+jets[oj_idx]).M()) - 80.4;
+        float W2 = abs((bjets[hj2_idx]+jets[oj_idx]).M()) - 80.4;
+        if (W1 < W2) secondW_mass = W1;
+        else secondW_mass = W2;
+
+    }
+
+    if(Tprime_mass == -1){
+        cout << "Hi again, I'm the minus" << endl;
+        cout << "how is everything assigned?" << endl;
+        cout << "hb1 E: " << bjets[hj1_idx].E() << endl;
+        cout << "hb2 E: " << bjets[hj2_idx].E() << endl;
+        cout << "wj1 E: " << jets[wj1_idx].E() << endl;
+        cout << "wj2 E: " << jets[wj2_idx].E() << endl;
+        cout << "tbj E: " << bjets[tjb_idx].E() << endl;
+        cout << "oj E: " << jets[oj_idx].E() << endl;
+    }
 
     out.push_back(hj1_idx);           // 0
     out.push_back(hj2_idx);           // 1
@@ -484,7 +689,11 @@ floats Tprime_reconstruction(FourVectorVec &jets, FourVectorVec &bjets){
     out.push_back(H_mass);            // 10
     out.push_back(W_mass);            // 11
     out.push_back(Top_mass);          // 12
-    out.push_back(Chi2_max);          // 13
+    out.push_back(secondTop_mass);    // 13 
+    out.push_back(secondW_mass);      // 14  
+    out.push_back(WH_mass);           // 15 
+    out.push_back(Tprime_mass);       // 16
+    out.push_back(Chi2_max);          // 17
 
     return out;
 
@@ -594,3 +803,90 @@ bool isHadWHiggs(FourVectorVec &p, ints &pdgId, ints &midx){
     if (Whad && Hbb) flag = true;
     return flag;
 };
+
+floats btv_shape_correction(std::unique_ptr<correction::CorrectionSet> &cset, std::string type, std::string sys, floats &pts, floats &etas, ints &hadflav, floats &btags)
+{
+    floats scalefactors;
+    auto nvecs = pts.size();
+    scalefactors.reserve(nvecs);
+    //for (auto i=0; i<nvecs; i++){
+    for (unsigned int i=0; i<nvecs; i++){
+
+        float sfi = cset->at(type)->evaluate({sys, int(hadflav[i]), fabs(float(etas[i])), float(pts[i]), float(btags[i])});
+        scalefactors.emplace_back(sfi);
+
+    }
+    return scalefactors;
+}
+
+float btv_case1(std::unique_ptr<correction::CorrectionSet>& cset, std::string type, std::string sys, std::string sysl, std::string wp, ints &hadflav, floats &etas, floats &pts)
+{
+    float btagWeight = 1.0;
+
+    const auto nvecs = pts.size();
+    for (auto i = 0; i < nvecs; i++) {
+        if(std::fabs(etas[i]) < 2.5 && pts[i] > 20 && pts[i] < 1000){
+            float bc_jets;
+            if (hadflav[i] == 4 || hadflav[i] == 5) {
+                bc_jets = cset->at("deepJet_mujet")->evaluate({sys, wp, hadflav[i], std::fabs(etas[i]), pts[i]});
+            } else{
+                if(hadflav[i] == 0){
+                    bc_jets = cset->at("deepJet_incl")->evaluate({sysl, wp, hadflav[i], std::fabs(etas[i]), pts[i]});
+                }
+            }
+            btagWeight = bc_jets;
+        }
+    }
+    return btagWeight;
+}
+
+float btv_effMap(std::unique_ptr<correction::CorrectionSet>& eff, std::string wp, ints &hadflav, floats &etas, floats &pts)
+{
+    std::string flav;
+    float efficiency=1;
+    const auto nvecs = pts.size();
+    for (auto i = 0; i < nvecs; i++) {
+        if(std::fabs(etas[i]) < 2.5 && pts[i] > 20 && pts[i] < 1000){
+            if (hadflav[i] == 0) flav = "l";
+            if (hadflav[i] == 4) flav = "c";
+            if (hadflav[i] == 5) flav = "b";
+
+            float efficiency = eff->at("btag_effMap_"+wp+"_"+flav+"_Tprime")->evaluate({pts[i],std::fabs(etas[i])});
+        }
+    }
+
+    return efficiency;
+}
+
+float pucorrection(std::unique_ptr<correction::CorrectionSet> &cset, std::string name, std::string syst, float ntruepileup)
+{
+    return float(cset->at(name)->evaluate({ntruepileup, syst.c_str()}));
+}
+
+floats PrintVector(floats myvector){
+    for (size_t i = 0; i < myvector.size(); i++){
+        std::cout<<myvector[i]<<"\n";
+    }
+}
+
+floats compute_DR (FourVectorVec &muons, ints goodMuons_charge){
+    floats out;
+    float mu_ss_DR;
+    float mu_os_DR;
+    //std::cout<<"Muonsize: " << muons.size()<<std::endl;
+    if(muons.size()>0)
+    //Loop on all selected muons
+    for(unsigned int mu1 = 0; mu1<muons.size()-1; mu1++){
+        for(unsigned int mu2 = mu1+1; mu2<muons.size(); mu2++){
+            //select 2 muons with same sign
+            if (goodMuons_charge[mu1]!=goodMuons_charge[mu2]) continue; //check charge of muons
+            mu_ss_DR = ROOT::Math::VectorUtil::DeltaR(muons[mu1],muons[mu2]);
+            //select 2 muons with same sign
+            if (goodMuons_charge[mu1]==goodMuons_charge[mu2]) continue;
+            mu_os_DR = ROOT::Math::VectorUtil::DeltaR(muons[mu1],muons[mu2]);
+        }
+    }
+    out.push_back(mu_ss_DR);        //0: same sign dimuon DR
+    out.push_back(mu_os_DR);        //1: opposite sign dimuon dR
+    return out;
+}

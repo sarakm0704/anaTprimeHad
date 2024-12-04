@@ -251,7 +251,7 @@ def Nanoaodprocessor_singledir(indir, outputroot, procflags, config):
     if not skipcorrections:
     #    aproc.setupCorrections(config['goodjson'], config['pileupfname'], config['pileuptag']\
     #    , config['btvfname'], config['btvtype'], config['jercfname'], config['jerctag'], config['jercunctag'])
-        aproc.setupCorrections(config['goodjson'], config['pileupfname'], config['pileuptag'], config['btvfname'], config['btvtype'], config['fname_btageff'], config['jercfname'], config['jerctag'], config['jercunctag'], config['jercsys_total'])
+        aproc.setupCorrections(config['goodjson'], config['pileupfname'], config['pileuptag'], config['btvfname'], config['btvtype'], config['fname_btagEff'], config['jercfname'], config['jerctag'], config['jercunctag'], config['jercsys_total'])
     #sys.stdout.flush() #to force printout in right order 
     #aproc.setupObjects()
     else:

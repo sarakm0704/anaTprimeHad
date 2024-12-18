@@ -47,11 +47,11 @@ class TprimeHadAnalyzer: public NanoAODAnalyzerrdframe
         bool readgoodjson(string goodjsonfname); // get ready for applying golden JSON
         //json jsonroot;
 
-		std::string _jerctag;
-		std::string _jercunctag;
-        std::string _jercsys_total;
-        std::string _jercptres_type;
-        std::string _jercSF_type;
+		//std::string _jerctag;
+		//std::string _jercunctag;
+        //std::string _jercsys_total;
+        //std::string _jercptres_type;
+        //std::string _jercSF_type;
 
         void GetJetsys(string sys);
         

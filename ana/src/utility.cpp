@@ -809,7 +809,6 @@ floats btv_shape_correction(std::unique_ptr<correction::CorrectionSet> &cset, st
     floats scalefactors;
     auto nvecs = pts.size();
     scalefactors.reserve(nvecs);
-    //for (auto i=0; i<nvecs; i++){
     for (unsigned int i=0; i<nvecs; i++){
 
         float sfi = cset->at(type)->evaluate({sys, int(hadflav[i]), fabs(float(etas[i])), float(pts[i]), float(btags[i])});
@@ -824,18 +823,16 @@ float btv_case1(std::unique_ptr<correction::CorrectionSet>& cset, std::string ty
     float btagWeight = 1.0;
 
     const auto nvecs = pts.size();
-    for (auto i = 0; i < nvecs; i++) {
+    for (unsigned int i = 0; i < nvecs; i++) {
+        float bc_jets = 1.;
         if(std::fabs(etas[i]) < 2.5 && pts[i] > 20 && pts[i] < 1000){
-            float bc_jets;
             if (hadflav[i] == 4 || hadflav[i] == 5) {
-                bc_jets = cset->at("deepJet_mujet")->evaluate({sys, wp, hadflav[i], std::fabs(etas[i]), pts[i]});
-            } else{
-                if(hadflav[i] == 0){
-                    bc_jets = cset->at("deepJet_incl")->evaluate({sysl, wp, hadflav[i], std::fabs(etas[i]), pts[i]});
-                }
-            }
-            btagWeight = bc_jets;
-        }
+                bc_jets = cset->at("deepJet_mujets")->evaluate({sys, wp, hadflav[i], std::fabs(etas[i]), pts[i]});
+            } else if(hadflav[i] == 0){
+                bc_jets = cset->at("deepJet_incl")->evaluate({sysl, wp, hadflav[i], std::fabs(etas[i]), pts[i]});
+            } 
+         }
+         btagWeight *= bc_jets;
     }
     return btagWeight;
 }
@@ -845,17 +842,86 @@ float btv_effMap(std::unique_ptr<correction::CorrectionSet>& eff, std::string wp
     std::string flav;
     float efficiency=1;
     const auto nvecs = pts.size();
-    for (auto i = 0; i < nvecs; i++) {
+    for (unsigned int i = 0; i < nvecs; i++) {
         if(std::fabs(etas[i]) < 2.5 && pts[i] > 20 && pts[i] < 1000){
             if (hadflav[i] == 0) flav = "l";
             if (hadflav[i] == 4) flav = "c";
             if (hadflav[i] == 5) flav = "b";
 
-            float efficiency = eff->at("btag_effMap_"+wp+"_"+flav+"_Tprime")->evaluate({pts[i],std::fabs(etas[i])});
+            efficiency = eff->at("btag_effMap_"+wp+"_"+flav+"_Tprime")->evaluate({pts[i],std::fabs(etas[i])});
         }
     }
 
     return efficiency;
+}
+
+float producer_btagWeight(std::unique_ptr<correction::CorrectionSet>& cset, std::unique_ptr<correction::CorrectionSet>& eff, std::string type, std::string sys, std::string sysl, ints &hadflav, floats &etas, floats &pts, floats &discs, ints &wpL, ints &wpM, ints &wpT, bool isTp, bool isTT, bool isQCD)
+{
+    std::string flav;
+    std::string sample;
+    float weight=1.0;
+    float efficiencyL=0;
+    float efficiencyM=0;
+    float efficiencyT=0;
+
+    float sfL=1.0;
+    float sfM=1.0;
+    float sfT=1.0;
+
+    if (isTp == true) sample = "Tprime";
+    if (isTT == true) sample = "TTToHadronic";
+    if (isQCD == true) sample = "QCD";
+
+    //cout << "calculate btagWeight" << endl;
+
+    const auto nvecs = pts.size();
+    for (unsigned int i = 0; i < nvecs; i++) {
+        if (std::fabs(etas[i]) > 2.5 || pts[i] < 20 || pts[i] > 1000) continue;
+
+        //cout << "for a jet " << i << endl;
+        //cout << "pT | eta = " << pts[i] << " | " << std::fabs(etas[i]) << endl;
+
+        if (hadflav[i] == 0) flav = "l";
+        if (hadflav[i] == 4) flav = "c";
+        if (hadflav[i] == 5) flav = "b";
+
+        //cout << "the flavour " << flav << endl;
+
+        efficiencyL = eff->at("btag_effMap_L_"+flav+"_"+sample)->evaluate({pts[i],std::fabs(etas[i])});
+        efficiencyM = eff->at("btag_effMap_M_"+flav+"_"+sample)->evaluate({pts[i],std::fabs(etas[i])});
+        efficiencyT = eff->at("btag_effMap_T_"+flav+"_"+sample)->evaluate({pts[i],std::fabs(etas[i])});
+
+        //cout << "efficiency loaded, e.g. L = " << flav << endl;
+
+        if (hadflav[i] == 4 || hadflav[i] == 5) {
+            //cout << "its heavy flavour" << endl;
+            sfL = cset->at("deepJet_comb")->evaluate({sys, "L", hadflav[i], std::fabs(etas[i]), pts[i]});
+            sfM = cset->at("deepJet_comb")->evaluate({sys, "M", hadflav[i], std::fabs(etas[i]), pts[i]});
+            sfT = cset->at("deepJet_comb")->evaluate({sys, "T", hadflav[i], std::fabs(etas[i]), pts[i]});
+            //cout << "scale factor loaded, e.g. L = " << sfL << endl;
+        } else if(hadflav[i] == 0){
+            sfL = cset->at("deepJet_incl")->evaluate({sysl, "L", hadflav[i], std::fabs(etas[i]), pts[i]});
+            sfM = cset->at("deepJet_incl")->evaluate({sysl, "M", hadflav[i], std::fabs(etas[i]), pts[i]});
+            sfT = cset->at("deepJet_incl")->evaluate({sysl, "T", hadflav[i], std::fabs(etas[i]), pts[i]});
+        }
+
+        // calculate weight
+        // weight = tagged at T * tagged at M but not T * tagged at L but not M * not tagged at L
+        if (wpT[i] == 1){
+            weight *= sfT;
+        } else if (wpM[i] == 1 && wpT[i] == 0){
+             weight *= (sfM*efficiencyM - sfT*efficiencyT)/(efficiencyM - efficiencyT);
+        } else if (wpL[i] == 1 && wpM[i] == 0){
+             weight *= (sfL*efficiencyL - sfM*efficiencyM)/(efficiencyL - efficiencyM);
+        } else if (wpL[i] == 0) {
+            weight *= (1-sfL*efficiencyL)/(1-efficiencyL);
+        } else cout << "something weird happening in tagging" << endl;
+        
+    }
+
+    //cout << "the weight = " << weight << endl;
+
+    return weight;
 }
 
 float pucorrection(std::unique_ptr<correction::CorrectionSet> &cset, std::string name, std::string syst, float ntruepileup)

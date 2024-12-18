@@ -73,6 +73,11 @@ public:
 	void add2DHist(TH2DModel histdef, string variable1, string variable2, string weight, string mincutstep="");
 
     double getBTaggingEff(double hadflav, double eta, double pt);
+
+	//TFile *f_btagEff;
+	//TH2D *hist_btagEff_bcflav;
+	//TH2D *hist_btagEff_lflav;
+
     ROOT::RDF::RNode calculateBTagSF(RNode _rlm, std::vector<std::string> Jets_vars, int _case, const double btag_cut, std::string _BTaggingWP = "M", std::string output_var = "btag_SF_");
     
     void setupCuts_and_Hists();
@@ -82,13 +87,12 @@ public:
     void setupTree();
     
     //setting parameters for nanoaod
-    //void setParams(int year, string runtype, int datatype);
-    //void setParams(int year, string runtype, int datatype, string CutOnNom, string GENsig,  string topPtReweight, string topPtReweightsys, string jecsys, string jersys, string btagsys, string btagsysuncorr, string channels);
-    void setParams(int year, string runtype, int datatype, string sampletype, string topPtReweight, string topPtReweightsys, string jecsys, string jersys, string btagsys, string btagsysuncorr);
+    void setParams(int year, string runtype, int datatype, string sampletype, string region, string topPtReweight, string topPtReweightsys, string jecsys, string jersys, string btagsys, string btagsysuncorr);
     int _year;
     string _runtype;
     int _datatype;
     string _sampletype;
+    string _region;
 
     string _topPtReweight;
     string _topPtReweightsys;
@@ -96,6 +100,10 @@ public:
     bool _isTprime =false;
     bool _isTT =false;
     bool _isQCD =false;
+
+    bool _is2M1L =false;
+    bool _is3M =false;
+    bool _is3T =false;
 
     bool _isUL =false;
     bool _isReReco = false;
@@ -126,27 +134,18 @@ public:
     bool _jsonOK;
     string _outfilename;
     string _jsonfname;
-    string _jerctag;
-    string _jercunctag;
-    string _putag;
-    string _btvtype;
-
-    string _jercsys_total;
-    string _jercptres_type;
-    string _jercSF_type; 
     
     TFile *_outrootfile;
     vector<string> _outrootfilenames;
     RNode _rlm;
     map<string, RDF1DHist> _th1dhistos;
-    //bool helper_1DHisntCreator(std::string hname, std::string title, const int nbins, const double xlow, const double xhi, std::string rdfvar, std::string evWeight);
     bool helper_1DHistCreator(string hname, string title, const int nbins, const double xlow, const double xhi, string rdfvar, string evWeight, RNode *anode);
     vector<hist1dinfo> _hist1dinfovector;
 
 	//for 2D histograms
-	map<string, RDF2DHist> _th2dhistos;
-	bool helper_2DHistCreator(string hname, string title, const int nbinsx, const double xlow, const double xhi, const int nbinsy, const double ylow, const double yhi, string rdfvarx, string rdfvary, string evWeight, RNode *anode);
-    vector<hist2dinfo> _hist2dinfovector;
+	//map<string, RDF2DHist> _th2dhistos;
+	//bool helper_2DHistCreator(string hname, string title, const int nbinsx, const double xlow, const double xhi, const int nbinsy, const double ylow, const double yhi, string rdfvarx, string rdfvary, string evWeight, RNode *anode);
+    //vector<hist2dinfo> _hist2dinfovector;
 
     vector<string> _originalvars;
     vector<string> _selections;
@@ -162,12 +161,13 @@ public:
     //rapidjson::Document jsonroot;
     
     json jsonroot;
-    
-    // pile up weights
-    std::unique_ptr<correction::CorrectionSet> _correction_pu;
 
     // JERC scale factors
     std::unique_ptr<correction::CorrectionSet> _jerc_fname;
+
+    string _jercptres_type;
+    string _jercSF_type; 
+    string _jercsys_total;
 
     std::unique_ptr<correction::CorrectionSet> _correction_jerc; // json containing all forms of corrections and uncertainties
     std::shared_ptr<const correction::CompoundCorrection> _jetCorrector; // just the combined L1L2L3 correction
@@ -177,10 +177,15 @@ public:
     std::unique_ptr<correction::CorrectionSet> _correction_btag1;
     std::unique_ptr<correction::CorrectionSet> _efficiency_btag1;
 
-	TFile *f_btagEff;
-	TH2D *hist_btagEff_bcflav;
-	TH2D *hist_btagEff_lflav; 
-    
+    string _btvtype;
+
+    // pile up weights
+    std::unique_ptr<correction::CorrectionSet> _correction_pu;
+    string _putag;
+
+    string _jerctag;
+    string _jercunctag;
+
     RNodeTree _rnt;
     
     bool isDefined(string v);

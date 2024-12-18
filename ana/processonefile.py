@@ -51,7 +51,7 @@ if __name__=='__main__':
     # w/ Di
     #aproc.setParams(config['year'], config['runtype'],config['datatype'], config['jecsys'], config['jersys'])
     # somewhat different
-    aproc.setParams(config['year'], config['runtype'], config['datatype'], config['sampletype'], config['topPtReweight'], config['topPtReweightsys'], config['jecsys'], config['jersys'], config['btagsys'], config['btagsysuncorr'])
+    aproc.setParams(config['year'], config['runtype'], config['datatype'], config['sampletype'], config['region'], config['topPtReweight'], config['topPtReweightsys'], config['jecsys'], config['jersys'], config['btagsys'], config['btagsysuncorr'])
 
     #aproc.setParams(config[year])
     # setup JSONS for corrections

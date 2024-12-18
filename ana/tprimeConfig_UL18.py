@@ -14,7 +14,9 @@ config = {
         'runtype': 'UL',
         'datatype': -1,
         # sample descriptions
-        'sampletype': 'Tprime',
+        'sampletype': "Tprime",
+#        'region': "2M1L",
+        'region': "3T",
         'topPtReweight': "True",
         'topPtReweightsys': "none",
         'jecsys': "Total",

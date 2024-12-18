@@ -37,10 +37,8 @@ def function_calling_PostProcessor(outdir, rootfileshere, jobconfmod):
 
 
 class Nanoaodprocessor:
-#    def __init__(self, indir, outdir, jobconfmod, procflags, config):
     def __init__(self, inlist, outdir, jobconfmod, procflags, config):
         self.outdir = outdir
-#        self.indir = indir
         self.inlist = inlist
         self.jobconfmod = jobconfmod
         self.split = procflags['split']
@@ -53,33 +51,23 @@ class Nanoaodprocessor:
         self.runtype =config['runtype']
         self.datatype = config['datatype']
         self.sampletype = config['sampletype']
+        self.region = config['region']
         print("year=", self.year)
         print("data=", self.datatype)
         print("sample=", self.sampletype)
-
-        # check whether input directory exists
-        #if not os.path.exists(self.indir):
-        #    print ('Path '+indir+' does not exist')
-        #    exit(1)
-        #pass
-        # well we will take a list
+        print("region=", self.region)
 
     def process(self):
-        #self._processROOTfiles(self.indir, self.outdir)
         self._processROOTfiles(self.inlist, self.outdir)
         pass
 
 
-    #def _processROOTfiles(self, inputdirectory, outputdirectory):
     def _processROOTfiles(self, inputlist, outputdirectory):
         # list currect directory
-        #flist = os.listdir(inputdirectory) 
         # no, I will take a list
-        # HEERE
         flist = open(inputlist).read().splitlines()
         print(f"flist = {flist}")
         # then put xrootd
-        #inputdirectory = 'root://cmsxrootd.fnal.gov/'
         inputdirectory = 'root://xrootd-cms.infn.it/'
         rootfileshere = []
         subdirs = []
@@ -91,8 +79,6 @@ class Nanoaodprocessor:
         # pick root files but not those that match  _analyzed.root
         counter=0
         for fname in flist:
-            #fullname = os.path.join(inputdirectory, fname)
-            #fullname = os.path.join(inputdirectory, fname) #HM, path.join doesnt work for.... string?
             fullname = inputdirectory + fname
             #if re.match('.*\.root', fname) and os.path.isfile(fullname): # if it has .root file extension
             if re.match('.*\.root', fname): # if it has .root file extension + isfile doesnt count str object, first aid
@@ -242,7 +228,7 @@ def Nanoaodprocessor_singledir(indir, outputroot, procflags, config):
     aproc = ROOT.TprimeHadAnalyzer(t, outputroot)
     #aproc = ROOT.GJetAnalyzer(t, outputroot)
     #aproc.setParams(config['year'], config['runtype'],config['datatype']) 
-    aproc.setParams(config['year'], config['runtype'],config['datatype'], config['sampletype'], config['topPtReweight'], config['topPtReweightsys'], config['jecsys'], config['jersys'], config['btagsys'], config['btagsysuncorr'])
+    aproc.setParams(config['year'], config['runtype'],config['datatype'], config['sampletype'], config['region'], config['topPtReweight'], config['topPtReweightsys'], config['jecsys'], config['jersys'], config['btagsys'], config['btagsysuncorr'])
     #
     #if your input root file already has good json, various corrections applied with
     #object clean up, you should skip the corrections step
@@ -295,29 +281,18 @@ if __name__=='__main__':
     # inputDir and lower directories contain input NanoAOD files
     # outputDir is where the outputs will be created
 
-    # HERE, maybe inlist
     parser = ArgumentParser(usage="%prog inputDir outputDir jobconfmod")
-    #parser = ArgumentParser(usage="%prog inputDir inlist outputDir jobconfmod")
-
-    #HERE
-    #parser.add_argument("inlist")
 
     parser.add_argument("indir")
     parser.add_argument("outdir")
     parser.add_argument("jobconfmod")
     args = parser.parse_args()
 
-    # HERE
-    #inlist = args.inlist
 
     indir = args.indir
     outdir = args.outdir
     jobconfmod = args.jobconfmod
 
-    # check whether input directory exists
-    #if not os.path.exists(indir):
-    #    print ('Path '+indir+' does not exist. Stopping')
-    #    exit(1)
     print(f"indir = {indir}")
 
     # load compiled C++ library into ROOT/python

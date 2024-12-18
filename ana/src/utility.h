@@ -135,6 +135,8 @@ float btv_case1( std::unique_ptr<correction::CorrectionSet> &cset, std::string t
 
 float btv_effMap( std::unique_ptr<correction::CorrectionSet>& eff, std::string wp, ints &hadflav, floats &etas, floats &pts );
 
+float producer_btagWeight(std::unique_ptr<correction::CorrectionSet>& cset, std::unique_ptr<correction::CorrectionSet>& eff, std::string type, std::string sys, std::string sysl, ints &hadflav, floats &etas, floats &pts, floats &discs, ints &wpL, ints &wpM, ints &wpT, bool isTp, bool isTT, bool isQCD);
+
 float pucorrection(std::unique_ptr<correction::CorrectionSet> &cset, std::string name, std::string syst, float ntruepileup);
 
 floats PrintVector(floats myvector);

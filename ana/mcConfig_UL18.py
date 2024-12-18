@@ -13,6 +13,9 @@ config = {
         # is ReReco or Ultra Legacy
         'runtype': 'UL',
         'datatype': -1,
+        # sample descriptions
+        'sampletype': "QCD",
+        'region': "3T",
         'topPtReweight': "True",
         'topPtReweightsys': "none",
         'jecsys': "Total",
@@ -29,7 +32,8 @@ config = {
         'btvfname': 'data/BTV/2018_UL/btagging.json',
         # BTV correction type
         'btvtype': 'deepJet_comb',
-        'btvEffMap': 'data/BTV/2018_UL/2018_btagEff_VLQ_FH.json',
+        # BTV efficiency map
+        'fname_btagEff': 'data/BTV/2018_UL/2018_btagEff_VLQ_FH.json',
         # json file name for JERC
         'jercfname': 'data/JERC/jetUL18_jerc.json',
         # conbined correction type for jets

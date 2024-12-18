@@ -35,8 +35,11 @@ int main(void) {
 	string jercfname;
 	string jerctag;
 	string jercunctag;
+    // di
     string jercsys_total;
 
+	//nanoaodrdf.setupCorrections(goodjsonfname, pileupfname, pileuptag, btvfname, btvtype, jercfname, jerctag, jercunctag);
+	//nanoaodrdf.setupCorrections(goodjsonfname, pileupfname, pileuptag, btvfname, btvtype, muonid_fname, muonid_type, muoniso_fname, muoniso_type, muonreco_fname, muonreco_type, elereco_fname, elerecotype, eleid_fname, eleidtype, jercfname, jerctag, jercunctag, jercsys_total);
 	nanoaodrdf.setupCorrections(goodjsonfname, pileupfname, pileuptag, btvfname, btvtype, fname_btagEff, jercfname, jerctag, jercunctag, jercsys_total);
 	nanoaodrdf.setupObjects();
 	nanoaodrdf.setupAnalysis();

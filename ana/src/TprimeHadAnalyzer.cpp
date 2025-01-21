@@ -81,8 +81,8 @@ void TprimeHadAnalyzer::defineCuts()
     }else if(_is3T){
          addCuts("nselTbJets >= 3","0000");
     }else{
-        cout << "no region defined" << endl;
-        return;
+        cout << "no region defined, get efficiency Map" << endl;
+        //return;
     }
 
 //    addCuts("isHadProcess","0");
@@ -331,6 +331,14 @@ void TprimeHadAnalyzer::defineMoreVars()
   
     ////addVartoStore("dRbb");
     ////addVartoStore("mbb");
+    
+    //addVartoStore("selJetsForbtag_pt");
+    //addVartoStore("selJetsForbtag_eta");
+    //addVartoStore("selJetsForbtag_phi");
+    //addVartoStore("selJetsForbtag_mass");
+    //addVartoStore("selJetsForbtag_btag");
+    //addVartoStore("selJetsForbtag_hadronFlavour");
+    //addVartoStore("nselJetsForbtag");
 
     // DNN Study
     // Cut0
@@ -341,14 +349,6 @@ void TprimeHadAnalyzer::defineMoreVars()
     addVartoStore("is_deepJet_T");
     addVartoStore("is_deepJet_M");
     addVartoStore("is_deepJet_L");
-
-    addVartoStore("selJetsForbtag_pt");
-    addVartoStore("selJetsForbtag_eta");
-    addVartoStore("selJetsForbtag_phi");
-    addVartoStore("selJetsForbtag_mass");
-    addVartoStore("selJetsForbtag_btag");
-    addVartoStore("selJetsForbtag_hadronFlavour");
-    addVartoStore("nselJetsForbtag");
 
     addVartoStore("selJet1_pt");
     addVartoStore("selJet1_pt_massnom");
@@ -448,7 +448,8 @@ void TprimeHadAnalyzer::defineMoreVars()
 void TprimeHadAnalyzer::bookHists()
 {
 
-  add1DHist( {"hnevents", "Number of Events", 2, -0.5, 1.5}, "one", "evWeight", "");
+  add1DHist( {"h_nevents", "Number of Events", 2, -0.5, 1.5}, "one", "evWeight", "");
+  add1DHist( {"hw_nevents", "Number of Events", 2, -0.5, 1.5}, "one", "evWeight_btag", "0000");
   //add2DHist( {"h_btagEff", "Jet pT", "Jet eta", 2, -0.5, 1.5}, "one", "evWeight", "");
 
   //add1DHist( {"h_nJets", "Number of Jets", 10, 5, 15}, "nselJets", "evWeight", "000");
@@ -819,18 +820,58 @@ void TprimeHadAnalyzer::selectJets()
   // external JER Jet_pt -> Jet_pt_nom
   // and need to resort by new pt: _rlm = _rlm.Define("sorted_Jet_pt", ::sort_discriminant, {"Jet_pt_nom","Jet_pt_nom"})
   //_rlm = _rlm.Define("Jet_idx","")
+
+  //well JER here  
+  if(!_isData){
+              _rlm = _rlm.Define("MCorData", "-1.0");
+              auto getJERCptResolution=[this](floats &etas, floats &pts, floats &rhos)->floats
+              {
+                      return ::JERCptResolution(_jerc_fname, _jercptres_type, etas, pts, rhos);
+              };
+
+              auto getJERCSF=[this](floats &etas)->floats
+              {
+                      return ::JERCSF(_jerc_fname, _jercSF_type,"nom", etas);
+              };
+
+      _rlm = _rlm.Define("JERCptResolution", getJERCptResolution, {"Jet_eta","Jet_pt","fixedGridRhoFastjetAll"});
+      _rlm = _rlm.Define("JERCSF", getJERCSF, {"Jet_eta"});
+      _rlm = _rlm.Define("GenMatchJetPtvars", ::GenMatchJetPt, {"Jet_pt", "Jet_eta", "Jet_phi", "Jet_mass", "GenJet_pt", "GenJet_eta", "GenJet_phi", "GenJet_mass", "JERCptResolution"});
+      _rlm = _rlm.Define("c_JER", ::getcJER, {"Jet_pt", "GenMatchJetPtvars", "JERCSF", "JERCptResolution"});
+      _rlm = _rlm.Define("Jet_pt_smear_nom", "c_JER*Jet_pt");
+//      _rlm = _rlm.Define("corrmet_pt_nom", ::getmetsmear, {"corrmetjson_pt", "corrmet_phi", "Jet_pt", "Jet_pt_smear_nom", "Jet_phi"}); // this is the good one
+      _rlm = _rlm.Define("rawmet_pt", "MET_pt");
+      _rlm = _rlm.Define("rawmet_phi", "MET_phi");
+
+  }
+  else{
+      _rlm = _rlm.Define("MCorData", "1.0");
+      _rlm = _rlm.Define("Jet_pt_smear_nom", "Jet_pt");
+      _rlm = _rlm.Define("run_numbers", "float(run)");
+      _rlm = _rlm.Define("rawmet_pt", "MET_pt");
+      _rlm = _rlm.Define("rawmet_phi", "MET_phi");
+  }
   
   //presel for overlap
-  _rlm = _rlm.Define("pre_goodJets", "Jet_jetId > 1 && Jet_pt >= 30 && abs(Jet_eta) <= 4.5");
+  //_rlm = _rlm.Define("pre_goodJets", "Jet_jetId > 1 && Jet_pt >= 30 && abs(Jet_eta) <= 4.5");
+  // w JER
+  //_rlm = _rlm.Define("pre_goodJets", "Jet_jetId > 1 && Jet_pt_smear_nom >= 30 && abs(Jet_eta) <= 4.5");
+  // w PU JetId
+  _rlm = _rlm.Define("pre_goodJets", "Jet_jetId > 1 && Jet_pt_smear_nom >= 30 && abs(Jet_eta) <= 4.5 && (Jet_pt_smear_nom > 50 || Jet_puId > 0)");
   
   _rlm = _rlm.Define("pre_nselJets","Sum(pre_goodJets)")
-             .Define("pre_selJet_pt","Jet_pt[pre_goodJets]")
+//             .Define("pre_selJet_pt","Jet_pt[pre_goodJets]")
+//             w JER
+             .Define("pre_selJet_pt","Jet_pt_smear_nom[pre_goodJets]")
              .Define("pre_selJet_eta","Jet_eta[pre_goodJets]")
              .Define("pre_selJet_phi","Jet_phi[pre_goodJets]")
              .Define("pre_selJet_mass","Jet_mass[pre_goodJets]")
              .Define("pre_selJet_btagDeepFlavB","Jet_btagDeepFlavB[pre_goodJets]")
-             .Define("pre_selJet_hadronFlavour", "Jet_hadronFlavour[pre_goodJets]")
+//             .Define("pre_selJet_hadronFlavour", "Jet_hadronFlavour[pre_goodJets]")
              .Define("pre_jet4vecs", ::generate_4vec, {"pre_selJet_pt", "pre_selJet_eta", "pre_selJet_phi", "pre_selJet_mass"});
+
+  // apparently there is no such branch in data
+  if(!_isData) _rlm = _rlm.Define("pre_selJet_hadronFlavour", "Jet_hadronFlavour[pre_goodJets]");
   
   // lambda function
   // for checking overlapped jets with leptons
@@ -859,21 +900,20 @@ void TprimeHadAnalyzer::selectJets()
              .Define("good40Jets", "goodJets && pre_selJet_pt >= 40")
              .Define("good80Jets", "good40Jets && pre_selJet_pt >= 80");
   
-    _rlm = _rlm.Define("selJet_pt","pre_selJet_pt[goodJets]")
-               .Define("selJet40_pt","pre_selJet_pt[good40Jets]")
-               .Define("selJet80_pt","pre_selJet_pt[good80Jets]")
-              
-               .Define("selJet_eta","pre_selJet_eta[goodJets]")
-               .Define("selJet_phi","pre_selJet_phi[goodJets]")
-               .Define("selJet_mass","pre_selJet_mass[goodJets]")
-               .Define("selJet_btagDeepFlavB","pre_selJet_btagDeepFlavB[goodJets]")
-               .Define("selJet_hadronFlavour","pre_selJet_btagDeepFlavB[goodJets]")
+  _rlm = _rlm.Define("selJet_pt","pre_selJet_pt[goodJets]")
+             .Define("selJet40_pt","pre_selJet_pt[good40Jets]")
+             .Define("selJet80_pt","pre_selJet_pt[good80Jets]")
+            
+             .Define("selJet_eta","pre_selJet_eta[goodJets]")
+             .Define("selJet_phi","pre_selJet_phi[goodJets]")
+             .Define("selJet_mass","pre_selJet_mass[goodJets]")
+             .Define("selJet_btagDeepFlavB","pre_selJet_btagDeepFlavB[goodJets]")
 
-               .Define("nselJets","int(selJet_pt.size())")
-               .Define("nsel40Jets","int(selJet40_pt.size())")
-               .Define("nsel80Jets","int(selJet80_pt.size())")
-              
-               .Define("jet4vecs", ::generate_4vec, {"selJet_pt", "selJet_eta", "selJet_phi", "selJet_mass"});
+             .Define("nselJets","int(selJet_pt.size())")
+             .Define("nsel40Jets","int(selJet40_pt.size())")
+             .Define("nsel80Jets","int(selJet80_pt.size())")
+            
+             .Define("jet4vecs", ::generate_4vec, {"selJet_pt", "selJet_eta", "selJet_phi", "selJet_mass"});
 
   //float WP_deepJet_T = 0;
   //float WP_deepJet_M = 0;
@@ -915,15 +955,18 @@ void TprimeHadAnalyzer::selectJets()
       _rlm = _rlm.Define("is_deepJet_L","pre_selJet_btagDeepFlavB > 0.0490");
   }
 
-  _rlm = _rlm.Define("goodJetsForbtag", "goodJets && abs(pre_selJet_eta) < 2.5")
-             .Define("selJetsForbtag_pt","pre_selJet_pt[goodJetsForbtag]")
-             .Define("selJetsForbtag_eta","pre_selJet_eta[goodJetsForbtag]")
-             .Define("selJetsForbtag_phi","pre_selJet_phi[goodJetsForbtag]")
-             .Define("selJetsForbtag_mass","pre_selJet_mass[goodJetsForbtag]")
-             .Define("selJetsForbtag_btag","pre_selJet_btagDeepFlavB[goodJetsForbtag]")
-             .Define("selJetsForbtag_hadronFlavour","pre_selJet_hadronFlavour[goodJetsForbtag]")
-             .Define("nselJetsForbtag","int(selJetsForbtag_pt.size())");
-
+  if(!_isData){
+  // you dont measure efficiency in data
+      _rlm = _rlm.Define("goodJetsForbtag", "goodJets && abs(pre_selJet_eta) < 2.5")
+                 .Define("selJetsForbtag_pt","pre_selJet_pt[goodJetsForbtag]")
+                 .Define("selJetsForbtag_eta","pre_selJet_eta[goodJetsForbtag]")
+                 .Define("selJetsForbtag_phi","pre_selJet_phi[goodJetsForbtag]")
+                 .Define("selJetsForbtag_mass","pre_selJet_mass[goodJetsForbtag]")
+                 .Define("selJetsForbtag_btag","pre_selJet_btagDeepFlavB[goodJetsForbtag]")
+                 .Define("selJetsForbtag_hadronFlavour","pre_selJet_hadronFlavour[goodJetsForbtag]")
+                 .Define("nselJetsForbtag","int(selJetsForbtag_pt.size())");
+  }
+    
   if(_year==2015){        //2016preVFP - APV
       _rlm = _rlm.Define("WP_deepJet_T","selJetsForbtag_btag > 0.6502");
       _rlm = _rlm.Define("WP_deepJet_M","selJetsForbtag_btag > 0.2598");
@@ -943,9 +986,16 @@ void TprimeHadAnalyzer::selectJets()
   }
 
   // for Chi2 reco
-  _rlm = _rlm.Define("goodbJets", "goodJets && abs(pre_selJet_eta) < 2.5 && is_deepJet_L");
+  //_rlm = _rlm.Define("goodbJets", "goodJets && abs(pre_selJet_eta) < 2.5 && is_deepJet_L");
   //_rlm = _rlm.Define("goodbJets", "goodJets && abs(pre_selJet_eta) < 2.5 && is_deepJet_M");
   //_rlm = _rlm.Define("goodbJets", "goodJets && abs(pre_selJet_eta) < 2.5 && is_deepJet_T");
+  if(_is2M1L){
+      _rlm = _rlm.Define("goodbJets", "goodJets && abs(pre_selJet_eta) < 2.5 && is_deepJet_L");
+  }else if(_is3M){
+      _rlm = _rlm.Define("goodbJets", "goodJets && abs(pre_selJet_eta) < 2.5 && is_deepJet_M");
+  }else if(_is3T){
+      _rlm = _rlm.Define("goodbJets", "goodJets && abs(pre_selJet_eta) < 2.5 && is_deepJet_T");
+  }
 
   _rlm = _rlm.Define("goodLbJets", "goodJets && abs(pre_selJet_eta) < 2.5 && is_deepJet_L");
   _rlm = _rlm.Define("goodMbJets", "goodJets && abs(pre_selJet_eta) < 2.5 && is_deepJet_M");
@@ -956,7 +1006,7 @@ void TprimeHadAnalyzer::selectJets()
              .Define("selbJet_phi","pre_selJet_phi[goodbJets]")
              .Define("selbJet_mass","pre_selJet_mass[goodbJets]")
              .Define("selbJet_btag","pre_selJet_btagDeepFlavB[goodbJets]")
-             .Define("selbJet_hadronFlavour","pre_selJet_hadronFlavour[goodbJets]")
+//             .Define("selbJet_hadronFlavour","pre_selJet_hadronFlavour[goodbJets]")
              .Define("nselbJets","int(selbJet_pt.size())")
              .Define("bjet4vecs", ::generate_4vec, {"selbJet_pt", "selbJet_eta", "selbJet_phi", "selbJet_mass"});
 
@@ -965,7 +1015,7 @@ void TprimeHadAnalyzer::selectJets()
              .Define("selLbJet_phi","pre_selJet_phi[goodLbJets]")
              .Define("selLbJet_mass","pre_selJet_mass[goodLbJets]")
              .Define("selLbJet_btag","pre_selJet_btagDeepFlavB[goodLbJets]")
-             .Define("selLbJet_hadronFlavour","pre_selJet_hadronFlavour[goodLbJets]")
+//             .Define("selLbJet_hadronFlavour","pre_selJet_hadronFlavour[goodLbJets]")
              .Define("nselLbJets","int(selLbJet_pt.size())")
              .Define("Lbjet4vecs", ::generate_4vec, {"selLbJet_pt", "selLbJet_eta", "selLbJet_phi", "selLbJet_mass"});
 
@@ -974,7 +1024,7 @@ void TprimeHadAnalyzer::selectJets()
              .Define("selMbJet_phi","pre_selJet_phi[goodMbJets]")
              .Define("selMbJet_mass","pre_selJet_mass[goodMbJets]")
              .Define("selMbJet_btag","pre_selJet_btagDeepFlavB[goodMbJets]")
-             .Define("selMbJet_hadronFlavour","pre_selJet_hadronFlavour[goodMbJets]")
+//             .Define("selMbJet_hadronFlavour","pre_selJet_hadronFlavour[goodMbJets]")
              .Define("nselMbJets","int(selMbJet_pt.size())")
              .Define("Mbjet4vecs", ::generate_4vec, {"selMbJet_pt", "selMbJet_eta", "selMbJet_phi", "selMbJet_mass"});
 
@@ -983,7 +1033,7 @@ void TprimeHadAnalyzer::selectJets()
              .Define("selTbJet_phi","pre_selJet_phi[goodTbJets]")
              .Define("selTbJet_mass","pre_selJet_mass[goodTbJets]")
              .Define("selTbJet_btag","pre_selJet_btagDeepFlavB[goodTbJets]")
-             .Define("selTbJet_hadronFlavour","pre_selJet_hadronFlavour[goodTbJets]")
+//             .Define("selTbJet_hadronFlavour","pre_selJet_hadronFlavour[goodTbJets]")
              .Define("nselTbJets","int(selTbJet_pt.size())")
              .Define("Tbjet4vecs", ::generate_4vec, {"selTbJet_pt", "selTbJet_eta", "selTbJet_phi", "selTbJet_mass"});
 
@@ -1118,26 +1168,26 @@ void TprimeHadAnalyzer::calculateEvWeight()
         //{
         //    return ::btv_shape_correction(_correction_btag1, _btvtype, "central", pts, etas, hadflav, btags); // defined in utility.cpp
         //};
-        auto effMap_L_central = [this](ints &hadflav, floats &etas, floats &pts)->float
-        {
-            return ::btv_effMap(_efficiency_btag1, "L", hadflav, etas, pts); // defined in utility.cpp
-        };
-
-        auto btagSF_fixedWP_L_central = [this](ints &hadflav, floats &etas, floats &pts)->float
-        {
-            return ::btv_case1(_correction_btag1, _btvtype, "central", "central", "L", hadflav, etas, pts); // defined in utility.cpp
-        };
-
-        auto btagSF_fixedWP_M_central = [this](ints &hadflav, floats &etas, floats &pts)->float
-        {
-            return ::btv_case1(_correction_btag1, _btvtype, "central", "central", "M", hadflav, etas, pts); // defined in utility.cpp
-        };
-
-        auto btagSF_fixedWP_T_central = [this](ints &hadflav, floats &etas, floats &pts)->float
-        {
-            return ::btv_case1(_correction_btag1, _btvtype, "central", "central", "T", hadflav, etas, pts); // defined in utility.cpp
-        };
-
+//        auto effMap_L_central = [this](ints &hadflav, floats &etas, floats &pts)->float
+//        {
+//            return ::btv_effMap(_efficiency_btag1, "L", hadflav, etas, pts); // defined in utility.cpp
+//        };
+//
+//        auto btagSF_fixedWP_L_central = [this](ints &hadflav, floats &etas, floats &pts)->float
+//        {
+//            return ::btv_case1(_correction_btag1, _btvtype, "central", "central", "L", hadflav, etas, pts); // defined in utility.cpp
+//        };
+//
+//        auto btagSF_fixedWP_M_central = [this](ints &hadflav, floats &etas, floats &pts)->float
+//        {
+//            return ::btv_case1(_correction_btag1, _btvtype, "central", "central", "M", hadflav, etas, pts); // defined in utility.cpp
+//        };
+//
+//        auto btagSF_fixedWP_T_central = [this](ints &hadflav, floats &etas, floats &pts)->float
+//        {
+//            return ::btv_case1(_correction_btag1, _btvtype, "central", "central", "T", hadflav, etas, pts); // defined in utility.cpp
+//        };
+//
         //_rlm = _rlm.Define("selbJet_deepJet_shape_central", btv_shape_central, {"selbJet_pt", "selbJet_eta", "selbJet_hadronFlavour", "selbJet_btag"});
 
 //        _rlm = _rlm.Define("btagSF_deepJet_fixedL_central", btagSF_fixedWP_L_central, {"selLbJet_hadronFlavour", "selLbJet_eta", "selLbJet_pt"});
@@ -1195,10 +1245,10 @@ void TprimeHadAnalyzer::calculateEvWeight()
 
     // previously
     //_rlm = _rlm.Define("evWeight", "pugenWeight * btagWeight_DeepJetrecalc");
-    //_rlm = _rlm.Define("evWeight", "pugenWeight * L1PreFiringWeight_Nom");
-    _rlm = _rlm.Define("evWeight", "pugenWeight");
-    _rlm = _rlm.Define("evWeight_btag", "pugenWeight * btagWeight");
-    _rlm = _rlm.Define("evWeight_btagL1", "pugenWeight * btagWeight * L1PreFiringWeight_Nom");
+    _rlm = _rlm.Define("evWeight", "pugenWeight * L1PreFiringWeight_Nom");
+    //_rlm = _rlm.Define("evWeight", "pugenWeight");
+    //_rlm = _rlm.Define("evWeight_btag", "pugenWeight * btagWeight");
+    _rlm = _rlm.Define("evWeight_btag", "pugenWeight * btagWeight * L1PreFiringWeight_Nom");
 
 }
 
@@ -1332,8 +1382,8 @@ void TprimeHadAnalyzer::GetJetsys(string sys){
                 _rlm = _rlm.Define("c_JER"+sys+"Down", ::getcJER, {"Jet_pt_"+sys+"Down", "GenMatchJetPtvars"+sys+"Down", "JERCSF", "JERCptResolution"+sys+"Down"});
                 _rlm = _rlm.Define("Jet_pt_smear_"+sys+"Up", "c_JER"+sys+"Up*Jet_pt_"+sys+"Up");
                 _rlm = _rlm.Define("Jet_pt_smear_"+sys+"Down", "c_JER"+sys+"Down*Jet_pt_"+sys+"Down");
-                _rlm = _rlm.Define("corrmet_pt_"+sys+"Up", ::getmetsmear, {"corrmetjson_pt", "corrmet_phi", "Jet_pt_"+sys+"Up", "Jet_pt_smear_"+sys+"Up", "Jet_phi"});
-                _rlm = _rlm.Define("corrmet_pt_"+sys+"Down", ::getmetsmear, {"corrmetjson_pt", "corrmet_phi", "Jet_pt_"+sys+"Down", "Jet_pt_smear_"+sys+"Down", "Jet_phi"});
+//                _rlm = _rlm.Define("corrmet_pt_"+sys+"Up", ::getmetsmear, {"corrmetjson_pt", "corrmet_phi", "Jet_pt_"+sys+"Up", "Jet_pt_smear_"+sys+"Up", "Jet_phi"});
+//                _rlm = _rlm.Define("corrmet_pt_"+sys+"Down", ::getmetsmear, {"corrmetjson_pt", "corrmet_phi", "Jet_pt_"+sys+"Down", "Jet_pt_smear_"+sys+"Down", "Jet_phi"});
 
         _rlm = _rlm.Define("goodJets_"+sys+"Up", "goodJetsID && Jet_pt_smear_"+sys+"Up>30.0 && abs(Jet_eta)<2.5");
         _rlm = _rlm.Define("goodJets_pt_"+sys+"Up", "Jet_pt_smear_"+sys+"Up[goodJets_"+sys+"Up]")
@@ -1369,254 +1419,252 @@ void TprimeHadAnalyzer::setupJetMETCorrection(string fname, string jettag){
     _jetCorrectionUnc = _correction_jerc->at(_jercunctag);
 }
 
-void TprimeHadAnalyzer::applyJetMETCorrections(){
-
-    cout << "apply JETMET correction" << endl;
-  
-    auto appcorrlambdaf = [this](floats jetpts, floats jetetas, floats jetAreas, floats jetrawf, float rho)->floats
-    {
-        floats corrfactors;
-        corrfactors.reserve(jetpts.size());
-        for (unsigned int i =0; i<jetpts.size(); i++)
-        {
-            float rawjetpt = jetpts[i]*(1.0-jetrawf[i]);
-            //std::cout<<"jetpt===="<< jetpts[i] <<std::endl;
-            //float jet_rawmass = jet_mass * (1 - jet.rawFactor)
-            //std::cout<<"rawjetpt===="<< rawjetpt <<std::endl;
-            float corrfactor = _jetCorrector->evaluate({jetAreas[i], jetetas[i], rawjetpt, rho});
-            //std::cout<<"correction factor===="<< corrfactor <<std::endl;
-            corrfactors.emplace_back(rawjetpt * corrfactor);
-            //std::cout<<"rawjetpt* corrfactor ===="<< rawjetpt * corrfactor <<std::endl;
-  
-        }
-        //std::cout<<"Facsss===="<< corrfactors <<std::endl;
-        return corrfactors;
-      
-    };
-  
-    auto jecuncertaintylambdaf= [this](floats jetpts, floats jetetas, floats jetAreas, floats jetrawf, float rho)->floats
-      {
-          floats uncertainties;
-          uncertainties.reserve(jetpts.size());
-          for (unsigned int i =0; i<jetpts.size(); i++){
-                float rawjetpt = jetpts[i]*(1.0-jetrawf[i]);
-                        
-                float corrfactor = _jetCorrector->evaluate({jetAreas[i], jetetas[i], rawjetpt, rho});
-                //print("\njet SF for shape correction:")
-                //print(f"SF: {corrfactor}")
-                        
-                float unc = _jetCorrectionUnc->evaluate({corrfactor*rawjetpt, jetetas[i]});
-                uncertainties.emplace_back(unc);
-  
-          }
-          return uncertainties;
-      };
-  
-    auto metcorrlambdaf = [](float met, float metphi, floats jetptsbefore, floats jetptsafter, floats jetphis)->float
-    {
-        auto metx = met * cos(metphi);
-        auto mety = met * sin(metphi);
-        for (unsigned int i=0; i<jetphis.size(); i++){
-            if (jetptsafter[i]>15.0){
-                metx -= (jetptsafter[i] - jetptsbefore[i])*cos(jetphis[i]);
-                mety -= (jetptsafter[i] - jetptsbefore[i])*sin(jetphis[i]);
-            }
-        }
-        return float(sqrt(metx*metx + mety*mety));
-    };
-  
-    auto metphicorrlambdaf = [](float met, float metphi, floats jetptsbefore, floats jetptsafter, floats jetphis)->float
-    {
-        auto metx = met * cos(metphi);
-        auto mety = met * sin(metphi);
-        for (unsigned int i=0; i<jetphis.size(); i++){
-
-            if (jetptsafter[i]>15.0){
-                metx -= (jetptsafter[i] - jetptsbefore[i])*cos(jetphis[i]);
-                mety -= (jetptsafter[i] - jetptsbefore[i])*sin(jetphis[i]);
-            }
-        }
-        return float(atan2(mety, metx));
-    };
-  
-    if (_jetCorrector != 0)
-    {
-          //cout << "jetcorrector==" <<_jetCorrector << endl;
-  
-      _rlm = _rlm.Define("Jet_pt_corr", appcorrlambdaf, {"Jet_pt", "Jet_eta", "Jet_area", "Jet_rawFactor", "fixedGridRhoFastjetAll"});
-      _rlm = _rlm.Define("Jet_pt_relerror", jecuncertaintylambdaf, {"Jet_pt", "Jet_eta", "Jet_area", "Jet_rawFactor", "fixedGridRhoFastjetAll"});
-      _rlm = _rlm.Define("Jet_pt_corr_up", "Jet_pt_corr*(1.0f + Jet_pt_relerror)");
-      _rlm = _rlm.Define("Jet_pt_corr_down", "Jet_pt_corr*(1.0f - Jet_pt_relerror)");
-      _rlm = _rlm.Define("MET_pt_corr", metcorrlambdaf, {"MET_pt", "MET_phi", "Jet_pt", "Jet_pt_corr", "Jet_phi"});
-      _rlm = _rlm.Define("MET_phi_corr", metphicorrlambdaf, {"MET_pt", "MET_phi", "Jet_pt", "Jet_pt_corr", "Jet_phi"});
-      _rlm = _rlm.Define("MET_pt_corr_up", metcorrlambdaf, {"MET_pt", "MET_phi", "Jet_pt", "Jet_pt_corr_up", "Jet_phi"});
-      _rlm = _rlm.Define("MET_phi_corr_up", metphicorrlambdaf, {"MET_pt", "MET_phi", "Jet_pt", "Jet_pt_corr_up", "Jet_phi"});
-      _rlm = _rlm.Define("MET_pt_corr_down", metcorrlambdaf, {"MET_pt", "MET_phi", "Jet_pt", "Jet_pt_corr_down", "Jet_phi"});
-      _rlm = _rlm.Define("MET_phi_corr_down", metphicorrlambdaf, {"MET_pt", "MET_phi", "Jet_pt", "Jet_pt_corr_down", "Jet_phi"});
-    }
-
-    if(!_isData){
-                _rlm = _rlm.Define("MCorData", "-1.0");
-                auto getJERCptResolution=[this](floats &etas, floats &pts, floats &rhos)->floats
-                {
-                        return ::JERCptResolution(_jerc_fname, _jercptres_type, etas, pts, rhos);
-                };
-
-                auto getJERCSF=[this](floats &etas)->floats
-                {
-                        return ::JERCSF(_jerc_fname, _jercSF_type,"nom", etas);
-                };
-
-        //auto getmetptmc=[this](float &pts, float &phis, int &npv, unsigned int &runnumber)->float
-        //{
-        //                if(pts > 0.0 && pts < 6500.0 && abs(phis) < 3.15){
-        //            float w = _met_fname->at(_metptmctag)->evaluate({float(pts),float(phis), float(npv), float(runnumber)});
-        //                        return w;
-        //                }
-        //                else{
-        //                        return float(pts);
-        //                }
-        //                //return float(pts);
-        //};
-
-        //auto getmetphimc=[this](float &pts, float &phis, int &npv, unsigned int &runnumber)->float
-        //{
-        //                if(pts > 0.0 && pts < 6500.0 && abs(phis) < 3.15){
-        //            float w = _met_fname->at(_metphimctag)->evaluate({float(pts),float(phis), float(npv), float(runnumber)});
-        //                        return w;
-        //                }
-        //                else{
-        //            return float(phis);
-        //                }
-        //         //       return float(phis);
-        //};
-
-        _rlm = _rlm.Define("JERCptResolution", getJERCptResolution, {"Jet_eta","Jet_pt","fixedGridRhoFastjetAll"});
-        _rlm = _rlm.Define("JERCSF", getJERCSF, {"Jet_eta"});
-        _rlm = _rlm.Define("GenMatchJetPtvars", ::GenMatchJetPt, {"Jet_pt", "Jet_eta", "Jet_phi", "Jet_mass", "GenJet_pt", "GenJet_eta", "GenJet_phi", "GenJet_mass", "JERCptResolution"});
-        _rlm = _rlm.Define("c_JER", ::getcJER, {"Jet_pt", "GenMatchJetPtvars", "JERCSF", "JERCptResolution"});
-        _rlm = _rlm.Define("Jet_pt_smear_nom", "c_JER*Jet_pt");
-        //_rlm = _rlm.Define("corrmet_phi", getmetphimc, {"MET_pt", "MET_phi", "PV_npvs", "run"}); // this is the good one
-        //_rlm = _rlm.Define("corrmetjson_pt", getmetptmc, {"MET_pt", "MET_phi", "PV_npvs", "run"}); // this is the good one
-
-        _rlm = _rlm.Define("corrmet_pt_nom", ::getmetsmear, {"corrmetjson_pt", "corrmet_phi", "Jet_pt", "Jet_pt_smear_nom", "Jet_phi"}); // this is the good one
-
-        _rlm = _rlm.Define("rawmet_pt", "MET_pt");
-        _rlm = _rlm.Define("rawmet_phi", "MET_phi");
-
-    }
-    else{
-                _rlm = _rlm.Define("MCorData", "1.0");
-        _rlm = _rlm.Define("Jet_pt_smear_nom", "Jet_pt");
-        _rlm = _rlm.Define("run_numbers", "float(run)");
-
-        //if(_year == 2018){
-        //    _rlm = _rlm.Define("corrmet_ptphi", ::calmetptphidata, {"MET_pt", "MET_phi", "PV_npvs", "run_numbers"})
-        //        .Define("corrmet_pt_nom", "corrmet_ptphi[0]")
-        //        .Define("corrmet_phi", "corrmet_ptphi[1]");
-        //}
-        //if(_year == 2017){
-        //    _rlm = _rlm.Define("corrmet_ptphi", ::calmetptphidata17, {"MET_pt", "MET_phi", "PV_npvs", "run_numbers"})
-        //        .Define("corrmet_pt_nom", "corrmet_ptphi[0]")
-        //        .Define("corrmet_phi", "corrmet_ptphi[1]");
-        //}
-        //if(_year == 2016 && _runtype == "preVFP_UL"){
-        //    _rlm = _rlm.Define("corrmet_ptphi", ::calmetptphidata16pre, {"MET_pt", "MET_phi", "PV_npvs", "run_numbers"})
-        //        .Define("corrmet_pt_nom", "corrmet_ptphi[0]")
-        //        .Define("corrmet_phi", "corrmet_ptphi[1]");
-        //}
-        //if(_year == 2016 && _runtype == "postVFP_UL"){
-        //    _rlm = _rlm.Define("corrmet_ptphi", ::calmetptphidata16post, {"MET_pt", "MET_phi", "PV_npvs", "run_numbers"})
-        //        .Define("corrmet_pt_nom", "corrmet_ptphi[0]")
-        //        .Define("corrmet_phi_nom", "corrmet_ptphi[1]");
-        //}
-        _rlm = _rlm.Define("rawmet_pt", "MET_pt");
-        _rlm = _rlm.Define("rawmet_phi", "MET_phi");
-    }
-
-    _rlm = _rlm.Define("goodJetsID", JetID(6)); //without pt-eta cuts
-    //     _rlm = _rlm.Define("goodJets", "goodJetsID && Jet_pt_smear>30.0 && abs(Jet_eta)<2.5");
-    _rlm = _rlm.Define("goodJets", "goodJetsID && Jet_pt_smear_nom>30.0 && abs(Jet_eta)<2.5");
-    _rlm = _rlm.Define("goodJets_pt", "Jet_pt_smear_nom[goodJets]")
-        .Define("goodJets_eta", "Jet_eta[goodJets]")
-        .Define("goodJets_phi", "Jet_phi[goodJets]")
-        .Define("goodJets_mass", "Jet_mass[goodJets]")
-        .Define("goodJets_deepjetbtag", "Jet_btagDeepFlavB[goodJets]")
-        .Define("NgoodJets", "int(goodJets_pt.size())")
-        .Define("goodJetsHT_nom", "Sum(goodJets_pt)")
-        .Define("goodJets_4vecs", ::generate_4vec, {"goodJets_pt", "goodJets_eta", "goodJets_phi", "goodJets_mass"});
-
-    if(!_isData){
-
-                auto getJERCSFup=[this](floats &etas)->floats
-                {
-                        return ::JERCSF(_jerc_fname, _jercSF_type,"up", etas);
-                };
-
-                auto getJERCSFdown=[this](floats &etas)->floats
-                {
-                        return ::JERCSF(_jerc_fname, _jercSF_type,"down", etas);
-                };
-
-        _rlm = _rlm.Define("goodJets_hadflav", "Jet_hadronFlavour[goodJets]");
-                if(_jecsys == "Total"){ // HERE!
-                auto getJECSFs = [this](floats &pts, floats &etas)->floats
-                {
-                        return ::getsysJERC(_jerc_fname, pts, etas, _jercsys_total);
-                };
-                _rlm = _rlm.Define("JecTotal",getJECSFs, {"Jet_pt","Jet_eta"});
-
-                        GetJetsys("JecTotal");
-                }
-
-/*                if(_jecsys == "All"){
-                {
-                        return ::getsysJerc(_jerc_fname, pts, etas, JECAbsolute);
-                };
-                _rlm = _rlm.Define("JecAbsolute",getJECSFs, {"Jet_pt","Jet_eta"});
-                        GetJetsys("JecAbsolute");
-                }*/
-
-                if(_jersys == "True"){
-                        _rlm = _rlm.Define("JERCSFUp", getJERCSFup, {"Jet_eta"})
-                                  .Define("JERCSFUp2Sig", "JERCSF+2*(JERCSFUp-JERCSF)");
-                        _rlm = _rlm.Define("JERCSFDown", getJERCSFdown, {"Jet_eta"})
-                                  .Define("JERCSFDown2Sig", "JERCSF+2*(JERCSFDown-JERCSF)");
-                        _rlm = _rlm.Define("c_JERUp", ::getcJER, {"Jet_pt", "GenMatchJetPtvars", "JERCSFUp2Sig", "JERCptResolution"});
-                        _rlm = _rlm.Define("c_JERDown", ::getcJER, {"Jet_pt", "GenMatchJetPtvars", "JERCSFDown2Sig", "JERCptResolution"});
-//                        _rlm = _rlm.Define("c_JERUp", ::getcJER, {"Jet_pt", "GenMatchJetPtvars", "JERCSFUp", "JERCptResolution"});
-//                        _rlm = _rlm.Define("c_JERDown", ::getcJER, {"Jet_pt", "GenMatchJetPtvars", "JERCSFDown", "JERCptResolution"});
-                        _rlm = _rlm.Define("Jet_pt_smear_JERUp", "c_JERUp*Jet_pt");
-                        _rlm = _rlm.Define("Jet_pt_smear_JERDown", "c_JERDown*Jet_pt");
-                        _rlm = _rlm.Define("corrmet_pt_JERUp", ::getmetsmear, {"corrmetjson_pt", "corrmet_phi", "Jet_pt", "Jet_pt_smear_JERUp", "Jet_phi"});
-                        _rlm = _rlm.Define("corrmet_pt_JERDown", ::getmetsmear, {"corrmetjson_pt", "corrmet_phi", "Jet_pt", "Jet_pt_smear_JERDown", "Jet_phi"});
-                        _rlm = _rlm.Define("goodJets_JERUp", "goodJetsID && Jet_pt_smear_JERUp>30.0 && abs(Jet_eta)<2.5");
-                        _rlm = _rlm.Define("goodJets_JERDown", "goodJetsID && Jet_pt_smear_JERDown>30.0 && abs(Jet_eta)<2.5");
-                        _rlm = _rlm.Define("goodJets_pt_JERUp", "Jet_pt_smear_JERUp[goodJets_JERUp]")
-                                .Define("goodJets_eta_JERUp", "Jet_eta[goodJets_JERUp]")
-                                .Define("goodJets_phi_JERUp", "Jet_phi[goodJets_JERUp]")
-                                .Define("goodJets_mass_JERUp", "Jet_mass[goodJets_JERUp]")
-                                .Define("goodJets_deepjetbtag_JERUp", "Jet_btagDeepFlavB[goodJets_JERUp]")
-                                .Define("goodJets_hadflav_JERUp", "Jet_hadronFlavour[goodJets_JERUp]")
-                                .Define("NgoodJets_JERUp", "int(goodJets_pt_JERUp.size())")
-                                .Define("goodJetsHT_JERUp", "Sum(goodJets_pt_JERUp)")
-                                .Define("goodJets_4vecs_JERUp", ::generate_4vec, {"goodJets_pt_JERUp", "goodJets_eta_JERUp", "goodJets_phi_JERUp", "goodJets_mass_JERUp"});
-
-                        _rlm = _rlm.Define("goodJets_pt_JERDown", "Jet_pt_smear_JERDown[goodJets_JERDown]")
-                                .Define("goodJets_eta_JERDown", "Jet_eta[goodJets_JERDown]")
-                                .Define("goodJets_phi_JERDown", "Jet_phi[goodJets_JERDown]")
-                                .Define("goodJets_mass_JERDown", "Jet_mass[goodJets_JERDown]")
-                                .Define("goodJets_deepjetbtag_JERDown", "Jet_btagDeepFlavB[goodJets_JERDown]")
-                                .Define("goodJets_hadflav_JERDown", "Jet_hadronFlavour[goodJets_JERDown]")
-                                .Define("NgoodJets_JERDown", "int(goodJets_pt_JERDown.size())")
-                                .Define("goodJetsHT_JERDown", "Sum(goodJets_pt_JERDown)")
-                                .Define("goodJets_4vecs_JERDown", ::generate_4vec, {"goodJets_pt_JERDown", "goodJets_eta_JERDown", "goodJets_phi_JERDown", "goodJets_mass_JERDown"});
-                }
-
-    }
-
-  
-}
+//void TprimeHadAnalyzer::applyJetMETCorrections(){
+//
+//    cout << "apply JETMET correction" << endl;
+//  
+//    auto appcorrlambdaf = [this](floats jetpts, floats jetetas, floats jetAreas, floats jetrawf, float rho)->floats
+//    {
+//        floats corrfactors;
+//        corrfactors.reserve(jetpts.size());
+//        for (unsigned int i =0; i<jetpts.size(); i++)
+//        {
+//            float rawjetpt = jetpts[i]*(1.0-jetrawf[i]);
+//            //std::cout<<"jetpt===="<< jetpts[i] <<std::endl;
+//            //float jet_rawmass = jet_mass * (1 - jet.rawFactor)
+//            //std::cout<<"rawjetpt===="<< rawjetpt <<std::endl;
+//            float corrfactor = _jetCorrector->evaluate({jetAreas[i], jetetas[i], rawjetpt, rho});
+//            //std::cout<<"correction factor===="<< corrfactor <<std::endl;
+//            corrfactors.emplace_back(rawjetpt * corrfactor);
+//            //std::cout<<"rawjetpt* corrfactor ===="<< rawjetpt * corrfactor <<std::endl;
+//  
+//        }
+//        //std::cout<<"Facsss===="<< corrfactors <<std::endl;
+//        return corrfactors;
+//      
+//    };
+//  
+//    auto jecuncertaintylambdaf= [this](floats jetpts, floats jetetas, floats jetAreas, floats jetrawf, float rho)->floats
+//      {
+//          floats uncertainties;
+//          uncertainties.reserve(jetpts.size());
+//          for (unsigned int i =0; i<jetpts.size(); i++){
+//                float rawjetpt = jetpts[i]*(1.0-jetrawf[i]);
+//                        
+//                float corrfactor = _jetCorrector->evaluate({jetAreas[i], jetetas[i], rawjetpt, rho});
+//                //print("\njet SF for shape correction:")
+//                //print(f"SF: {corrfactor}")
+//                        
+//                float unc = _jetCorrectionUnc->evaluate({corrfactor*rawjetpt, jetetas[i]});
+//                uncertainties.emplace_back(unc);
+//  
+//          }
+//          return uncertainties;
+//      };
+//  
+//    auto metcorrlambdaf = [](float met, float metphi, floats jetptsbefore, floats jetptsafter, floats jetphis)->float
+//    {
+//        auto metx = met * cos(metphi);
+//        auto mety = met * sin(metphi);
+//        for (unsigned int i=0; i<jetphis.size(); i++){
+//            if (jetptsafter[i]>15.0){
+//                metx -= (jetptsafter[i] - jetptsbefore[i])*cos(jetphis[i]);
+//                mety -= (jetptsafter[i] - jetptsbefore[i])*sin(jetphis[i]);
+//            }
+//        }
+//        return float(sqrt(metx*metx + mety*mety));
+//    };
+//  
+//    auto metphicorrlambdaf = [](float met, float metphi, floats jetptsbefore, floats jetptsafter, floats jetphis)->float
+//    {
+//        auto metx = met * cos(metphi);
+//        auto mety = met * sin(metphi);
+//        for (unsigned int i=0; i<jetphis.size(); i++){
+//
+//            if (jetptsafter[i]>15.0){
+//                metx -= (jetptsafter[i] - jetptsbefore[i])*cos(jetphis[i]);
+//                mety -= (jetptsafter[i] - jetptsbefore[i])*sin(jetphis[i]);
+//            }
+//        }
+//        return float(atan2(mety, metx));
+//    };
+//  
+//    if (_jetCorrector != 0)
+//    {
+//          //cout << "jetcorrector==" <<_jetCorrector << endl;
+//  
+//      _rlm = _rlm.Define("Jet_pt_corr", appcorrlambdaf, {"Jet_pt", "Jet_eta", "Jet_area", "Jet_rawFactor", "fixedGridRhoFastjetAll"});
+//      _rlm = _rlm.Define("Jet_pt_relerror", jecuncertaintylambdaf, {"Jet_pt", "Jet_eta", "Jet_area", "Jet_rawFactor", "fixedGridRhoFastjetAll"});
+//      _rlm = _rlm.Define("Jet_pt_corr_up", "Jet_pt_corr*(1.0f + Jet_pt_relerror)");
+//      _rlm = _rlm.Define("Jet_pt_corr_down", "Jet_pt_corr*(1.0f - Jet_pt_relerror)");
+//      _rlm = _rlm.Define("MET_pt_corr", metcorrlambdaf, {"MET_pt", "MET_phi", "Jet_pt", "Jet_pt_corr", "Jet_phi"});
+//      _rlm = _rlm.Define("MET_phi_corr", metphicorrlambdaf, {"MET_pt", "MET_phi", "Jet_pt", "Jet_pt_corr", "Jet_phi"});
+//      _rlm = _rlm.Define("MET_pt_corr_up", metcorrlambdaf, {"MET_pt", "MET_phi", "Jet_pt", "Jet_pt_corr_up", "Jet_phi"});
+//      _rlm = _rlm.Define("MET_phi_corr_up", metphicorrlambdaf, {"MET_pt", "MET_phi", "Jet_pt", "Jet_pt_corr_up", "Jet_phi"});
+//      _rlm = _rlm.Define("MET_pt_corr_down", metcorrlambdaf, {"MET_pt", "MET_phi", "Jet_pt", "Jet_pt_corr_down", "Jet_phi"});
+//      _rlm = _rlm.Define("MET_phi_corr_down", metphicorrlambdaf, {"MET_pt", "MET_phi", "Jet_pt", "Jet_pt_corr_down", "Jet_phi"});
+//    }
+//
+//    if(!_isData){
+//                _rlm = _rlm.Define("MCorData", "-1.0");
+//                auto getJERCptResolution=[this](floats &etas, floats &pts, floats &rhos)->floats
+//                {
+//                        return ::JERCptResolution(_jerc_fname, _jercptres_type, etas, pts, rhos);
+//                };
+//
+//                auto getJERCSF=[this](floats &etas)->floats
+//                {
+//                        return ::JERCSF(_jerc_fname, _jercSF_type,"nom", etas);
+//                };
+//
+//        //auto getmetptmc=[this](float &pts, float &phis, int &npv, unsigned int &runnumber)->float
+//        //{
+//        //                if(pts > 0.0 && pts < 6500.0 && abs(phis) < 3.15){
+//        //            float w = _met_fname->at(_metptmctag)->evaluate({float(pts),float(phis), float(npv), float(runnumber)});
+//        //                        return w;
+//        //                }
+//        //                else{
+//        //                        return float(pts);
+//        //                }
+//        //                //return float(pts);
+//        //};
+//
+//        //auto getmetphimc=[this](float &pts, float &phis, int &npv, unsigned int &runnumber)->float
+//        //{
+//        //                if(pts > 0.0 && pts < 6500.0 && abs(phis) < 3.15){
+//        //            float w = _met_fname->at(_metphimctag)->evaluate({float(pts),float(phis), float(npv), float(runnumber)});
+//        //                        return w;
+//        //                }
+//        //                else{
+//        //            return float(phis);
+//        //                }
+//        //         //       return float(phis);
+//        //};
+//
+//        _rlm = _rlm.Define("JERCptResolution", getJERCptResolution, {"Jet_eta","Jet_pt","fixedGridRhoFastjetAll"});
+//        _rlm = _rlm.Define("JERCSF", getJERCSF, {"Jet_eta"});
+//        _rlm = _rlm.Define("GenMatchJetPtvars", ::GenMatchJetPt, {"Jet_pt", "Jet_eta", "Jet_phi", "Jet_mass", "GenJet_pt", "GenJet_eta", "GenJet_phi", "GenJet_mass", "JERCptResolution"});
+//        _rlm = _rlm.Define("c_JER", ::getcJER, {"Jet_pt", "GenMatchJetPtvars", "JERCSF", "JERCptResolution"});
+//        _rlm = _rlm.Define("Jet_pt_smear_nom", "c_JER*Jet_pt");
+//        //_rlm = _rlm.Define("corrmet_phi", getmetphimc, {"MET_pt", "MET_phi", "PV_npvs", "run"}); // this is the good one
+//        //_rlm = _rlm.Define("corrmetjson_pt", getmetptmc, {"MET_pt", "MET_phi", "PV_npvs", "run"}); // this is the good one
+//
+//        _rlm = _rlm.Define("corrmet_pt_nom", ::getmetsmear, {"corrmetjson_pt", "corrmet_phi", "Jet_pt", "Jet_pt_smear_nom", "Jet_phi"}); // this is the good one
+//
+//        _rlm = _rlm.Define("rawmet_pt", "MET_pt");
+//        _rlm = _rlm.Define("rawmet_phi", "MET_phi");
+//
+//    }
+//    else{
+//        _rlm = _rlm.Define("MCorData", "1.0");
+//        _rlm = _rlm.Define("Jet_pt_smear_nom", "Jet_pt");
+//        _rlm = _rlm.Define("run_numbers", "float(run)");
+//
+//        //if(_year == 2018){
+//        //    _rlm = _rlm.Define("corrmet_ptphi", ::calmetptphidata, {"MET_pt", "MET_phi", "PV_npvs", "run_numbers"})
+//        //        .Define("corrmet_pt_nom", "corrmet_ptphi[0]")
+//        //        .Define("corrmet_phi", "corrmet_ptphi[1]");
+//        //}
+//        //if(_year == 2017){
+//        //    _rlm = _rlm.Define("corrmet_ptphi", ::calmetptphidata17, {"MET_pt", "MET_phi", "PV_npvs", "run_numbers"})
+//        //        .Define("corrmet_pt_nom", "corrmet_ptphi[0]")
+//        //        .Define("corrmet_phi", "corrmet_ptphi[1]");
+//        //}
+//        //if(_year == 2016 && _runtype == "preVFP_UL"){
+//        //    _rlm = _rlm.Define("corrmet_ptphi", ::calmetptphidata16pre, {"MET_pt", "MET_phi", "PV_npvs", "run_numbers"})
+//        //        .Define("corrmet_pt_nom", "corrmet_ptphi[0]")
+//        //        .Define("corrmet_phi", "corrmet_ptphi[1]");
+//        //}
+//        //if(_year == 2016 && _runtype == "postVFP_UL"){
+//        //    _rlm = _rlm.Define("corrmet_ptphi", ::calmetptphidata16post, {"MET_pt", "MET_phi", "PV_npvs", "run_numbers"})
+//        //        .Define("corrmet_pt_nom", "corrmet_ptphi[0]")
+//        //        .Define("corrmet_phi_nom", "corrmet_ptphi[1]");
+//        //}
+//        _rlm = _rlm.Define("rawmet_pt", "MET_pt");
+//        _rlm = _rlm.Define("rawmet_phi", "MET_phi");
+//    }
+//
+//    _rlm = _rlm.Define("goodJetsID", JetID(6)); //without pt-eta cuts
+//    //     _rlm = _rlm.Define("goodJets", "goodJetsID && Jet_pt_smear>30.0 && abs(Jet_eta)<2.5");
+//    _rlm = _rlm.Define("goodJets", "goodJetsID && Jet_pt_smear_nom>30.0 && abs(Jet_eta)<2.5");
+//    _rlm = _rlm.Define("goodJets_pt", "Jet_pt_smear_nom[goodJets]")
+//        .Define("goodJets_eta", "Jet_eta[goodJets]")
+//        .Define("goodJets_phi", "Jet_phi[goodJets]")
+//        .Define("goodJets_mass", "Jet_mass[goodJets]")
+//        .Define("goodJets_deepjetbtag", "Jet_btagDeepFlavB[goodJets]")
+//        .Define("NgoodJets", "int(goodJets_pt.size())")
+//        .Define("goodJetsHT_nom", "Sum(goodJets_pt)")
+//        .Define("goodJets_4vecs", ::generate_4vec, {"goodJets_pt", "goodJets_eta", "goodJets_phi", "goodJets_mass"});
+//
+//    if(!_isData){
+//
+//                auto getJERCSFup=[this](floats &etas)->floats
+//                {
+//                        return ::JERCSF(_jerc_fname, _jercSF_type,"up", etas);
+//                };
+//
+//                auto getJERCSFdown=[this](floats &etas)->floats
+//                {
+//                        return ::JERCSF(_jerc_fname, _jercSF_type,"down", etas);
+//                };
+//
+//        _rlm = _rlm.Define("goodJets_hadflav", "Jet_hadronFlavour[goodJets]");
+//                if(_jecsys == "Total"){ // HERE!
+//                auto getJECSFs = [this](floats &pts, floats &etas)->floats
+//                {
+//                        return ::getsysJERC(_jerc_fname, pts, etas, _jercsys_total);
+//                };
+//                _rlm = _rlm.Define("JecTotal",getJECSFs, {"Jet_pt","Jet_eta"});
+//
+//                        GetJetsys("JecTotal");
+//                }
+//
+///*                if(_jecsys == "All"){
+//                {
+//                        return ::getsysJerc(_jerc_fname, pts, etas, JECAbsolute);
+//                };
+//                _rlm = _rlm.Define("JecAbsolute",getJECSFs, {"Jet_pt","Jet_eta"});
+//                        GetJetsys("JecAbsolute");
+//                }*/
+//
+//                if(_jersys == "True"){
+//                        _rlm = _rlm.Define("JERCSFUp", getJERCSFup, {"Jet_eta"})
+//                                  .Define("JERCSFUp2Sig", "JERCSF+2*(JERCSFUp-JERCSF)");
+//                        _rlm = _rlm.Define("JERCSFDown", getJERCSFdown, {"Jet_eta"})
+//                                  .Define("JERCSFDown2Sig", "JERCSF+2*(JERCSFDown-JERCSF)");
+//                        _rlm = _rlm.Define("c_JERUp", ::getcJER, {"Jet_pt", "GenMatchJetPtvars", "JERCSFUp2Sig", "JERCptResolution"});
+//                        _rlm = _rlm.Define("c_JERDown", ::getcJER, {"Jet_pt", "GenMatchJetPtvars", "JERCSFDown2Sig", "JERCptResolution"});
+////                        _rlm = _rlm.Define("c_JERUp", ::getcJER, {"Jet_pt", "GenMatchJetPtvars", "JERCSFUp", "JERCptResolution"});
+////                        _rlm = _rlm.Define("c_JERDown", ::getcJER, {"Jet_pt", "GenMatchJetPtvars", "JERCSFDown", "JERCptResolution"});
+//                        _rlm = _rlm.Define("Jet_pt_smear_JERUp", "c_JERUp*Jet_pt");
+//                        _rlm = _rlm.Define("Jet_pt_smear_JERDown", "c_JERDown*Jet_pt");
+//                        _rlm = _rlm.Define("goodJets_JERUp", "goodJetsID && Jet_pt_smear_JERUp>30.0 && abs(Jet_eta)<2.5");
+//                        _rlm = _rlm.Define("goodJets_JERDown", "goodJetsID && Jet_pt_smear_JERDown>30.0 && abs(Jet_eta)<2.5");
+//                        _rlm = _rlm.Define("goodJets_pt_JERUp", "Jet_pt_smear_JERUp[goodJets_JERUp]")
+//                                .Define("goodJets_eta_JERUp", "Jet_eta[goodJets_JERUp]")
+//                                .Define("goodJets_phi_JERUp", "Jet_phi[goodJets_JERUp]")
+//                                .Define("goodJets_mass_JERUp", "Jet_mass[goodJets_JERUp]")
+//                                .Define("goodJets_deepjetbtag_JERUp", "Jet_btagDeepFlavB[goodJets_JERUp]")
+//                                .Define("goodJets_hadflav_JERUp", "Jet_hadronFlavour[goodJets_JERUp]")
+//                                .Define("NgoodJets_JERUp", "int(goodJets_pt_JERUp.size())")
+//                                .Define("goodJetsHT_JERUp", "Sum(goodJets_pt_JERUp)")
+//                                .Define("goodJets_4vecs_JERUp", ::generate_4vec, {"goodJets_pt_JERUp", "goodJets_eta_JERUp", "goodJets_phi_JERUp", "goodJets_mass_JERUp"});
+//
+//                        _rlm = _rlm.Define("goodJets_pt_JERDown", "Jet_pt_smear_JERDown[goodJets_JERDown]")
+//                                .Define("goodJets_eta_JERDown", "Jet_eta[goodJets_JERDown]")
+//                                .Define("goodJets_phi_JERDown", "Jet_phi[goodJets_JERDown]")
+//                                .Define("goodJets_mass_JERDown", "Jet_mass[goodJets_JERDown]")
+//                                .Define("goodJets_deepjetbtag_JERDown", "Jet_btagDeepFlavB[goodJets_JERDown]")
+//                                .Define("goodJets_hadflav_JERDown", "Jet_hadronFlavour[goodJets_JERDown]")
+//                                .Define("NgoodJets_JERDown", "int(goodJets_pt_JERDown.size())")
+//                                .Define("goodJetsHT_JERDown", "Sum(goodJets_pt_JERDown)")
+//                                .Define("goodJets_4vecs_JERDown", ::generate_4vec, {"goodJets_pt_JERDown", "goodJets_eta_JERDown", "goodJets_phi_JERDown", "goodJets_mass_JERDown"});
+//                }
+//
+//    }
+//
+//  
+//}
 
 void TprimeHadAnalyzer::setupAnalysis()
 {
@@ -1673,6 +1721,8 @@ void TprimeHadAnalyzer::setupAnalysis()
     //}
     
   
+    //setupJetMETCorrection();
+    //applyJetMETCorrections();
     defineCuts();
     defineMoreVars();
     bookHists();

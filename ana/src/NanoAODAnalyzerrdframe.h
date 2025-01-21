@@ -54,7 +54,10 @@ public:
     // RNode is in namespace ROOT::RDF
     bool readgoodjson(string goodjsonfname); // get ready for applying golden JSON
 
-    void applyJetMETCorrections();
+    // Jet MET corrections
+    //void GetJetsys(string sys);
+    //void setupJetMETCorrection(string fname, string jettag);
+    //void applyJetMETCorrections();
     void selectFatJets();
     void removeOverlaps();
     
@@ -189,9 +192,6 @@ public:
     RNodeTree _rnt;
     
     bool isDefined(string v);
-    
-    // Jet MET corrections
-    void setupJetMETCorrection(string fname, string jettag);
 
 };
 

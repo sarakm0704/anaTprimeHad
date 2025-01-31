@@ -1,0 +1,1 @@
+/store/mc/RunIISummer20UL18NanoAODv9/TprimeBToTH_M-1100_LH_TuneCP5_13TeV-madgraph_pythia8/NANOAODSIM/106X_upgrade2018_realistic_v16_L1v1-v1/40000/04A6ACA2-4565-E649-9E8C-27771CF98FA1.root

@@ -2,6 +2,10 @@
 import os, sys, time, re
 import csv
 
+#tmux error
+import matplotlib
+matplotlib.use('Agg')
+
 # HYU htop option
 #os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
@@ -342,11 +346,12 @@ if __name__ == '__main__':
     start_time = time.time()
 
     # Handle HERE
-    model_name = 'test_model'
+    model_name = 'model_test'
     #VAR = ['Chi2_max', 'Chi2_min', 'Chi2_min_H', 'Chi2_min_W', 'Chi2_min_Top', 'h_mass', 'w_mass', 'top_mass', 'secondTop_mass', 'chi2mass', 'njets', 'nbjets', 'goodHT', 'RelHT', 'Chi2_dRHbb', 'Chi2_dRWjj', 'Chi2_dRbW', 'mindR_dRbb', 'mindR_mbb', 'jet1_pt', 'jet2_pt', 'jet3_pt', 'jet4_pt', 'jet5_pt', 'jet1_eta', 'jet2_eta', 'jet3_eta', 'jet4_eta', 'jet5_eta', 'jet1_e', 'jet2_e', 'jet3_e', 'jet4_e', 'jet5_e', 'jet1_btag', 'jet2_btag', 'jet3_btag', 'jet4_btag', 'jet5_btag', 'bjet1_pt', 'bjet2_pt', 'bjet1_eta', 'bjet2_eta', 'bjet1_e', 'bjet2_e', 'bjet1_btag', 'bjet2_btag']
     VAR = ['Chi2_min', 'h_mass', 'secondTop_mass', 'njets', 'nbjets', 'goodHT', 'jet1_eta', 'jet2_eta', 'jet3_eta', 'jet4_eta', 'jet5_eta', 'jet1_btag', 'jet2_btag', 'jet3_btag', 'jet4_btag', 'jet5_btag', 'bjet1_eta', 'bjet2_eta', 'bjet1_e_massnom', 'bjet2_e_massnom', 'bjet1_btag', 'bjet2_btag', 'jet1_e_massnom', 'jet2_e_massnom', 'jet3_e_massnom', 'jet4_e_massnom', 'jet5_e_massnom','RelHT','Chi2_max','Chi2_dRHbb','Chi2_min_H','Chi2_dRWjj','Chi2_dRbW']
 
-    DIR = "/Users/jieun/WORK/vlq/dnn/array/arrayOut/pNN/eval/"
+    #DIR = "/pbs/home/j/jechoi/work/vlq/try/anaTprimeHad/dnn/array/eval/"
+    DIR = "/pbs/home/j/jechoi/work/vlq/try/anaTprimeHad/dnn/array/eval/what/"
     TAR = "array_trainInput_shuffled.h5"
     OUT = "models/"+model_name+"/"
 

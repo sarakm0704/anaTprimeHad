@@ -11,6 +11,7 @@
 #include "ROOT/RDataFrame.hxx"
 #include "ROOT/RVec.hxx"
 #include "Math/Vector4D.h"
+#include "correction.h"
 #include <string>
 
 using floats =  ROOT::VecOps::RVec<float>;
@@ -32,6 +33,15 @@ struct hist1dinfo
 	std::string mincutstep;
 } ;
 
+//for 2D histograms
+struct hist2dinfo
+{
+  ROOT::RDF::TH2DModel hmodel;
+  std::string varname1;
+  std::string varname2;
+  std::string weightname;
+  std::string mincutstep;
+} ;
 
 struct varinfo
 {
@@ -55,11 +65,22 @@ FourVectorVec genmet4vec(float met_pt, float met_phi);
 // return a vector size equal to length of x all filled with evWeight value
 floats weightv(floats &x, float evWeight);
 
+//std::unique_ptr<correction::CorrectionSet> _jerc_fname;
+
+floats getsysJERC(std::unique_ptr<correction::CorrectionSet> &jercfname, floats &pts, floats &etas, std::string &tag);
+floats JERCSF(std::unique_ptr<correction::CorrectionSet> &jercfname, std::string tag, std::string wp, floats &etas);
+float getmetsmear(float &met, float &metphi, floats jetptsbefore, floats jetptsafter, floats jetphis);
+floats JERCptResolution(std::unique_ptr<correction::CorrectionSet> &jercfname, std::string tag, floats &etas, floats &pts, floats &rhos);
+floats GenMatchJetPt(floats &JetsPt, floats &JetsEta, floats &JetsPhi, floats &JetsMass, floats &GENJetsPt, floats &GENJetsEta, floats &GENJetsPhi, floats &GENJetsMass, floats &ptresolution);
+floats getcJER(floats &JetsPt, floats &GENJetsPt, floats &SF, floats &ptresolution);
+
 floats sphericity(FourVectorVec &p);
 
 double foxwolframmoment(int l, FourVectorVec &p, int minj=0, int maxj=-1);
 
 ints good_idx(ints good);
+
+float topPtWeight(floats &genpts, ints &genid, ints &genflag);
 
 floats lqtop_reconstruction( FourVectorVec &cjet, FourVectorVec &mu);
 
@@ -79,6 +100,8 @@ float calculate_invMass( FourVector &p1, FourVector &p2);
 float calculate_goodHT( floats jet_pt );
 
 float calculate_RelHT( FourVector &top, FourVector &higgs, float ht );
+
+float calculate_newRelHT( FourVector &top, FourVector &higgs, float oj_pt, float ht );
 
 FourVector sum_4vec( FourVector &p1, FourVector &p2);
 
@@ -105,4 +128,17 @@ int count2s(floats targets, float obj1, float obj2);
 
 bool isHadWHiggs(FourVectorVec &p, ints &pdgId, ints &midx);
 
+floats btv_shape_correction(std::unique_ptr<correction::CorrectionSet> &cset, std::string type, std::string sys, floats &pts, floats &etas, ints &hadflav, floats &btags);
+
+//float btv_case1(std::unique_ptr<correction::CorrectionSet> &cset, std::string type, std::string sys, std::string sysl, std::string wp, ints &hadflav, floats &etas, floats &pts );
+float btv_case1( std::unique_ptr<correction::CorrectionSet> &cset, std::string type, std::string sys, std::string sysl, std::string wp, ints &hadflav, floats &etas, floats &pts );
+
+float btv_effMap( std::unique_ptr<correction::CorrectionSet>& eff, std::string wp, ints &hadflav, floats &etas, floats &pts );
+
+float producer_btagWeight(std::unique_ptr<correction::CorrectionSet>& cset, std::unique_ptr<correction::CorrectionSet>& eff, std::string type, std::string sys, std::string sysl, ints &hadflav, floats &etas, floats &pts, floats &discs, ints &wpL, ints &wpM, ints &wpT, bool isTp, bool isTT, bool isQCD);
+
+float pucorrection(std::unique_ptr<correction::CorrectionSet> &cset, std::string name, std::string syst, float ntruepileup);
+
+floats PrintVector(floats myvector);
+floats compute_DR (FourVectorVec &muons, ints goodMuons_charge);
 #endif /* UTILITY_H_ */

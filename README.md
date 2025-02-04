@@ -3,7 +3,9 @@ Searching for Tprime in Hadronic channel
 
 ## Analysis workflow
 
-Setup tested in `sl7`, `el8`, `el9_amd64_gcc12`
+Setup tested in `cca.in2p3.fr`
+- pyroot, xrootd, slurm needed
+
 ```
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 
@@ -20,6 +22,15 @@ to test
 mkdir test
 ./processnanoaod.py filelist/list_Tprime600UL18.txt test/Tprime600 tprimeConfig_UL18_3T > test/tp600.out
 ```
+<details>
+  <summary>for htop server (if sample exists locally)</summary>
+  
+  ```
+  ./processnanoaod.py filelist/htoplist_TThad_test.txt test/TTToHadronic ttConfig_UL18_3T > test/tt.out
+  ```
+    
+</details>
+
 This workflow is currently using nanoaod via xrootd and running over slurm only. It could be modified to use HTCondor.
 
 To run with complete datasets:
@@ -32,6 +43,48 @@ After defining options correctly, run the job
 ```
 ./sjob.sh
 ```
+
+## NN workflow
+
+### Treating arrays for training inputs / prediction outputs
+To convert training ntuples to hdf:
+```
+./tree2hdf.py -d -p
+```
+- ```-d```: convert single root file to hdf
+- ```-p```: merge single hdf files per process
+
+then to cut out training datasets for balancing training inputs into certain fractions and shuffle:
+```
+python3 shuffle_mergy.py
+```
+to convert hdf output with prediction scores into TTree once training is done:
+```
+./hdf2tree.py
+```
+
+### Training and evaluation
+Training has been performed DNN+CNN architecture with `train_cnn.py`
+```
+python3 train_cnn.py
+```
+To run over all the samples and save prediction scores (e.g. data) use evaluation
+```
+cnn_evaluation.py -e
+```
+input/output location needs to be specified when train/evaluate using code aboves
+
+There is a tool to have evaluation, correlation matrices, feature importance and input distribution of features. Dedicated for further studies only.
+```
+python doFeatures.py -e -i -c -d (or -t)
+```
+- ```-e```: do Evaluation of model
+- ```-i```: Extract Feature Importance
+- ```-c```: Extract Correlations
+- ```-d```: Draw Input variable Distributions
+- ```-t```: Test with small portion from given dataset (100 events)
+
+<i>keras (2.8.0), pyroot (6.30/02) used above</i><br>
 
 ## nanoAOD private production
 
@@ -52,22 +105,3 @@ git clone https://github.com/sarakm0704/anaTprimeHad.git
 cd anaTprimeHad/prod
 crab submit -c crab_mc.py
 ```
-## NN workflow
-
-Training via simple DNN is available with ```training.py```
-Evaluation and extracting feature informations with ```ecid_afterTraining.py```
-
-- ```training.py```<br>
-> This has no option yet. Can be handled by changing input / structure itself. 
-
-- ```ecid_afterTraining.py```<br>
-do **E**valuation and extract **C**orrelations, **I**mportance, **D**istributions of features after training
-
-```
-python ecid_afterTraining -e -i -c -d (or -t)
-```
-- ```-e```: do Evaluation of model
-- ```-i```: Extract Feature Importance
-- ```-c```: Extract Correlations
-- ```-d```: Draw Input variable Distributions
-- ```-t```: Test with small portion from given dataset (100 events)

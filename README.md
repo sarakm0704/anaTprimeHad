@@ -1,6 +1,19 @@
 # anaTprimeHad
 Searching for Tprime in Hadronic channel
 
+## To run analysis workflow
+
+setup in lxplus8
+```
+cmsrel CMSSW_14_1_12
+cd CMSSW_14_1_12/src
+cmsenv
+git clone https://github.com/sarakm0704/anaTprimeHad.git
+cd anaTprimeHad/ana
+make clean
+make -j 30
+```
+
 ## nanoAOD private production
 
 ref: https://gitlab.cern.ch/cms-nanoAOD/nanoaod-doc/-/wikis/Instructions/Private%20production

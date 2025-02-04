@@ -3,7 +3,7 @@ Searching for Tprime in Hadronic channel
 
 ## Analysis workflow
 
-Setup in el8_amd64_gcc12
+Setup tested in `sl7`, `el8`, `el9_amd64_gcc12`
 ```
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 

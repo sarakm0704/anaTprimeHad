@@ -1,10 +1,12 @@
 # anaTprimeHad
 Searching for Tprime in Hadronic channel
 
-## To run analysis workflow
+## Analysis workflow
 
-setup in lxplus8
+Setup in el8_amd64_gcc12
 ```
+source /cvmfs/cms.cern.ch/cmsset_default.sh
+
 cmsrel CMSSW_14_1_12
 cd CMSSW_14_1_12/src
 cmsenv
@@ -12,6 +14,23 @@ git clone https://github.com/sarakm0704/anaTprimeHad.git
 cd anaTprimeHad/ana
 make clean
 make -j 30
+```
+to test
+```
+mkdir test
+./processnanoaod.py filelist/list_Tprime600UL18.txt test/Tprime600 tprimeConfig_UL18_3T > test/tp600.out
+```
+This workflow is currently using nanoaod via xrootd and running over slurm only. It could be modified to use HTCondor.
+
+To run with complete datasets:
+- modify tasks in `sjob.sh`
+  - `-L sps` option is only allowed in `cca.in2p3.fr` to use sps storage
+- individual tasks are defined in  `shell_slurm/` directory
+  - but options for slurm job such as `--chdir`, `--mail*`, `X509_USER_PROXY` and storage locations should be modified according to the analyser themselves
+ 
+After defining options correctly, run the job
+```
+./sjob.sh
 ```
 
 ## nanoAOD private production

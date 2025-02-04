@@ -76,6 +76,8 @@ void TprimeHadAnalyzer::defineCuts()
 
     if(_is2M1L){
         addCuts("nselMbJets == 2 && nselLbJets >= 3 && nselMbJets < 3","0000");
+    }else if(_is3L){
+        addCuts("nselLbJets >= 3","0000");
     }else if(_is3M){
         addCuts("nselMbJets >= 3 && nselTbJets < 3","0000");
     }else if(_is3T){
@@ -243,7 +245,7 @@ void TprimeHadAnalyzer::defineMoreVars()
     //addVartoStore("evWeight");
 
     addVartoStore("genWeight");
-    //addVartoStore("genEventSumw");
+    addVartoStore("genEventSumw");
   
     //addVartoStore("selJet5_pt");
 
@@ -407,212 +409,9 @@ void TprimeHadAnalyzer::defineMoreVars()
 void TprimeHadAnalyzer::bookHists()
 {
 
-  add1DHist( {"h_nevents", "Number of Events", 2, -0.5, 1.5}, "one", "evWeight", "");
-  add1DHist( {"hw_nevents", "Number of Events", 2, -0.5, 1.5}, "one", "evWeight_btag", "0000");
-  //add2DHist( {"h_btagEff", "Jet pT", "Jet eta", 2, -0.5, 1.5}, "one", "evWeight", "");
-
-  //add1DHist( {"h_nJets", "Number of Jets", 10, 5, 15}, "nselJets", "evWeight", "000");
-  //add1DHist( {"h_nbJets", "Number of b-tagged Jets", 5, 2, 8}, "nselbJets", "evWeight", "000");
-  //add1DHist( {"h_invmass_Tprime", "invariant mass of 5 jets from chi2: dnn cut", 100, 0, 1800}, "invmass_Tprime", "evWeight", "00");
-  //add1DHist( {"h_invmass_Tprime", "invariant mass of 5 jets from chi2: cut 0", 100, 0, 1800}, "invmass_Tprime", "evWeight", "10000");
-  //// cut0
-  //add1DHist( {"h_invmass_Tprime", "invariant mass of 5 jets from chi2: cut 1", 100, 0, 1800}, "invmass_Tprime", "evWeight", "100010");
-  //add1DHist( {"h_invmass_Tprime", "invariant mass of 5 jets from chi2: cut 2", 100, 0, 1800}, "invmass_Tprime", "evWeight", "1000100");
-  //add1DHist( {"h_invmass_Tprime", "invariant mass of 5 jets from chi2: cut 3", 100, 0, 1800}, "invmass_Tprime", "evWeight", "10001000");
-  //add1DHist( {"h_invmass_Tprime", "invariant mass of 5 jets from chi2: cut 4", 100, 0, 1800}, "invmass_Tprime", "evWeight", "100010000");
-  //add1DHist( {"h_invmass_Tprime", "invariant mass of 5 jets from chi2: cut 5", 100, 0, 1800}, "invmass_Tprime", "evWeight", "1000100000");
-  //// cut6
-  //add1DHist( {"h_invmass_Tprime", "invariant mass of 5 jets from chi2: cut 6", 100, 0, 1800}, "invmass_Tprime", "evWeight", "10001000000");
-
-  //add1DHist( {"h_H_mass", "in cut 1", 100, 0, 1800}, "H_mass", "evWeight", "100010");
-  //add1DHist( {"h_H_mass", "in cut 2", 100, 0, 1800}, "H_mass", "evWeight", "1000100");
-  //add1DHist( {"h_H_mass", "in cut 3", 100, 0, 1800}, "H_mass", "evWeight", "10001000");
-  //add1DHist( {"h_H_mass", "in cut 4", 100, 0, 1800}, "H_mass", "evWeight", "100010000");
-  //add1DHist( {"h_H_mass", "in cut 5", 100, 0, 1800}, "H_mass", "evWeight", "1000100000");
-  //add1DHist( {"h_H_mass", "in cut 6", 100, 0, 1800}, "H_mass", "evWeight", "10001000000");
-
-  //add1DHist( {"h_RelHT", "cut 1", 100, 0, 1800}, "RelHT", "evWeight", "100010");
-  //add1DHist( {"h_RelHT", "cut 2", 100, 0, 1800}, "RelHT", "evWeight", "1000100");
-  //add1DHist( {"h_RelHT", "cut 3", 100, 0, 1800}, "RelHT", "evWeight", "10001000");
-  //add1DHist( {"h_RelHT", "cut 4", 100, 0, 1800}, "RelHT", "evWeight", "100010000");
-  //add1DHist( {"h_RelHT", "cut 5", 100, 0, 1800}, "RelHT", "evWeight", "1000100000");
-  //add1DHist( {"h_RelHT", "cut 6", 100, 0, 1800}, "RelHT", "evWeight", "10001000000");
-
-  //add1DHist( {"h_Chi2_max", "cut 1", 100, 0, 1800}, "Chi2_max", "evWeight", "100010");
-  //add1DHist( {"h_Chi2_max", "cut 2", 100, 0, 1800}, "Chi2_max", "evWeight", "1000100");
-  //add1DHist( {"h_Chi2_max", "cut 3", 100, 0, 1800}, "Chi2_max", "evWeight", "10001000");
-  //add1DHist( {"h_Chi2_max", "cut 4", 100, 0, 1800}, "Chi2_max", "evWeight", "100010000");
-  //add1DHist( {"h_Chi2_max", "cut 5", 100, 0, 1800}, "Chi2_max", "evWeight", "1000100000");
-  //add1DHist( {"h_Chi2_max", "cut 6", 100, 0, 1800}, "Chi2_max", "evWeight", "10001000000");
-
-  //add1DHist( {"h_dRHbb_chi2", "cut 1", 100, 0, 1800}, "dRHbb_chi2", "evWeight", "100010");
-  //add1DHist( {"h_dRHbb_chi2", "cut 2", 100, 0, 1800}, "dRHbb_chi2", "evWeight", "1000100");
-  //add1DHist( {"h_dRHbb_chi2", "cut 3", 100, 0, 1800}, "dRHbb_chi2", "evWeight", "10001000");
-  //add1DHist( {"h_dRHbb_chi2", "cut 4", 100, 0, 1800}, "dRHbb_chi2", "evWeight", "100010000");
-  //add1DHist( {"h_dRHbb_chi2", "cut 5", 100, 0, 1800}, "dRHbb_chi2", "evWeight", "1000100000");
-  //add1DHist( {"h_dRHbb_chi2", "cut 6", 100, 0, 1800}, "dRHbb_chi2", "evWeight", "10001000000");
-
-  //add1DHist( {"h_Chi2_min_H", "cut 1", 100, 0, 1800}, "Chi2_min_H", "evWeight", "100010");
-  //add1DHist( {"h_Chi2_min_H", "cut 2", 100, 0, 1800}, "Chi2_min_H", "evWeight", "1000100");
-  //add1DHist( {"h_Chi2_min_H", "cut 3", 100, 0, 1800}, "Chi2_min_H", "evWeight", "10001000");
-  //add1DHist( {"h_Chi2_min_H", "cut 4", 100, 0, 1800}, "Chi2_min_H", "evWeight", "100010000");
-  //add1DHist( {"h_Chi2_min_H", "cut 5", 100, 0, 1800}, "Chi2_min_H", "evWeight", "1000100000");
-  //add1DHist( {"h_Chi2_min_H", "cut 6", 100, 0, 1800}, "Chi2_min_H", "evWeight", "10001000000");
-
-  //add1DHist( {"h_dRWjj_chi2", "cut 1", 100, 0, 1800}, "dRWjj_chi2", "evWeight", "100010");
-  //add1DHist( {"h_dRWjj_chi2", "cut 2", 100, 0, 1800}, "dRWjj_chi2", "evWeight", "1000100");
-  //add1DHist( {"h_dRWjj_chi2", "cut 3", 100, 0, 1800}, "dRWjj_chi2", "evWeight", "10001000");
-  //add1DHist( {"h_dRWjj_chi2", "cut 4", 100, 0, 1800}, "dRWjj_chi2", "evWeight", "100010000");
-  //add1DHist( {"h_dRWjj_chi2", "cut 5", 100, 0, 1800}, "dRWjj_chi2", "evWeight", "1000100000");
-  //add1DHist( {"h_dRWjj_chi2", "cut 6", 100, 0, 1800}, "dRWjj_chi2", "evWeight", "10001000000");
-
-  //add1DHist( {"h_dRbW_chi2", "iut 1", 100, 0, 1800}, "dRbW_chi2", "evWeight", "100010");
-  //add1DHist( {"h_dRbW_chi2", "iut 2", 100, 0, 1800}, "dRbW_chi2", "evWeight", "1000100");
-  //add1DHist( {"h_dRbW_chi2", "iut 3", 100, 0, 1800}, "dRbW_chi2", "evWeight", "10001000");
-  //add1DHist( {"h_dRbW_chi2", "iut 4", 100, 0, 1800}, "dRbW_chi2", "evWeight", "100010000");
-  //add1DHist( {"h_dRbW_chi2", "iut 5", 100, 0, 1800}, "dRbW_chi2", "evWeight", "1000100000");
-  //add1DHist( {"h_dRbW_chi2", "iut 6", 100, 0, 1800}, "dRbW_chi2", "evWeight", "10001000000");
-/*
-  add1DHist( {"h_Jet_pt", "pT of selected Jets", 100, 30, 300}, "selJet_pt", "evWeight", "0");
-  add1DHist( {"h_Jet_eta", "eta of selected Jets", 100, -5, 5}, "selJet_eta", "evWeight", "0");
-  add1DHist( {"h_Jet_phi", "phi of selected Jets", 100, -3.5, 3.5}, "selJet_phi", "evWeight", "0");
-  add1DHist( {"h_Jet_mass", "mass of selected Jets", 100, 0, 200}, "selJet_mass", "evWeight", "0");
-  add1DHist( {"h_Jet_btagDeepB", "DeepCSV value of selected Jets", 100, 0, 1}, "selJet_btagDeepB", "evWeight", "0");
-  add1DHist( {"h_Jet_e", "energy of selected Jets", 100, 0, 200}, "selJet_e", "evWeight", "0");
-
-  add1DHist( {"h_Jet1_pt", "pT of selected 1st Jets", 100, 30, 800}, "selJet1_pt", "evWeight", "0");
-  add1DHist( {"h_Jet1_eta", "eta of selected 1st Jets", 100, -5, 5}, "selJet1_eta", "evWeight", "0");
-  add1DHist( {"h_Jet1_phi", "phi of selected 1st Jets", 100, -3.5, 3.5}, "selJet1_phi", "evWeight", "0");
-  add1DHist( {"h_Jet1_mass", "mass of selected 1st Jets", 100, 0, 200}, "selJet1_mass", "evWeight", "0");
-  add1DHist( {"h_Jet1_btagDeepB", "DeepCSV value of selected 1st Jets", 100, 0, 1}, "selJet1_btagDeepB", "evWeight", "0");
-  add1DHist( {"h_Jet1_e", "e of selected 1st Jets", 100, 50, 1000}, "selJet1_e", "evWeight", "0");
-
-  add1DHist( {"h_Jet2_pt", "pT of selected 2nd Jets", 100, 30, 600}, "selJet2_pt", "evWeight", "0");
-  add1DHist( {"h_Jet2_eta", "eta of selected 2nd Jets", 100, -5, 5}, "selJet2_eta", "evWeight", "0");
-  add1DHist( {"h_Jet2_phi", "phi of selected 2nd Jets", 100, -3.5, 3.5}, "selJet2_phi", "evWeight", "0");
-  add1DHist( {"h_Jet2_mass", "mass of selected 2nd Jets", 100, 0, 150}, "selJet2_mass", "evWeight", "0");
-  add1DHist( {"h_Jet2_btagDeepB", "DeepCSV value of selected 2nd Jets", 100, 0, 1}, "selJet2_btagDeepB", "evWeight", "0");
-  add1DHist( {"h_Jet2_e", "e of selected 2nd Jets", 100, 30, 600}, "selJet2_e", "evWeight", "0");
-
-  add1DHist( {"h_Jet3_pt", "pT of selected 3nd Jets", 100, 30, 400}, "selJet3_pt", "evWeight", "0");
-  add1DHist( {"h_Jet3_eta", "eta of selected 3nd Jets", 100, -5, 5}, "selJet3_eta", "evWeight", "0");
-  add1DHist( {"h_Jet3_phi", "phi of selected 3nd Jets", 100, -3.5, 3.5}, "selJet3_phi", "evWeight", "0");
-  add1DHist( {"h_Jet3_mass", "mass of selected 3nd Jets", 100, 0, 50}, "selJet3_mass", "evWeight", "0");
-  add1DHist( {"h_Jet3_btagDeepB", "DeepCSV value of selected 3nd Jets", 100, 0, 1}, "selJet3_btagDeepB", "evWeight", "0");
-  add1DHist( {"h_Jet3_e", "e of selected 3nd Jets", 100, 30, 400}, "selJet3_e", "evWeight", "0");
-
-  add1DHist( {"h_Jet4_pt", "pT of selected 4nd Jets", 100, 40, 200}, "selJet4_pt", "evWeight", "0");
-  add1DHist( {"h_Jet4_eta", "eta of selected 4nd Jets", 100, -5, 5}, "selJet4_eta", "evWeight", "0");
-  add1DHist( {"h_Jet4_phi", "phi of selected 4nd Jets", 100, -3.5, 3.5}, "selJet4_phi", "evWeight", "0");
-  add1DHist( {"h_Jet4_mass", "mass of selected 4nd Jets", 100, 0, 50}, "selJet4_mass", "evWeight", "0");
-  add1DHist( {"h_Jet4_btagDeepB", "DeepCSV value of selected 4nd Jets", 100, 0, 1}, "selJet4_btagDeepB", "evWeight", "0");
-  add1DHist( {"h_Jet4_e", "e of selected 4th Jets", 100, 30, 300}, "selJet4_e", "evWeight", "0");
-
-  add1DHist( {"h_Jet5_pt", "pT of selected 5nd Jets", 100, 50, 200}, "selJet5_pt", "evWeight", "0");
-  add1DHist( {"h_Jet5_eta", "eta of selected 5nd Jets", 100, -5, 5}, "selJet5_eta", "evWeight", "0");
-  add1DHist( {"h_Jet5_phi", "phi of selected 5nd Jets", 100, -3.5, 3.5}, "selJet5_phi", "evWeight", "0");
-  add1DHist( {"h_Jet5_mass", "mass of selected 5nd Jets", 100, 0, 50}, "selJet5_mass", "evWeight", "0");
-  add1DHist( {"h_Jet5_btagDeepB", "DeepCSV value of selected 5nd Jets", 100, 0, 1}, "selJet5_btagDeepB", "evWeight", "0");
-  add1DHist( {"h_Jet5_e", "e of selected 5th Jets", 100, 30, 300}, "selJet5_e", "evWeight", "0");
-
-//  add1DHist( {"h_bJet_pt", "pT of selected bJets", 100, 30, 300}, "selbJet_pt", "evWeight", "0");
-//  add1DHist( {"h_bJet_eta", "eta of selected bJets", 100, -5, 5}, "selbJet_eta", "evWeight", "0");
-//  add1DHist( {"h_bJet_phi", "phi of selected bJets", 100, -3.5, 3.5}, "selbJet_phi", "evWeight", "0");
-//  add1DHist( {"h_bJet_mass", "mass of selected bJets", 100, 0, 200}, "selbJet_mass", "evWeight", "0");
-//  add1DHist( {"h_bJet_btagDeepB", "DeepCSV value of selected 1st bJets", 100, 0, 1}, "selbJet_btagDeepB", "evWeight", "0");
-//  add1DHist( {"h_bJet_e", "e of selected bJets", 100, 0, 200}, "selbJet_e", "evWeight", "0");
-
-  add1DHist( {"h_bJet1_pt", "pT of selected 1st bJets", 100, 30, 700}, "selbJet1_pt", "evWeight", "0");
-  add1DHist( {"h_bJet1_eta", "eta of selected 1st bJets", 100, -5, 5}, "selbJet1_eta", "evWeight", "0");
-  add1DHist( {"h_bJet1_phi", "phi of selected 1st bJets", 100, -3.5, 3.5}, "selbJet1_phi", "evWeight", "0");
-  add1DHist( {"h_bJet1_mass", "mass of selected 1st bJets", 100, 0, 200}, "selbJet1_mass", "evWeight", "0");
-  add1DHist( {"h_bJet1_btagDeepB", "DeepCSV value of selected 1st bJets", 100, 0, 1}, "selbJet1_btagDeepB", "evWeight", "0");
-  add1DHist( {"h_bJet1_e", "energy of selected 1st bJets", 100, 30, 500}, "selbJet1_e", "evWeight", "0");
-
-  add1DHist( {"h_bJet2_pt", "pT of selected 2nd bJets", 100, 30, 500}, "selbJet2_pt", "evWeight", "0");
-  add1DHist( {"h_bJet2_eta", "eta of selected 2nd bJets", 100, -5, 5}, "selbJet2_eta", "evWeight", "0");
-  add1DHist( {"h_bJet2_phi", "phi of selected 2nd bJets", 100, -3.5, 3.5}, "selbJet2_phi", "evWeight", "0");
-  add1DHist( {"h_bJet2_mass", "mass of selected 2nd bJets", 100, 0, 50}, "selbJet2_mass", "evWeight", "0");
-  add1DHist( {"h_bJet2_btagDeepB", "DeepCSV value of selected 2nd bJets", 100, 0, 1}, "selbJet2_btagDeepB", "evWeight", "0");
-  add1DHist( {"h_bJet2_e", "energy of selected 2nd bJets", 100, 30, 300}, "selbJet2_e", "evWeight", "0");
-
-//  add1DHist( {"h_bJet3_pt", "pT of selected 3nd bJets", 100, 30, 300}, "selbJet3_pt", "evWeight", "0");
-//  add1DHist( {"h_bJet3_eta", "eta of selected 3nd bJets", 100, -5, 5}, "selbJet3_eta", "evWeight", "0");
-//  add1DHist( {"h_bJet3_phi", "phi of selected 3nd bJets", 100, -3.5, 3.5}, "selbJet3_phi", "evWeight", "0");
-//  add1DHist( {"h_bJet3_mass", "mass of selected 3nd bJets", 100, 0, 30}, "selbJet3_mass", "evWeight", "0");
-//  add1DHist( {"h_bJet3_btagDeepB", "DeepCSV value of selected 3nd bJets", 100, 0, 1}, "selbJet3_btagDeepB", "evWeight", "0");
-//  add1DHist( {"h_bJet3_e", "e of selected 3nd bJets", 100, 0, 30}, "selbJet3_e", "evWeight", "0");
-
-//  add1DHist( {"h_bJet4_pt", "pT of selected 4nd bJets", 100, 40, 200}, "selbJet4_pt", "evWeight", "0");
-//  add1DHist( {"h_bJet4_eta", "eta of selected 4nd bJets", 100, -5, 5}, "selbJet4_eta", "evWeight", "0");
-//  add1DHist( {"h_bJet4_phi", "phi of selected 4nd bJets", 100, -4.5, 4.5}, "selbJet4_phi", "evWeight", "0");
-//  add1DHist( {"h_bJet4_mass", "mass of selected 4nd bJets", 100, 0, 30}, "selbJet4_mass", "evWeight", "0");
-//  add1DHist( {"h_bJet4_btagDeepB", "DeepCSV value of selected 4nd bJets", 100, 0, 1}, "selbJet4_btagDeepB", "evWeight", "0");
-
-  add1DHist( {"h_dR_Hbb", "Delta R between two b jets from H Chi2", 100, 0, 6}, "dRHbb_chi2", "evWeight", "0");
-  add1DHist( {"h_dR_Wjj", "Delta R between two jets from W Chi2", 100, 0.1, 6}, "dRWjj_chi2", "evWeight", "0");
-  
-  add1DHist( {"h_mindR_dRbb", "Delta R between two b jets having mininum Delta R", 100, 0, 5}, "mindR_dRbb", "evWeight", "0");
-  add1DHist( {"h_mindR_mbb", "invariant mass of two b jets having mininum Delta R", 100, 0, 500}, "mindR_mbb", "evWeight", "0");
-
-  add1DHist( {"h_goodHT", "HT of jets pT over 30", 100, 0, 2500}, "goodHT", "evWeight", "0");
-
-  add1DHist( {"h_Jet1_pt_massnom", "pT of selected 1st Jets", 100, 0, 2.5}, "selJet1_pt_massnom", "evWeight", "0");
-  add1DHist( {"h_Jet2_pt_massnom", "pT of selected 2nd Jets", 100, 0, 1.5}, "selJet2_pt_massnom", "evWeight", "0");
-  add1DHist( {"h_Jet3_pt_massnom", "pT of selected 3rd Jets", 100, 0, 1}, "selJet3_pt_massnom", "evWeight", "0");
-  add1DHist( {"h_Jet4_pt_massnom", "pT of selected 4th Jets", 100, 0, 0.7}, "selJet4_pt_massnom", "evWeight", "0");
-  add1DHist( {"h_Jet5_pt_massnom", "pT of selected 5th Jets", 100, 0, 0.4}, "selJet5_pt_massnom", "evWeight", "0");
-  add1DHist( {"h_bJet1_pt_massnom", "pT of selected 1st bJets", 100, 0, 1.2}, "selbJet1_pt_massnom", "evWeight", "0");
-  add1DHist( {"h_bJet2_pt_massnom", "pT of selected 2nd bJets", 100, 0, 0.5}, "selbJet2_pt_massnom", "evWeight", "0");
-
-  add1DHist( {"h_Jet1_e_massnom", "energy of selected 1st Jets", 100, 0, 4}, "selJet1_e_massnom", "evWeight", "0");
-  add1DHist( {"h_Jet2_e_massnom", "energy of selected 2nd Jets", 100, 0, 4}, "selJet2_e_massnom", "evWeight", "0");
-  add1DHist( {"h_Jet3_e_massnom", "energy of selected 3rd Jets", 100, 0, 4}, "selJet3_e_massnom", "evWeight", "0");
-  add1DHist( {"h_Jet4_e_massnom", "energy of selected 4th Jets", 100, 0, 4}, "selJet4_e_massnom", "evWeight", "0");
-  add1DHist( {"h_Jet5_e_massnom", "energy of selected 5th Jets", 100, 0, 4}, "selJet5_e_massnom", "evWeight", "0");
-  add1DHist( {"h_bJet1_e_massnom", "energy of selected 1st bJets", 100, 0, 2}, "selbJet1_e_massnom", "evWeight", "0");
-  add1DHist( {"h_bJet2_e_massnom", "energy of selected 2nd bJets", 100, 0, 2}, "selbJet2_e_massnom", "evWeight", "0");
-
-  add1DHist( {"h_Jet1_pt_htnom", "pT of selected 1st Jets", 100, 0, 0.8}, "selJet1_pt_htnom", "evWeight", "0");
-  add1DHist( {"h_Jet2_pt_htnom", "pT of selected 2nd Jets", 100, 0, 0.8}, "selJet2_pt_htnom", "evWeight", "0");
-  add1DHist( {"h_Jet3_pt_htnom", "pT of selected 3rd Jets", 100, 0, 0.3}, "selJet3_pt_htnom", "evWeight", "0");
-  add1DHist( {"h_Jet4_pt_htnom", "pT of selected 4th Jets", 100, 0, 0.3}, "selJet4_pt_htnom", "evWeight", "0");
-  add1DHist( {"h_Jet5_pt_htnom", "pT of selected 5th Jets", 100, 0, 0.2}, "selJet5_pt_htnom", "evWeight", "0");
-  add1DHist( {"h_bJet1_pt_htnom", "pT of selected 1st bJets", 100, 0, 0.8}, "selbJet1_pt_htnom", "evWeight", "0");
-  add1DHist( {"h_bJet2_pt_htnom", "pT of selected 2nd bJets", 100, 0, 0.5}, "selbJet2_pt_htnom", "evWeight", "0");
-
-  add1DHist( {"h_Jet1_e_htnom", "energy of selected 1st Jets", 100, 0, 2.5}, "selJet1_e_htnom", "evWeight", "0");
-  add1DHist( {"h_Jet2_e_htnom", "energy of selected 2nd Jets", 100, 0, 2.5}, "selJet2_e_htnom", "evWeight", "0");
-  add1DHist( {"h_Jet3_e_htnom", "energy of selected 3rd Jets", 100, 0, 2.5}, "selJet3_e_htnom", "evWeight", "0");
-  add1DHist( {"h_Jet4_e_htnom", "energy of selected 4th Jets", 100, 0, 2.5}, "selJet4_e_htnom", "evWeight", "0");
-  add1DHist( {"h_Jet5_e_htnom", "energy of selected 5th Jets", 100, 0, 2.5}, "selJet5_e_htnom", "evWeight", "0");
-  add1DHist( {"h_bJet1_e_htnom", "energy of selected 1st bJets", 100, 0, 1.5}, "selbJet1_e_htnom", "evWeight", "0");
-  add1DHist( {"h_bJet2_e_htnom", "energy of selected 2nd bJets", 100, 0, 1}, "selbJet2_e_htnom", "evWeight", "0");
-
-  add1DHist( {"h_goodHT_massnom", "HT of jets pT over 30", 100, 0, 7}, "goodHT_massnom", "evWeight", "0");
-  add1DHist( {"h_invmass_htnom", "invariant mass of 5 jets from chi2", 100, 0, 3}, "invmass_htnom", "evWeight", "0");
-
-  add1DHist( {"h_Chi2_min", "minimum Chi2", 100, 0, 100}, "Chi2_min", "evWeight", "0");
-  add1DHist( {"h_Chi2_minH", "minimum Chi2 for Higgs", 100, 0, 100}, "Chi2_min_H", "evWeight", "0");
-  add1DHist( {"h_Chi2_minW", "minimum Chi2 for W", 100, 10, 100}, "Chi2_min_W", "evWeight", "0");
-  add1DHist( {"h_Chi2_minTop", "minimum Chi2 for Top", 100, 0, 100}, "Chi2_min_Top", "evWeight", "0");
-
-  add1DHist( {"h_H_mass", "mass of the Higgs from minChi2", 100, 50, 200}, "H_mass", "evWeight", "0");
-  add1DHist( {"h_W_mass", "mass of the W from minChi2", 100, 10, 300}, "W_mass", "evWeight", "0");
-  add1DHist( {"h_Top_mass", "mass of the Top from minChi2", 100, 50, 400}, "Top_mass", "evWeight", "0");
-
-  add1DHist( {"h_invmass_leadjets", "invariant mass of 5 leading jets", 100, 0, 3000}, "invmass_leadjets", "evWeight", "0");
-  add1DHist( {"h_invmass_Tprime", "invariant mass of 5 jets from chi2", 100, 0, 1700}, "invmass_Tprime", "evWeight", "0");
-  //add1DHist( {"h_invmass_trueTprime", "invariant mass of 5 jets from trueTprime", 200, 0, 1300}, "invmass_trueTprime", "evWeight", "00000");
-  add1DHist( {"h_invmass_2ndTop", "invariant mass of 2nd Top", 100, 0, 1000}, "invmass_2ndTop", "evWeight", "0");
-  add1DHist( {"h_invmass_Higgs", "invariant mass of Higgs", 100, 0, 400}, "invmass_Higgs", "evWeight", "0");
-
-  add1DHist( {"h_RelHT", "Relative HT", 100, 0, 1}, "RelHT", "evWeight", "0");
-  add1DHist( {"h_chi2_trueTprime", "number of matched chi2 jets with true Tprime", 6, 0, 6}, "chi2true_matched_Tprime", "evWeight", "000");
-  add1DHist( {"h_chi2_trueH", "number of matched chi2 jets with true Higgs", 3, 0, 3}, "chi2true_matched_H", "evWeight", "000");
-  add1DHist( {"h_chi2_trueTop", "number of matched chi2 jets with true Top", 4, 0, 4}, "chi2true_matched_Top", "evWeight", "000");
-  add1DHist( {"h_chi2_trueW", "number of matched chi2 jets with true W", 3, 0, 3}, "chi2true_matched_W", "evWeight", "000");
-*/
+  add1DHist( {"h_nevents", "Number of Events", 2, -0.5, 1.5}, "one", "genWeight", "");
+  add1DHist( {"h_nevents_pugen", "Number of Events", 2, -0.5, 1.5}, "one", "pugenWeight", "");
+  add1DHist( {"h_nevents_weighted", "Number of Events", 2, -0.5, 1.5}, "one", "evWeight_L1btag_topPt", "0000");
 
 }
 
@@ -864,31 +663,31 @@ void TprimeHadAnalyzer::selectJets()
   // for Chi2 reco
   if(_is2M1L){
       _rlm = _rlm.Define("goodbJets", "goodJets && abs(pre_selJet_eta) < 2.5 && is_deepJet_L");
+  }else if(_is3L){
+      _rlm = _rlm.Define("goodbJets", "goodJets && abs(pre_selJet_eta) < 2.5 && is_deepJet_L");
   }else if(_is3M){
       _rlm = _rlm.Define("goodbJets", "goodJets && abs(pre_selJet_eta) < 2.5 && is_deepJet_M");
   }else if(_is3T){
       _rlm = _rlm.Define("goodbJets", "goodJets && abs(pre_selJet_eta) < 2.5 && is_deepJet_T");
   }
 
-  _rlm = _rlm.Define("goodLbJets", "goodJets && abs(pre_selJet_eta) < 2.5 && is_deepJet_L");
-  _rlm = _rlm.Define("goodMbJets", "goodJets && abs(pre_selJet_eta) < 2.5 && is_deepJet_M");
-  _rlm = _rlm.Define("goodTbJets", "goodJets && abs(pre_selJet_eta) < 2.5 && is_deepJet_T");
-
   _rlm = _rlm.Define("selbJet_pt","pre_selJet_pt[goodbJets]")
              .Define("selbJet_eta","pre_selJet_eta[goodbJets]")
              .Define("selbJet_phi","pre_selJet_phi[goodbJets]")
              .Define("selbJet_mass","pre_selJet_mass[goodbJets]")
              .Define("selbJet_btag","pre_selJet_btagDeepFlavB[goodbJets]")
-//             .Define("selbJet_hadronFlavour","pre_selJet_hadronFlavour[goodbJets]")
              .Define("nselbJets","int(selbJet_pt.size())")
              .Define("bjet4vecs", ::generate_4vec, {"selbJet_pt", "selbJet_eta", "selbJet_phi", "selbJet_mass"});
+
+  _rlm = _rlm.Define("goodLbJets", "goodJets && abs(pre_selJet_eta) < 2.5 && is_deepJet_L");
+  _rlm = _rlm.Define("goodMbJets", "goodJets && abs(pre_selJet_eta) < 2.5 && is_deepJet_M");
+  _rlm = _rlm.Define("goodTbJets", "goodJets && abs(pre_selJet_eta) < 2.5 && is_deepJet_T");
 
   _rlm = _rlm.Define("selLbJet_pt","pre_selJet_pt[goodLbJets]")
              .Define("selLbJet_eta","pre_selJet_eta[goodLbJets]")
              .Define("selLbJet_phi","pre_selJet_phi[goodLbJets]")
              .Define("selLbJet_mass","pre_selJet_mass[goodLbJets]")
              .Define("selLbJet_btag","pre_selJet_btagDeepFlavB[goodLbJets]")
-//             .Define("selLbJet_hadronFlavour","pre_selJet_hadronFlavour[goodLbJets]")
              .Define("nselLbJets","int(selLbJet_pt.size())")
              .Define("Lbjet4vecs", ::generate_4vec, {"selLbJet_pt", "selLbJet_eta", "selLbJet_phi", "selLbJet_mass"});
 
@@ -897,7 +696,6 @@ void TprimeHadAnalyzer::selectJets()
              .Define("selMbJet_phi","pre_selJet_phi[goodMbJets]")
              .Define("selMbJet_mass","pre_selJet_mass[goodMbJets]")
              .Define("selMbJet_btag","pre_selJet_btagDeepFlavB[goodMbJets]")
-//             .Define("selMbJet_hadronFlavour","pre_selJet_hadronFlavour[goodMbJets]")
              .Define("nselMbJets","int(selMbJet_pt.size())")
              .Define("Mbjet4vecs", ::generate_4vec, {"selMbJet_pt", "selMbJet_eta", "selMbJet_phi", "selMbJet_mass"});
 
@@ -906,7 +704,6 @@ void TprimeHadAnalyzer::selectJets()
              .Define("selTbJet_phi","pre_selJet_phi[goodTbJets]")
              .Define("selTbJet_mass","pre_selJet_mass[goodTbJets]")
              .Define("selTbJet_btag","pre_selJet_btagDeepFlavB[goodTbJets]")
-//             .Define("selTbJet_hadronFlavour","pre_selJet_hadronFlavour[goodTbJets]")
              .Define("nselTbJets","int(selTbJet_pt.size())")
              .Define("Tbjet4vecs", ::generate_4vec, {"selTbJet_pt", "selTbJet_eta", "selTbJet_phi", "selTbJet_mass"});
 
@@ -1015,6 +812,9 @@ void TprimeHadAnalyzer::calculateEvWeight()
 
         _rlm = _rlm.Define("btagWeight", btagWeight, {"selJetsForbtag_hadronFlavour","selJetsForbtag_eta","selJetsForbtag_pt","selJetsForbtag_btag", "WP_deepJet_L", "WP_deepJet_M", "WP_deepJet_T"});
 
+    }else{
+        std::cout <<"its data, no b tagging SF applied"<< std::endl;
+        _rlm = _rlm.Define("btagWeight", "1.0");
     }
 
     int _case = 1;
@@ -1035,10 +835,11 @@ void TprimeHadAnalyzer::calculateEvWeight()
 
     // previously
     //_rlm = _rlm.Define("evWeight", "pugenWeight * btagWeight_DeepJetrecalc");
-    _rlm = _rlm.Define("evWeight", "pugenWeight * L1PreFiringWeight_Nom");
-    //_rlm = _rlm.Define("evWeight", "pugenWeight");
-    //_rlm = _rlm.Define("evWeight_btag", "pugenWeight * btagWeight");
-    _rlm = _rlm.Define("evWeight_btag", "pugenWeight * btagWeight * L1PreFiringWeight_Nom");
+    _rlm = _rlm.Define("evWeight", "pugenWeight");
+    _rlm = _rlm.Define("evWeight_L1", "pugenWeight * L1PreFiringWeight_Nom");
+    _rlm = _rlm.Define("evWeight_L1btag", "pugenWeight * btagWeight * L1PreFiringWeight_Nom");
+    _rlm = _rlm.Define("evWeight_L1_topPt", "pugenWeight * L1PreFiringWeight_Nom * evWeight_topPtSF");
+    _rlm = _rlm.Define("evWeight_L1btag_topPt", "pugenWeight * btagWeight * L1PreFiringWeight_Nom * evWeight_topPtSF");
 
 }
 
@@ -1094,6 +895,12 @@ void TprimeHadAnalyzer::setTree(TTree *t, std::string outfilename)
 
 void TprimeHadAnalyzer::setupObjects()
 {
+    // for evWeight pre-definition
+//    if (_isData && !isDefined("pugenWeight"))
+//    {
+//        std::cout << "wtf is happening, defining pugenWeight" << std::endl; 
+//        _rlm = _rlm.Define("pugenWeight","1.0");
+//    }
     // Object selection will be defined in sequence.
     // Selected objects will be stored in new vectors.
     genStudy();
@@ -1238,17 +1045,15 @@ void TprimeHadAnalyzer::setupAnalysis()
 
     //for correction define evWeights as fallows
     
-    if  (_isData){
-        _rlm = _rlm.Define("unitGenWeight","one")
-                   .Define("pugenWeight","one"); // if setupcorrection in processnanoad.py then don't define here. 
-        _rlm = _rlm.Define("evWeight","one");
-    }
-    //if (_isData && !isDefined("evWeight")){
- 
-    //    _rlm = _rlm.Define("evWeight", [](){
-    //        return 1.0;
-    //    }, {} );
-    //}
+//    if  (_isData){
+//        std::cout << "isData!" << std::endl;
+//        _rlm = _rlm.Define("unitGenWeight","one");
+//        if (!isDefined("pugenWeight")){
+//            std::cout << "there is no pugenWeight, define new" << std::endl;
+//            _rlm = _rlm.Define("pugenWeight","one"); // if setupcorrection in processnanoad.py then don't define here. 
+//        }
+//        if (!isDefined("evWeight")) _rlm = _rlm.Define("evWeight","one");
+//    }
     
     defineCuts();
     defineMoreVars();

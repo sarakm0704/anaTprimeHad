@@ -105,6 +105,7 @@ public:
     bool _isQCD =false;
 
     bool _is2M1L =false;
+    bool _is3L =false;
     bool _is3M =false;
     bool _is3T =false;
 

@@ -24,9 +24,11 @@ mkdir test
 ```
 <details>
   <summary>for htop server (if sample exists locally)</summary>
+  
   ```
   ./processnanoaod.py filelist/htoplist_TThad_test.txt test/TTToHadronic ttConfig_UL18_3T > test/tt.out
   ```
+    
 </details>
 
 This workflow is currently using nanoaod via xrootd and running over slurm only. It could be modified to use HTCondor.

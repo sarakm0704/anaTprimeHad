@@ -63,15 +63,8 @@ def split_train_test():
     pd_valid_label = pd.DataFrame( valid_label, columns=['signal'] )
     
     # event info
-    print(f".shapepd_valid_input = {pd_valid_input}")
-    print(f"pd_valid_input type = {type(pd_valid_input)}")
-    print(f"pd_valid_input shape = {pd_valid_input.shape}")
     valid_event_input = pd_valid_input.filter( items=event_var )
-    print(f"before array shape valid_event_input = {valid_event_input.shape}")
-    print(f"before array valid_event_input = {valid_event_input}")
     valid_event_input = np.array( valid_event_input )
-    print(f"after array valid_event_input = {valid_event_input}")
-    print(f"after array shape valid_event_input = {valid_event_input.shape}")
 
     valid_event_label = pd_valid_label.filter( items=['signal'] )
     valid_event_label = to_categorical( valid_event_label )
@@ -138,7 +131,7 @@ event_var=['nseljets', 'nselbjets', 'goodht', 'relht', 'mindR_dRbb', 'mindR_mbb'
 jet_var=['jet1_eta', 'jet1_e_massnom', 'jet2_eta', 'jet2_e_massnom', 'jet3_eta', 'jet3_e_massnom', 'jet4_eta', 'jet4_e_massnom', 'jet5_eta', 'jet5_e_massnom']
 
 nvar = len(event_var+jet_var)
-model_name = 'model_reproduce_cnn_2M1L'
+model_name = 'model_cnn'
 
 # read input
 #data = pd.read_hdf("/Users/jieun/WORK/vlq/dnn/array/arrayOut/ana/multi/2M1L/train_121/array_trainInput.h5")
@@ -150,9 +143,7 @@ data = pd.concat([dat_qcd,dat_ttbar,dat_tprime],axis=0)
 data = data.sample(frac=1).reset_index(drop=True)
 
 weights = compute_class_weight( class_weight='balanced', classes=np.unique(data['signal']), y=data['signal'])
-print(f"computed weights = {weights}")
 dic_weights = dict(enumerate(weights))
-print(f"computed dic weights = {dic_weights}")
 model_path = 'models/'+model_name
 
 ver = "model1"

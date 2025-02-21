@@ -915,12 +915,6 @@ void TprimeHadAnalyzer::setTree(TTree *t, std::string outfilename)
 
 void TprimeHadAnalyzer::setupObjects()
 {
-    // for evWeight pre-definition
-//    if (_isData && !isDefined("pugenWeight"))
-//    {
-//        std::cout << "wtf is happening, defining pugenWeight" << std::endl; 
-//        _rlm = _rlm.Define("pugenWeight","1.0");
-//    }
     // Object selection will be defined in sequence.
     // Selected objects will be stored in new vectors.
     genStudy();

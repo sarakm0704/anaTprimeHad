@@ -16,7 +16,7 @@ config = {
         # sample descriptions
         'sampletype': "Tprime",
         'region': "3T",
-        'topPtReweight': "True",
+        'topPtReweight': "False",
         'topPtReweightsys': "none",
         'jecsys': "Total",
         'jersys': "none",

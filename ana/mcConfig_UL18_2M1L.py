@@ -16,7 +16,7 @@ config = {
         # sample descriptions
         'sampletype': "QCD",
         'region': "2M1L",
-        'topPtReweight': "True",
+        'topPtReweight': "False",
         'topPtReweightsys': "none",
         'jecsys': "Total",
         'jersys': "none",

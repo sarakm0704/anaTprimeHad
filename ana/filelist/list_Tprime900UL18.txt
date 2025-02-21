@@ -1,0 +1,2 @@
+/store/mc/RunIISummer20UL18NanoAODv9/TprimeBToTH_M-900_LH_TuneCP5_13TeV-madgraph_pythia8/NANOAODSIM/106X_upgrade2018_realistic_v16_L1v1-v1/40000/8501CEB8-951F-BD4E-902A-2AD454F689B6.root
+/store/mc/RunIISummer20UL18NanoAODv9/TprimeBToTH_M-900_LH_TuneCP5_13TeV-madgraph_pythia8/NANOAODSIM/106X_upgrade2018_realistic_v16_L1v1-v1/40000/DB29EA58-5DA2-514A-B342-0DF499265832.root

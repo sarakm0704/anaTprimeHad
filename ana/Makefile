@@ -24,7 +24,7 @@ LIBS = $(rootlibs)
 
 TARGET =	nanoaodrdataframe
 
-all:	$(TARGET) libnanoadrdframe.so 
+all:	$(TARGET) libnanoaodrdframe.so 
 
 clean:
 	rm -f $(OBJS) $(TARGET) libnanoaodrdframe.so $(SRCDIR)/rootdict.C rootdict_rdict.pcm
@@ -48,7 +48,7 @@ libtest.so: $(SRCDIR)/testing.o $(SRCDIR)/rootdicttmp.o
 $(SRCDIR)/rootdicttmp.o: $(SRCDIR)/rootdicttmp.C
 	$(CXX) -c -o $@ $(CXXFLAGS) $<
 
-libnanoadrdframe.so: $(OBJS)
+libnanoaodrdframe.so: $(OBJS)
 	$(LD) $(SOFLAGS) $(LIBS) -o $@ $^ 
 
 

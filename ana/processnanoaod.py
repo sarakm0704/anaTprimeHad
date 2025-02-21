@@ -298,7 +298,7 @@ if __name__=='__main__':
     # load compiled C++ library into ROOT/python
     cppyy.load_reflection_info("libcorrectionlib.so")
     cppyy.load_reflection_info("libMathMore.so")
-    cppyy.load_reflection_info("libnanoadrdframe.so")
+    cppyy.load_reflection_info("libnanoaodrdframe.so")
 
     # read in configurations from job configuration python module
     mod = import_module(jobconfmod)

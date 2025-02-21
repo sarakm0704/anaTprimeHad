@@ -20,7 +20,7 @@ from keras.regularizers import l2
 from tensorflow.keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint
 
-trainInput = '/Users/jieun/WORK/vlq/dnn/array/arrayOut/pNN/train/array_trainInput_shuffled.h5'
+trainInput = '/pbs/home/j/jechoi/work/vlq/try/anaTprimeHad/dnn/array/train/array_trainInput_shuffled.h5'
 
 #name_inputvar=['Chi2_max', 'Chi2_min', 'Chi2_min_H', 'Chi2_min_W', 'Chi2_min_Top', 'h_mass', 'w_mass', 'top_mass', 'secondTop_mass', 'chi2mass', 'njets', 'nbjets', 'goodHT', 'RelHT', 'Chi2_dRHbb', 'Chi2_dRWjj', 'Chi2_dRbW', 'mindR_dRbb', 'mindR_mbb', 'jet1_pt', 'jet2_pt', 'jet3_pt', 'jet4_pt', 'jet5_pt', 'jet1_eta', 'jet2_eta', 'jet3_eta', 'jet4_eta', 'jet5_eta', 'jet1_e', 'jet2_e', 'jet3_e', 'jet4_e', 'jet5_e', 'jet1_btag', 'jet2_btag', 'jet3_btag', 'jet4_btag', 'jet5_btag', 'bjet1_pt', 'bjet2_pt', 'bjet1_eta', 'bjet2_eta', 'bjet1_e', 'bjet2_e', 'bjet1_btag', 'bjet2_btag']
 
@@ -29,7 +29,7 @@ name_inputvar=['Chi2_min', 'h_mass', 'secondTop_mass', 'njets', 'nbjets', 'goodH
 
 print ("number of variables: "+str(len(list(name_inputvar))))
 
-model_name = 'model_cut0'
+model_name = 'model_test'
 df_data = pd.read_hdf(trainInput)
 data = df_data
 
@@ -134,7 +134,7 @@ else:
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy','binary_accuracy'])
     checkpoint = ModelCheckpoint(model_name, monitor='val_binary_accuracy', verbose=1, save_best_only=False)
     history = model.fit(train_data, train_label,
-                        epochs=100, batch_size=2048,
+                        epochs=10, batch_size=2048,
                         validation_data=(valid_data,valid_label),
                         )
 

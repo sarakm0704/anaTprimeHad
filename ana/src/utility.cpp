@@ -58,7 +58,6 @@ floats weightv(floats &x, float evWeight)
 floats getsysJERC(std::unique_ptr<correction::CorrectionSet> &jercfname, floats &pts, floats &etas, string &tag)
 {
         floats Xvars;
-        //for (auto i=0; i<etas.size(); i++){
         for (unsigned int i=0; i<etas.size(); i++){
             float w = 0.0;
             if(pts[i] > 9.0 && pts[i] < 6538.0 && abs(etas[i]) < 5.4){
@@ -72,7 +71,6 @@ floats getsysJERC(std::unique_ptr<correction::CorrectionSet> &jercfname, floats 
 floats JERCSF(std::unique_ptr<correction::CorrectionSet> &jercfname, string tag, string wp, floats &etas)
 {
         floats Xvars;
-        //for (auto i=0; i<etas.size(); i++){
         for (unsigned int i=0; i<etas.size(); i++){
                 float w = jercfname->at(tag)->evaluate({float(etas[i]),wp});
                 Xvars.emplace_back(w);
@@ -84,7 +82,6 @@ float getmetsmear(float &met, float &metphi, floats jetptsbefore, floats jetptsa
 {
         auto metx = met * cos(metphi);
         auto mety = met * sin(metphi);
-        //for (auto j=0; j<jetptsbefore.size(); j++){
         for (unsigned int j=0; j<jetptsbefore.size(); j++){
                 if(jetptsafter[j] > 15.0){
                         metx -= (jetptsafter[j] - jetptsbefore[j])*cos(jetphis[j]);
@@ -97,7 +94,6 @@ float getmetsmear(float &met, float &metphi, floats jetptsbefore, floats jetptsa
 floats JERCptResolution(std::unique_ptr<correction::CorrectionSet> &jercfname, string tag, floats &etas, floats &pts, floats &rhos)
 {
         floats Xvars;
-        //for (auto i=0; i<pts.size(); i++){
         for (unsigned int i=0; i<pts.size(); i++){
                 float w = jercfname->at(tag)->evaluate({float(etas[i]),float(pts[i]),float(rhos[i])});
                 Xvars.emplace_back(w);
@@ -110,7 +106,6 @@ floats GenMatchJetPt(floats &JetsPt, floats &JetsEta, floats &JetsPhi, floats &J
         float MatchgenJet_pt = -99.0;
         float mindR = 99.0;
         floats Xvars;
-        //for(int i = 0; i < JetsPt.size(); i++){
         for(unsigned int i = 0; i < JetsPt.size(); i++){
                 mindR = 99.0;
                 MatchgenJet_pt = -99.0;
@@ -131,7 +126,6 @@ floats getcJER(floats &JetsPt, floats &genJetsPt, floats &SF, floats &ptresoluti
 {
         float w = 1.0;
         floats Xvars;
-        //for(int i = 0; i < JetsPt.size(); i++){
         for(unsigned int i = 0; i < JetsPt.size(); i++){
                 if(genJetsPt[i] > -9.0){
                        w = 1 + (SF[i]-1)*(JetsPt[i]-genJetsPt[i])/JetsPt[i];
@@ -183,12 +177,10 @@ double foxwolframmoment(int l, FourVectorVec &p, int minj, int maxj)
 	{
 		maxj = p.size();
 	}
-	//for (auto x: p)
 	for (auto i=minj; i<maxj; i++)
 	{
 		auto x = p[i];
 		ptsum += x.Pt();
-		//for (auto y: p)
 		for (auto j=minj; j<maxj; j++)
 		{
 			auto y = p[j];
@@ -222,17 +214,10 @@ float topPtWeight(floats &genpts, ints &genid, ints &genflag)
         float wtopbar = -1.0;
         bool top = false;
         bool topbar = false;
-        //for(int i = 0; i < genpts.size(); i++){
         for(unsigned int i = 0; i < genpts.size(); i++){
-                //cout<<bitset<16>(genflag[i])<<endl;
-                //cout<<bitset<16>(genflag[i])[0]<<endl;
-                //cout<<"genflag "<<genflag[i]<<endl;
                 if(genid[i] == 6 && bitset<16>(genflag[i])[13]==1){
-                       //cout<<bitset<16>(genflag[i])<<endl;
-                //if(genid[i] == 6 && genflag[i] > 8192 && genflag[i] < 16384){
                        top = true;
                        if(genpts[i] < 500){
-                //           cout<<"top lhe pt is "<<genpts[i]<<endl;
                            wtop = TMath::Exp(0.0615 - 0.0005*genpts[i]);
                        }
                        else{
@@ -240,9 +225,7 @@ float topPtWeight(floats &genpts, ints &genid, ints &genflag)
                        }
                 }
                 if(genid[i] == -6 && bitset<16>(genflag[i])[13]==1){
-                       //cout<<bitset<16>(genflag[i])<<endl;
                        topbar = true;
-                 //      cout<<"topbar lhe pt is "<<genpts[i]<<endl;
                        if(genpts[i] < 500){
                             wtopbar = TMath::Exp(0.0615 - 0.0005*genpts[i]);
                        }
@@ -262,14 +245,6 @@ float topPtWeight(floats &genpts, ints &genid, ints &genflag)
 floats chi2(float smtop_mass, float smw_mass, float lfvtop_mass)
 {
 	floats out;
-        // Theory values
-//        const float MT_LFV = 172.5;
-//        const float MT_SM = 172.5;
-//        const float MW = 80.4;
-//        const float WT_LFV = 1.41;
-//        const float WT_SM = 1.41;
-//        const float WW = 2.085;
-
         // Resolution applied values
         const float MT_LFV = 150.5;
         const float MT_SM = 165.2;
@@ -291,8 +266,6 @@ floats chi2(float smtop_mass, float smw_mass, float lfvtop_mass)
 	return out;
 }
 
-
-//floats top_reconstruction_whad(FourVectorVec &jets, FourVectorVec &bjets, FourVectorVec &muons, FourVectorVec &taus){
 floats top_reconstruction_whad(FourVectorVec &jets, FourVectorVec &bjets, FourVectorVec &muons){
         
         floats out;
@@ -356,7 +329,6 @@ floats top_reconstruction_whad(FourVectorVec &jets, FourVectorVec &bjets, FourVe
         return out;
 }
 
-//floats top_reco_products(FourVectorVec &jets, FourVectorVec &muons, FourVectorVec &taus, floats topreco){
 floats top_reco_products(FourVectorVec &jets, FourVectorVec &muons, floats topreco){
         floats out;
         int j_idx = topreco[4];
@@ -366,7 +338,6 @@ floats top_reco_products(FourVectorVec &jets, FourVectorVec &muons, floats topre
         FourVector lfvjet = jets[j_idx];
         FourVector wjet1 = jets[wjet1_idx];
         FourVector wjet2 = jets[wjet2_idx];
-        //FourVector tau = taus[0];
         FourVector muon = muons[0];
 
         float wqq_dEta = wjet1.Eta() - wjet2.Eta();
@@ -378,18 +349,6 @@ floats top_reco_products(FourVectorVec &jets, FourVectorVec &muons, floats topre
         float lfvjmu_dR = ROOT::Math::VectorUtil::DeltaR(lfvjet, muon);
         float lfvjmu_mass = ROOT::Math::VectorUtil::InvariantMass(lfvjet, muon);
 
-        /*float lfvjtau_dEta = lfvjet.Eta() - tau.Eta();
-        float lfvjtau_dPhi = ROOT::Math::VectorUtil::DeltaPhi(lfvjet, tau);
-        float lfvjtau_dR = ROOT::Math::VectorUtil::DeltaR(lfvjet, tau);
-        float lfvjtau_mass = ROOT::Math::VectorUtil::InvariantMass(lfvjet, tau);
-
-        FourVector mutau = muon + tau;
-        float lfvjmutau_dEta = lfvjet.Eta() - mutau.Eta();
-        float lfvjmutau_dPhi = ROOT::Math::VectorUtil::DeltaPhi(lfvjet, mutau);
-        float lfvjmutau_dR = ROOT::Math::VectorUtil::DeltaR(lfvjet, mutau);
-        float lfvjmutau_mass = ROOT::Math::VectorUtil::InvariantMass(lfvjet, mutau);
-
-        */
 	out.emplace_back(wqq_dEta);         //0
         out.emplace_back(wqq_dPhi);         //1
         out.emplace_back(wqq_dR);           //2
@@ -397,14 +356,6 @@ floats top_reco_products(FourVectorVec &jets, FourVectorVec &muons, floats topre
         out.emplace_back(lfvjmu_dPhi);      //4
         out.emplace_back(lfvjmu_dR);        //5
         out.emplace_back(lfvjmu_mass);      //6
-        //out.emplace_back(lfvjtau_dEta);     //7
-        //out.emplace_back(lfvjtau_dPhi);     //8
-        //out.emplace_back(lfvjtau_dR);       //9
-        //out.emplace_back(lfvjtau_mass);     //10
-        //out.emplace_back(lfvjmutau_dEta);   //11
-        //out.emplace_back(lfvjmutau_dPhi);   //12
-        //out.emplace_back(lfvjmutau_dR);     //13
-        //out.emplace_back(lfvjmutau_mass);   //14
 
         return out;
 }
@@ -721,19 +672,6 @@ floats mindR_bb(FourVectorVec &bjets){
 
     return out;
 }
-
-//floats dR_bW(FourVectorVec &bjets, FourVectorVec &jets){
-//
-//    floats out;
-//    float dR = -1;
-//    for(unsigned int b1 = 0; b1<bjets.size()-1; b1++){
-//        for(unsigned int b2 = b1+1; b2<bjets.size(); b2++){
-//            dR = ROOT::Math::VectorUtil::DeltaR(bjets[b1],bjets[b2]);
-//            out.emplace_back(dR);
-//        }
-//    }
-//    return out;
-//}
 
 floats dR_bb(FourVectorVec &bjets){
 

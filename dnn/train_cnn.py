@@ -6,6 +6,7 @@ import sys, os, re, shutil, array
 
 import numpy as np
 import pandas as pd
+import tensorflow as tf
 
 from keras.models import Model, Sequential, load_model
 from keras.layers import Input, Dense, Dropout, LSTM, Concatenate
@@ -13,6 +14,8 @@ from tensorflow.keras.layers import BatchNormalization
 from keras.layers.convolutional import Conv1D
 
 from keras.callbacks import ModelCheckpoint, EarlyStopping
+
+from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import confusion_matrix, roc_auc_score, roc_curve
 from sklearn.utils.class_weight import compute_class_weight
 from sklearn.model_selection import train_test_split
@@ -27,22 +30,32 @@ import seaborn as sns
 
 from time import time, localtime, strftime
 
+import pickle
+
 import argparse
 parser = argparse.ArgumentParser()
-parser.add_argument('--e', required=False, default=5, help='epochs')
+parser.add_argument('-e', required=False, default=1000, help='epochs')
 
 args = parser.parse_args()
 epochs = int(args.e) #Epoch
 njets = 5
 
-def split_train_test():
+def split_train_test(dirName):
     pd_label = data.filter(items = ['signal'])
     pd_input = data.filter(items = event_var+jet_var)
     np_label = np.array( pd_label )
     np_input = np.array( pd_input )
     # split
-    #test_size = 0.3
     test_size = 0.4
+
+    #######################################################################
+    #                        Standardization and PCA                      #
+    #######################################################################
+    scaler = StandardScaler()
+    data_sc = scaler.fit_transform(np_input)
+    np_input = data_sc
+    with open(f'{dirName}/scaler.pkl','wb') as f: pickle.dump(scaler, f)
+
     train_input, valid_input, train_label, valid_label = train_test_split( np_input, np_label, test_size=test_size )
 
     # train set
@@ -73,16 +86,13 @@ def split_train_test():
     valid_jet_input = np.array( valid_jet_input )
     valid_jet_input = valid_jet_input.reshape( valid_jet_input.shape[0], njets, -1 )
 
-    #print(train_event_input.shape)
-    #print(train_jet_input.shape)
-    #return train_event_input, train_event_label, train_jet_input, valid_event_input, valid_event_label, valid_jet_input
     return train_event_input, pd_train_label, train_event_label, train_jet_input, valid_event_input, pd_valid_label, valid_event_label, valid_jet_input
 
 
 def build_model(model_path):
     Inputs = [ Input( shape=(train_event_input.shape[1],) ), Input( shape=(train_jet_input.shape[1], train_jet_input.shape[2]), ) ]
     
-    dropout = 0.1
+    dropout = 0.2
     nodes = 100
     #nodes = 200
     # BatchNormalization
@@ -114,10 +124,9 @@ def build_model(model_path):
     x = Concatenate()( [event_info, jets] )
     x = Dense(10, activation='relu',kernel_initializer='lecun_uniform', name='concat_layer')(x)
     
-    #pred_dense = Dense(1, activation='sigmoid', kernel_initializer='lecun_uniform', name='event_prediction' )(x)
     pred_dense = Dense(3, activation='softmax', kernel_initializer='lecun_uniform', name='event_prediction' )(x)
     model = Model(inputs=Inputs, outputs= pred_dense)
-    #model.compile(loss='binary_crossentropy', optimizer = 'adam', metrics=['accuracy','binary_accuracy'])
+    adam=tf.keras.optimizers.Adam(learning_rate=1E-2)
     model.compile(loss='categorical_crossentropy', optimizer = 'adam', metrics=['accuracy'])
     model.save(model_path)
     print ('>>> This model is saved in ', model_path)
@@ -125,28 +134,36 @@ def build_model(model_path):
     return model
 
 # variables
-# from DNN
-#name_inputvar=['nseljets', 'nselbjets', 'goodht', 'relht', 'mindR_dRbb', 'mindR_mbb', 'jet1_eta', 'jet2_eta', 'jet3_eta', 'jet4_eta', 'jet5_eta', 'bjet1_eta', 'bjet2_eta', 'jet1_e_massnom', 'jet2_e_massnom', 'jet3_e_massnom', 'jet4_e_massnom', 'jet5_e_massnom', 'bjet1_e_massnom', 'bjet2_e_massnom', 'Chi2_max', 'Chi2_min', 'Chi2_min_H', 'Chi2_min_W', 'Chi2_min_Top', 'mass_h', 'mass_w', 'mass_top', 'mass_wh', 'mass_secondtop', 'mass_leadjets', 'dR_hbb', 'dR_wjj', 'dR_bw', 'dR_tprimeoj', 'ratio_mass_topH', 'ratio_mass_secondtopW', 'ratio_pt_topsecondtop', 'ratio_pt_htoptprime', 'ratio_pt_tprimehtprimetop']
 event_var=['nseljets', 'nselbjets', 'goodht', 'relht', 'mindR_dRbb', 'mindR_mbb', 'Chi2_max', 'Chi2_min', 'Chi2_min_H', 'Chi2_min_W', 'Chi2_min_Top', 'mass_h', 'mass_w', 'mass_top', 'mass_wh', 'mass_secondtop', 'mass_leadjets', 'dR_hbb', 'dR_wjj', 'dR_bw', 'dR_tprimeoj', 'ratio_mass_topH', 'ratio_mass_secondtopW', 'ratio_pt_topsecondtop', 'ratio_pt_htoptprime', 'ratio_pt_tprimehtprimetop']
 jet_var=['jet1_eta', 'jet1_e_massnom', 'jet2_eta', 'jet2_e_massnom', 'jet3_eta', 'jet3_e_massnom', 'jet4_eta', 'jet4_e_massnom', 'jet5_eta', 'jet5_e_massnom']
+# wo anything weird
+#event_var=['nselbjets', 'relht', 'mindR_dRbb', 'mindR_mbb', 'Chi2_max', 'Chi2_min', 'Chi2_min_W', 'Chi2_min_Top', 'mass_h', 'mass_w', 'mass_wh', 'mass_secondtop', 'mass_leadjets', 'dR_hbb', 'ratio_pt_topsecondtop', 'ratio_pt_htoptprime', 'ratio_pt_tprimehtprimetop']
+#jet_var=['jet1_eta', 'jet2_eta', 'jet3_eta', 'jet4_eta', 'jet5_eta']
 
 nvar = len(event_var+jet_var)
-model_name = 'model_cnn'
+model_name = 'model_2M1L'
 
 # read input
-#data = pd.read_hdf("/Users/jieun/WORK/vlq/dnn/array/arrayOut/ana/multi/2M1L/train_121/array_trainInput.h5")
-dat_qcd = pd.read_hdf("/Users/jieun/WORK/vlq/dnn/array/arrayOut/ana/multi/2M1L/train_121/array_merged_qcd.h5")
-dat_ttbar = pd.read_hdf("/Users/jieun/WORK/vlq/dnn/array/arrayOut/ana/multi/2M1L/train_121/array_merged_ttbar.h5")
-dat_tprime = pd.read_hdf("/Users/jieun/WORK/vlq/dnn/array/arrayOut/ana/multi/2M1L/train_121/array_merged_tprime.h5")
+dat_qcd = pd.read_hdf("/Users/jieun/WORK/vlq/dnn/array/arrayOut/ana/multi/2M1L/array_merged_qcd.h5")
+dat_ttbar = pd.read_hdf("/Users/jieun/WORK/vlq/dnn/array/arrayOut/ana/multi/2M1L/array_merged_ttbar.h5")
+dat_tprime = pd.read_hdf("/Users/jieun/WORK/vlq/dnn/array/arrayOut/ana/multi/2M1L/array_merged_tprime.h5")
 
 data = pd.concat([dat_qcd,dat_ttbar,dat_tprime],axis=0)
+
+# HLT
+data = data.loc[ (data['HLT_PFHT330PT30_QuadPFJet_75_60_45_40_TriplePFBTagDeepCSV_4p5']==1) | (data['HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2']==1) | (data['HLT_PFHT400_FivePFJet_100_100_60_30_30_DoublePFBTagDeepCSV_4p5']==1) | (data['HLT_PFHT430_SixPFJet40_PFBTagDeepCSV_1p5']==1) | (data['HLT_PFJet500']==1) | (data['HLT_PFHT1050']==1) | (data['HLT_PFHT400_SixPFJet32_DoublePFBTagDeepCSV_2p94']==1) | (data['HLT_PFHT450_SixPFJet36_PFBTagDeepCSV_1p59']==1) ]
+
 data = data.sample(frac=1).reset_index(drop=True)
 
 weights = compute_class_weight( class_weight='balanced', classes=np.unique(data['signal']), y=data['signal'])
+# qcd weights
+#weights[0] = weights[0]*8
+#print(f"computed weights = {weights}")
 dic_weights = dict(enumerate(weights))
+#print(f"computed dic weights = {dic_weights}")
 model_path = 'models/'+model_name
 
-ver = "model1"
+ver = "_model1"
 newDir = model_path+ver
 if os.path.exists( newDir ):
     string = re.split(r'(\d+)', ver)[0]
@@ -158,14 +175,14 @@ print ('>>> Results directory: ', newDir)
 os.makedirs( newDir )
 
 data = data.reset_index()
-train_event_input, pd_train_label, train_event_label, train_jet_input, valid_event_input, pd_valid_label, valid_event_label, valid_jet_input = split_train_test()
+train_event_input, pd_train_label, train_event_label, train_jet_input, valid_event_input, pd_valid_label, valid_event_label, valid_jet_input = split_train_test(newDir)
 
 train_label = train_event_label
 valid_label = valid_event_label
 
 model = build_model(model_path)
 
-earlystop = EarlyStopping(monitor='val_loss', patience=20)
+earlystop = EarlyStopping(monitor='val_loss', patience=50)
 filename = os.path.join(newDir, 'best_model.h5')
 
 checkpoint = ModelCheckpoint(filename, monitor='val_loss', verbose=1, save_best_only=True, mode='auto')
@@ -198,6 +215,16 @@ confusion = confusion_matrix(real_val_label, pred_val_max)
 correct = confusion.trace()
 sum_row = confusion.sum(axis=1)[:, np.newaxis]
 accuracy = correct/len(valid_label)*100
+#pred_max = np.argmax( train_prediction, axis=1 )
+#real_label = np.argmax( train_label, axis=1 )
+#
+##confusion = confusion_matrix(real_val_label, pred_val_max)
+#confusion = confusion_matrix(real_label, pred_max)
+#import seaborn as sns
+#confumap = sns.heatmap(confusion, annot=True)
+#fig = confumap.get_figure()
+#fig.savefig(f"models/{model_name}/confusion_matrix.png")
+#fig.savefig(f"models/{model_name}/confusion_matrix.pdf")
 
 #######################################################################
 #                          Plot loss curve                            # 
@@ -212,6 +239,7 @@ plt.ylabel('Accuracy')
 plt.xlabel('Epochs')
 plt.legend(['Train','Valid'], loc='lower right')
 plt.savefig(os.path.join(plotDir, 'accuracy.pdf'), bbox_inches='tight')
+plt.savefig(os.path.join(plotDir, 'accuracy.png'), bbox_inches='tight')
 plt.gcf().clear()
 
 plt.plot(hist.history['loss'])
@@ -221,6 +249,7 @@ plt.ylabel('Loss')
 plt.xlabel('Epochs')
 plt.legend(['Train','Valid'],loc='upper right')
 plt.savefig(os.path.join(plotDir, 'loss.pdf'), bbox_inches='tight')
+plt.savefig(os.path.join(plotDir, 'loss.png'), bbox_inches='tight')
 plt.gcf().clear()
 
 #######################################################################
@@ -251,6 +280,7 @@ plt.ylabel('Background Rejection')
 plt.title('ROC Curve for Tprime')
 plt.legend(['Valid', 'Train'], loc='lower left')
 plt.savefig(os.path.join(os.path.join("models/"+model_name+'/','fig_score_roc_tprime.pdf')))
+plt.savefig(os.path.join(os.path.join("models/"+model_name+'/','fig_score_roc_tprime.png')))
 plt.gcf().clear()
 print('ROC curve is saved!')
 
@@ -278,6 +308,7 @@ plt.ylabel('Background Rejection')
 plt.title('QCD ROC Curve')
 plt.legend(['Valid', 'Train'], loc='lower left')
 plt.savefig(os.path.join("models/"+model_name+'/','fig_score_roc_qcd.pdf'))
+plt.savefig(os.path.join("models/"+model_name+'/','fig_score_roc_qcd.png'))
 plt.gcf().clear()
 
 print("TTbar AUC on valid: "+str(roc_auc_val_ttbar))
@@ -293,6 +324,7 @@ plt.ylabel('Background Rejection')
 plt.title('TTbar ROC Curve')
 plt.legend(['Valid', 'Train'], loc='lower left')
 plt.savefig(os.path.join("models/"+model_name+'/','fig_score_roc_ttbar.pdf'))
+plt.savefig(os.path.join("models/"+model_name+'/','fig_score_roc_ttbar.png'))
 plt.gcf().clear()
 print('ROC curve for background are saved!')
 
@@ -332,6 +364,7 @@ plt.xlabel("Tprime Seperation Score")
 plt.ylabel("Arbitrary units")
 plt.legend(loc='best')
 plt.savefig(os.path.join("models/"+model_name+'/','fig_sep_score_overtraining_tprime.pdf'))
+plt.savefig(os.path.join("models/"+model_name+'/','fig_sep_score_overtraining_tprime.png'))
 plt.gcf().clear()
 print('Overtraining check plot is saved!')
 
@@ -364,6 +397,7 @@ plt.xlabel("QCD Seperation Score")
 plt.ylabel("Arbitrary units")
 plt.legend(loc='best')
 plt.savefig(os.path.join("models/"+model_name+'/','fig_sep_score_overtraining_qcd.pdf'))
+plt.savefig(os.path.join("models/"+model_name+'/','fig_sep_score_overtraining_qcd.png'))
 plt.gcf().clear()
 
 scores = [tpr[5], fpr[5], tpr[6], fpr[6]]
@@ -395,6 +429,7 @@ plt.xlabel("TTbar Seperation Score")
 plt.ylabel("Arbitrary units")
 plt.legend(loc='best')
 plt.savefig(os.path.join("models/"+model_name+'/','fig_sep_score_overtraining_ttbar.pdf'))
+plt.savefig(os.path.join("models/"+model_name+'/','fig_sep_score_overtraining_ttbar.png'))
 plt.gcf().clear()
 
 print('Overtraining check plot for background are saved!')
@@ -434,6 +469,7 @@ plt.xlabel("QCD Prediction Score")
 plt.ylabel("Normalized Entries")
 plt.legend(loc='best')
 plt.savefig(os.path.join("models/"+model_name+'/','fig_pred_score_qcd.pdf'))
+plt.savefig(os.path.join("models/"+model_name+'/','fig_pred_score_qcd.png'))
 plt.gcf().clear()
 
 pred_train_yTTbar = pred['pred_TTbar'].loc[pred['signal'] == 1]
@@ -466,6 +502,7 @@ plt.xlabel("TTbar Prediction Score")
 plt.ylabel("Normalized Entries")
 plt.legend(loc='best')
 plt.savefig(os.path.join("models/"+model_name+'/','fig_pred_score_ttbar.pdf'))
+plt.savefig(os.path.join("models/"+model_name+'/','fig_pred_score_ttbar.png'))
 plt.gcf().clear()
 
 pred_train_yTprime = pred['pred_Tprime'].loc[pred['signal'] == 2]
@@ -523,7 +560,8 @@ with open(f'{plotDir}/results.txt', "a") as f_log:
    f_log.write(f'Training   :: QCD : {nqcd_train} | TT : {ntt_train} | Tprime: {ntp_train}\n')
    f_log.write(f'Validation :: QCD : {nqcd_valid} | TT : {ntt_valid} | Tprime: {ntp_valid}\n')
 
-   f_log.write('Best epoch: '+str(bestepoch)+'  accuracy: '+str(correct)+'/'+str(len(valid_label))+'='+str(accuracy)+'\n\n')
+#   f_log.write('Best epoch: '+str(bestepoch)+'  accuracy: '+str(correct)+'/'+str(len(valid_label))+'='+str(accuracy)+'\n\n')
+   f_log.write('Best epoch: '+str(bestepoch)+'\n\n')
    f_log.write('AUC on valid: '+str(roc_auc_val)+'  train: '+str(roc_auc_train)+'\n')
 
 print("Training complete!")

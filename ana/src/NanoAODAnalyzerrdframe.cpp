@@ -61,7 +61,7 @@ void NanoAODAnalyzerrdframe::setTree(TTree *t, std::string outfilename)
 }
 
 
-void NanoAODAnalyzerrdframe::setupCorrections(string goodjsonfname, string pufname, string putag, string btvfname, string btvtype, string fname_btagEff, string jercfname, string jerctag, string jercunctag, string jercsys_total)
+void NanoAODAnalyzerrdframe::setupCorrections(string goodjsonfname, string pufname, string putag, string btvfname, string fname_btagEff, string jercfname, string jerctag, string jercunctag, string jercsys_total)
 {
     cout << "set up Corrections!" << endl;
     if (_isData) {
@@ -94,7 +94,7 @@ void NanoAODAnalyzerrdframe::setupCorrections(string goodjsonfname, string pufna
 
         // btag corrections
         _correction_btag1 = correction::CorrectionSet::from_file(btvfname);
-        _btvtype = btvtype;
+        //_btvtype = btvtype;
         assert(_correction_btag1->validate());
 
         // load efficiency map
@@ -236,33 +236,34 @@ ROOT::RDF::RNode NanoAODAnalyzerrdframe::calculateBTagSF(RNode _rlm, std::vector
           }
       }
     }
-    else if(_case==3){
-        //======================================================================================================================================
-        //case3 - Shape correction
-        //for case 3 : use btvtype': 'deepJet_shape' in jobconfiganalysis.py
-        cout<<"case 3 Shape correction B tagging SF for MC "<<endl;
-        //======================================================================================================================================
-        //>>>> function to calculate event weights for MC events,based on DeepJet algorithm, incorporating shape correction with central variation
-        //======================================================================================================================================
-        auto btagweightgenerator3= [this](ints &hadflav, floats &etas, floats &pts, floats &btags)->float{
-            double bweight=1.0;
-      
-            for (auto i=0; i<int(pts.size()); i++){
-                if(std::abs(etas[i])>2.5 || pts[i]<30.000001) continue;
-                double w = _correction_btag1->at(_btvtype)->evaluate({"central", int(hadflav[i]), fabs(float(etas[i])), float(pts[i]), float(btags[i])});
-                bweight *= w;
-            }
-            return bweight;
-        };
-        
-        cout<<"Generate case3 b-tagging weight"<<endl;
-        std::string column_name = output_var + "case3";
-        _rlm = _rlm.Define(column_name, btagweightgenerator3, Jets_vars_names);
-        //Total event weight after shape correction
-        //_rlm = _rlm.Define("evWeight", "pugenWeight*btagWeight_case3");
-        std::cout<< "BJet SF column name: " << column_name << std::endl;
+    // I dont use this
+    //else if(_case==3){
+    //    //======================================================================================================================================
+    //    //case3 - Shape correction
+    //    //for case 3 : use btvtype': 'deepJet_shape' in jobconfiganalysis.py
+    //    cout<<"case 3 Shape correction B tagging SF for MC "<<endl;
+    //    //======================================================================================================================================
+    //    //>>>> function to calculate event weights for MC events,based on DeepJet algorithm, incorporating shape correction with central variation
+    //    //======================================================================================================================================
+    //    auto btagweightgenerator3= [this](ints &hadflav, floats &etas, floats &pts, floats &btags)->float{
+    //        double bweight=1.0;
+    //  
+    //        for (auto i=0; i<int(pts.size()); i++){
+    //            if(std::abs(etas[i])>2.5 || pts[i]<30.000001) continue;
+    //            double w = _correction_btag1->at(_btvtype)->evaluate({"central", int(hadflav[i]), fabs(float(etas[i])), float(pts[i]), float(btags[i])});
+    //            bweight *= w;
+    //        }
+    //        return bweight;
+    //    };
+    //    
+    //    cout<<"Generate case3 b-tagging weight"<<endl;
+    //    std::string column_name = output_var + "case3";
+    //    _rlm = _rlm.Define(column_name, btagweightgenerator3, Jets_vars_names);
+    //    //Total event weight after shape correction
+    //    //_rlm = _rlm.Define("evWeight", "pugenWeight*btagWeight_case3");
+    //    std::cout<< "BJet SF column name: " << column_name << std::endl;
   
-    }
+    //}
     return _rlm;
 }
 
@@ -681,6 +682,15 @@ void NanoAODAnalyzerrdframe::setParams(int year, string runtype, int datatype, s
     }else if(_sampletype == "QCD"){
         _isQCD = true;
         cout << "Running background sample QCD" << endl;
+    }else if(_sampletype == "ST"){
+        _isST = true;
+        cout << "Running background sample ST" << endl;
+    }else if(_sampletype == "VJets"){
+        _isVJets = true;
+        cout << "Running background sample VJets" << endl;
+    }else if(_sampletype == "ttH"){
+        _isttH = true;
+        cout << "Running background sample ttH" << endl;
     }else if(_sampletype == "Data"){
         _isData = true;
         cout << "Running Data" << endl;

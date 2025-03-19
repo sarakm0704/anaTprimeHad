@@ -45,7 +45,8 @@ public:
     virtual ~NanoAODAnalyzerrdframe();
     
     //void setupCorrections(string goodjsonfname, string pufname, string putag, string btvfname, string btvtype, string jercfname, string jerctag, string jercunctag);
-    void setupCorrections(string goodjsonfname, string pufname, string putag, string btvfname, string btvtype, string fname_btagEff, string jercfname, string jerctag, string jercunctag, string jercsys_total);
+    //void setupCorrections(string goodjsonfname, string pufname, string putag, string btvfname, string btvtype, string fname_btagEff, string jercfname, string jerctag, string jercunctag, string jercsys_total);
+    void setupCorrections(string goodjsonfname, string pufname, string putag, string btvfname, string fname_btagEff, string jercfname, string jerctag, string jercunctag, string jercsys_total);
     virtual void setupObjects();
     virtual void setupAnalysis();
     virtual void setTree(TTree *t, string outfilename);
@@ -103,6 +104,9 @@ public:
     bool _isTprime =false;
     bool _isTT =false;
     bool _isQCD =false;
+    bool _isST =false;
+    bool _isVJets =false;
+    bool _isttH =false;
 
     bool _is2M1L =false;
     bool _is3L =false;
@@ -181,7 +185,7 @@ public:
     std::unique_ptr<correction::CorrectionSet> _correction_btag1;
     std::unique_ptr<correction::CorrectionSet> _efficiency_btag1;
 
-    string _btvtype;
+    //string _btvtype;
 
     // pile up weights
     std::unique_ptr<correction::CorrectionSet> _correction_pu;

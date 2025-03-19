@@ -128,14 +128,14 @@ int count2s(floats targets, float obj1, float obj2);
 
 bool isHadWHiggs(FourVectorVec &p, ints &pdgId, ints &midx);
 
-floats btv_shape_correction(std::unique_ptr<correction::CorrectionSet> &cset, std::string type, std::string sys, floats &pts, floats &etas, ints &hadflav, floats &btags);
+//floats btv_shape_correction(std::unique_ptr<correction::CorrectionSet> &cset, std::string sys, floats &pts, floats &etas, ints &hadflav, floats &btags);
 
 //float btv_case1(std::unique_ptr<correction::CorrectionSet> &cset, std::string type, std::string sys, std::string sysl, std::string wp, ints &hadflav, floats &etas, floats &pts );
-float btv_case1( std::unique_ptr<correction::CorrectionSet> &cset, std::string type, std::string sys, std::string sysl, std::string wp, ints &hadflav, floats &etas, floats &pts );
+float btv_case1( std::unique_ptr<correction::CorrectionSet> &cset, std::string sys, std::string sysl, std::string wp, ints &hadflav, floats &etas, floats &pts );
 
 float btv_effMap( std::unique_ptr<correction::CorrectionSet>& eff, std::string wp, ints &hadflav, floats &etas, floats &pts );
 
-float producer_btagWeight(std::unique_ptr<correction::CorrectionSet>& cset, std::unique_ptr<correction::CorrectionSet>& eff, std::string type, std::string sys, std::string sysl, ints &hadflav, floats &etas, floats &pts, floats &discs, ints &wpL, ints &wpM, ints &wpT, bool isTp, bool isTT, bool isQCD);
+float producer_btagWeight(std::unique_ptr<correction::CorrectionSet>& cset, std::unique_ptr<correction::CorrectionSet>& eff, std::string sys, std::string sysl, ints &hadflav, floats &etas, floats &pts, floats &discs, ints &wpL, ints &wpM, ints &wpT, bool isTp, bool isTT, bool isQCD, bool isST, bool isVJets, bool isttH);
 
 float pucorrection(std::unique_ptr<correction::CorrectionSet> &cset, std::string name, std::string syst, float ntruepileup);
 

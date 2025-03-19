@@ -804,21 +804,21 @@ bool isHadWHiggs(FourVectorVec &p, ints &pdgId, ints &midx){
     return flag;
 };
 
-floats btv_shape_correction(std::unique_ptr<correction::CorrectionSet> &cset, std::string type, std::string sys, floats &pts, floats &etas, ints &hadflav, floats &btags)
-{
-    floats scalefactors;
-    auto nvecs = pts.size();
-    scalefactors.reserve(nvecs);
-    for (unsigned int i=0; i<nvecs; i++){
+//floats btv_shape_correction(std::unique_ptr<correction::CorrectionSet> &cset, std::string type, std::string sys, floats &pts, floats &etas, ints &hadflav, floats &btags)
+//{
+//    floats scalefactors;
+//    auto nvecs = pts.size();
+//    scalefactors.reserve(nvecs);
+//    for (unsigned int i=0; i<nvecs; i++){
+//
+//        float sfi = cset->at(type)->evaluate({sys, int(hadflav[i]), fabs(float(etas[i])), float(pts[i]), float(btags[i])});
+//        scalefactors.emplace_back(sfi);
+//
+//    }
+//    return scalefactors;
+//}
 
-        float sfi = cset->at(type)->evaluate({sys, int(hadflav[i]), fabs(float(etas[i])), float(pts[i]), float(btags[i])});
-        scalefactors.emplace_back(sfi);
-
-    }
-    return scalefactors;
-}
-
-float btv_case1(std::unique_ptr<correction::CorrectionSet>& cset, std::string type, std::string sys, std::string sysl, std::string wp, ints &hadflav, floats &etas, floats &pts)
+float btv_case1(std::unique_ptr<correction::CorrectionSet>& cset, std::string sys, std::string sysl, std::string wp, ints &hadflav, floats &etas, floats &pts)
 {
     float btagWeight = 1.0;
 
@@ -855,7 +855,7 @@ float btv_effMap(std::unique_ptr<correction::CorrectionSet>& eff, std::string wp
     return efficiency;
 }
 
-float producer_btagWeight(std::unique_ptr<correction::CorrectionSet>& cset, std::unique_ptr<correction::CorrectionSet>& eff, std::string type, std::string sys, std::string sysl, ints &hadflav, floats &etas, floats &pts, floats &discs, ints &wpL, ints &wpM, ints &wpT, bool isTp, bool isTT, bool isQCD)
+float producer_btagWeight(std::unique_ptr<correction::CorrectionSet>& cset, std::unique_ptr<correction::CorrectionSet>& eff, std::string sys, std::string sysl, ints &hadflav, floats &etas, floats &pts, floats &discs, ints &wpL, ints &wpM, ints &wpT, bool isTp, bool isTT, bool isQCD, bool isST, bool isVJets, bool isttH)
 {
     std::string flav;
     std::string sample;
@@ -871,6 +871,9 @@ float producer_btagWeight(std::unique_ptr<correction::CorrectionSet>& cset, std:
     if (isTp == true) sample = "Tprime";
     if (isTT == true) sample = "TTToHadronic";
     if (isQCD == true) sample = "QCD";
+    if (isST == true) sample = "ST";
+    if (isVJets == true) sample = "VJets";
+    if (isttH == true) sample = "ttH";
 
     //cout << "calculate btagWeight" << endl;
 

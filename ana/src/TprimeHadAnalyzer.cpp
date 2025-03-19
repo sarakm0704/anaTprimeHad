@@ -67,7 +67,8 @@ void TprimeHadAnalyzer::defineCuts()
     if(_isTprime){
         addCuts("isHadProcess","0");
         addCuts("METfilter && HLT && nsel40Jets >= 6","00");
-    }else if(_isTT || _isQCD || _isData){
+//    }else if(_isTT || _isQCD || _isData){
+    }else{
         addCuts("METfilter && HLT","0");
         addCuts("nsel40Jets >= 6","00");
     }
@@ -84,7 +85,6 @@ void TprimeHadAnalyzer::defineCuts()
          addCuts("nselTbJets >= 3","0000");
     }else{
         cout << "no region defined, get efficiency Map" << endl;
-        //return;
     }
 
 // Cut 0
@@ -107,6 +107,7 @@ void TprimeHadAnalyzer::defineMoreVars()
 {
 
     //defineVar("isHadTprime",::isHadWHiggs,{"p4_GenPart","GenPart_pdgId","GenPart_genPartIdxMother"});
+    if(_is2M1L || _is3L || _is3M || _is3T){ 
   
     addVar({"Chi2_min_H","Chi2_Tprime[7]",""});
     addVar({"Chi2_min_W","Chi2_Tprime[8]",""});
@@ -230,6 +231,7 @@ void TprimeHadAnalyzer::defineMoreVars()
   
     addVar({"goodHT_massnom","goodHT/invmass_Tprime",""});
     addVar({"invmass_htnom","invmass_Tprime/goodHT",""});
+    }
   
     //================================Store variables in tree=======================================//
     // define variables that you want to store
@@ -246,159 +248,140 @@ void TprimeHadAnalyzer::defineMoreVars()
 
     addVartoStore("genWeight");
     addVartoStore("genEventSumw");
-  
-    //addVartoStore("selJet5_pt");
 
-    //addVartoStore("Chi2_Tprime");
-
-    ////addVartoStore("invmass_trueTprime");
-
-    ////addVartoStore("chi2true_matched_Tprime");
-    //////addVartoStore("chi2true_matched_H");
-    //////addVartoStore("chi2true_matched_Top");
-    //////addVartoStore("chi2true_matched_W");
-  
-    ////addVartoStore("synch_evt");
-    ////addVartoStore("Hb1_pt");
-    ////addVartoStore("Hb2_pt");
-    ////addVartoStore("Wj1_pt");
-    ////addVartoStore("Wj2_pt");
-    ////addVartoStore("Tbj_pt");
-
-    ////addVartoStore("qFromTop_eta");
-    //addVartoStore("gJetFromTop_pt");
-    //addVartoStore("gJetFromTop_eta");
-    //addVartoStore("gJetFromTop_phi");
-    ////addVartoStore("JetFromTop_eta");
-  
-    ////addVartoStore("qFromW_eta");
-    //addVartoStore("gJetFromW_pt");
-    //addVartoStore("gJetFromW_eta");
-    //addVartoStore("gJetFromW_phi");
-    ////addVartoStore("JetFromW_eta");
-  
-    ////addVartoStore("bFromH_eta");
-    //addVartoStore("gJetFromH_pt");
-    //addVartoStore("gJetFromH_eta");
-    //addVartoStore("gJetFromH_phi");
-    ////addVartoStore("JetFromH_eta"); // problem
-  
-    ////addVartoStore("JetFromTprime_eta");
-    ////addVartoStore("JetFromH_eta");
-    ////addVartoStore("JetFromW_eta");
-
-    ////addVartoStore("W_chi2_eta");
-    ////addVartoStore("W_chi2_phi");
-  
-    ////addVartoStore("dRbb");
-    ////addVartoStore("mbb");
+//    addVartoStore("HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2");
+//    addVartoStore("HLT_PFHT400_FivePFJet_100_100_60_30_30_DoublePFBTagDeepCSV_4p5");
+//    addVartoStore("HLT_PFHT430_SixPFJet40_PFBTagDeepCSV_1p5");
+//    addVartoStore("HLT_PFHT330PT30_QuadPFJet_75_60_45_40_TriplePFBTagDeepCSV_4p5");
+//    addVartoStore("HLT_PFHT1050");
+//    addVartoStore("HLT_PFJet500");
+//    addVartoStore("HLT_PFHT400_SixPFJet32_DoublePFBTagDeepCSV_2p94");
+//    addVartoStore("HLT_PFHT450_SixPFJet36_PFBTagDeepCSV_1p59");
+//  
+    if(!_is2M1L && !_is3L && !_is3M && !_is3T){ 
     
-    //addVartoStore("selJetsForbtag_pt");
-    //addVartoStore("selJetsForbtag_eta");
-    //addVartoStore("selJetsForbtag_phi");
-    //addVartoStore("selJetsForbtag_mass");
-    //addVartoStore("selJetsForbtag_btag");
-    //addVartoStore("selJetsForbtag_hadronFlavour");
-    //addVartoStore("nselJetsForbtag");
+    addVartoStore("selJetsForbtag_pt");
+    addVartoStore("selJetsForbtag_eta");
+    addVartoStore("selJetsForbtag_phi");
+    addVartoStore("selJetsForbtag_mass");
+    addVartoStore("selJetsForbtag_btag");
+    addVartoStore("selJetsForbtag_hadronFlavour");
+    addVartoStore("nselJetsForbtag");
+
+    }else{
 
     // DNN Study
     // Cut0
     addVartoStore("nselJets");
     addVartoStore("nselbJets");
+    addVartoStore("nselLbJets");
+    addVartoStore("nselMbJets");
+    addVartoStore("nselTbJets");
+
+    // for TF
+    addVartoStore("jet4vecs");
+    addVartoStore("numJets4vecs");
+    addVartoStore("denJets4vecs");
+    addVartoStore("numJets_pt");
+    addVartoStore("numJets_eta");
+    addVartoStore("denJets_pt");
+    addVartoStore("denJets_eta");
 
     // btag in binary
     addVartoStore("is_deepJet_T");
     addVartoStore("is_deepJet_M");
     addVartoStore("is_deepJet_L");
 
-    addVartoStore("selJet1_pt");
-    addVartoStore("selJet1_pt_massnom");
-    addVartoStore("selJet1_eta");
-    addVartoStore("selJet1_phi");
-    addVartoStore("selJet1_e");
-    addVartoStore("selJet1_e_massnom");
-    addVartoStore("selJet1_btag");
-
-    addVartoStore("selJet2_pt");
-    addVartoStore("selJet2_pt_massnom");
-    addVartoStore("selJet2_eta");
-    addVartoStore("selJet2_phi");
-    addVartoStore("selJet2_e");
-    addVartoStore("selJet2_e_massnom");
-    addVartoStore("selJet2_btag");
-
-    addVartoStore("selJet3_pt");
-    addVartoStore("selJet3_pt_massnom");
-    addVartoStore("selJet3_eta");
-    addVartoStore("selJet3_phi");
-    addVartoStore("selJet3_e");
-    addVartoStore("selJet3_e_massnom");
-    addVartoStore("selJet3_btag");
-
-    addVartoStore("selJet4_pt");
-    addVartoStore("selJet4_pt_massnom");
-    addVartoStore("selJet4_eta");
-    addVartoStore("selJet4_phi");
-    addVartoStore("selJet4_e");
-    addVartoStore("selJet4_e_massnom");
-    addVartoStore("selJet4_btag");
-
-    addVartoStore("selJet5_pt");
-    addVartoStore("selJet5_pt_massnom");
-    addVartoStore("selJet5_eta");
-    addVartoStore("selJet5_phi");
-    addVartoStore("selJet5_e");
-    addVartoStore("selJet5_e_massnom");
-    addVartoStore("selJet5_btag");
-
-    addVartoStore("selbJet1_pt");
-    addVartoStore("selbJet1_pt_massnom");
-    addVartoStore("selbJet1_eta");
-    addVartoStore("selbJet1_phi");
-    addVartoStore("selbJet1_e");
-    addVartoStore("selbJet1_e_massnom");
-    addVartoStore("selbJet1_btag");
-
-    addVartoStore("selbJet2_pt");
-    addVartoStore("selbJet2_pt_massnom");
-    addVartoStore("selbJet2_eta");
-    addVartoStore("selbJet2_phi");
-    addVartoStore("selbJet2_e");
-    addVartoStore("selbJet2_e_massnom");
-    addVartoStore("selbJet2_btag");
-
-    addVartoStore("Chi2_min");
-    addVartoStore("goodHT");
-    addVartoStore("invmass_2ndTop");
-    addVartoStore("H_mass");
-
-    addVartoStore("RelHT");          // Cut 1
-    addVartoStore("Chi2_max");       // Cut 2
-    addVartoStore("dRHbb_chi2");     // Cut 3
-    addVartoStore("Chi2_min_H");     // Cut 4
-    addVartoStore("dRWjj_chi2");     // Cut 5
-    addVartoStore("dRbW_chi2");      // Cut 6
-
-    // Candidates
-    addVartoStore("Chi2_min_W");
-    addVartoStore("Chi2_min_Top");
-    addVartoStore("mindR_dRbb");
-    addVartoStore("mindR_mbb");
-    addVartoStore("Top_mass");
-    addVartoStore("W_mass");
-    addVartoStore("invmass_WH");
-    addVartoStore("invmass_Tprime");
-    addVartoStore("invmass_leadjets");//etc
-    addVartoStore("R_TopH");
-    addVartoStore("R_2ndTopW");
-    addVartoStore("newRelHT");
-    addVartoStore("dRTprimeoj_chi2");
-    addVartoStore("dRHTop_chi2");
-    addVartoStore("dEtaWH_chi2");
-    addVartoStore("dPhiHTop_chi2");
-    addVartoStore("Rpt_Top2ndTop");
-    addVartoStore("Rpt_HTopTprime");
-    addVartoStore("Rpt_TprimeHTprimeTop");
+//    addVartoStore("selJet1_pt");
+//    addVartoStore("selJet1_pt_massnom");
+//    addVartoStore("selJet1_eta");
+//    addVartoStore("selJet1_phi");
+//    addVartoStore("selJet1_e");
+//    addVartoStore("selJet1_e_massnom");
+//    addVartoStore("selJet1_btag");
+//
+//    addVartoStore("selJet2_pt");
+//    addVartoStore("selJet2_pt_massnom");
+//    addVartoStore("selJet2_eta");
+//    addVartoStore("selJet2_phi");
+//    addVartoStore("selJet2_e");
+//    addVartoStore("selJet2_e_massnom");
+//    addVartoStore("selJet2_btag");
+//
+//    addVartoStore("selJet3_pt");
+//    addVartoStore("selJet3_pt_massnom");
+//    addVartoStore("selJet3_eta");
+//    addVartoStore("selJet3_phi");
+//    addVartoStore("selJet3_e");
+//    addVartoStore("selJet3_e_massnom");
+//    addVartoStore("selJet3_btag");
+//
+//    addVartoStore("selJet4_pt");
+//    addVartoStore("selJet4_pt_massnom");
+//    addVartoStore("selJet4_eta");
+//    addVartoStore("selJet4_phi");
+//    addVartoStore("selJet4_e");
+//    addVartoStore("selJet4_e_massnom");
+//    addVartoStore("selJet4_btag");
+//
+//    addVartoStore("selJet5_pt");
+//    addVartoStore("selJet5_pt_massnom");
+//    addVartoStore("selJet5_eta");
+//    addVartoStore("selJet5_phi");
+//    addVartoStore("selJet5_e");
+//    addVartoStore("selJet5_e_massnom");
+//    addVartoStore("selJet5_btag");
+//
+//    addVartoStore("selbJet1_pt");
+//    addVartoStore("selbJet1_pt_massnom");
+//    addVartoStore("selbJet1_eta");
+//    addVartoStore("selbJet1_phi");
+//    addVartoStore("selbJet1_e");
+//    addVartoStore("selbJet1_e_massnom");
+//    addVartoStore("selbJet1_btag");
+//
+//    addVartoStore("selbJet2_pt");
+//    addVartoStore("selbJet2_pt_massnom");
+//    addVartoStore("selbJet2_eta");
+//    addVartoStore("selbJet2_phi");
+//    addVartoStore("selbJet2_e");
+//    addVartoStore("selbJet2_e_massnom");
+//    addVartoStore("selbJet2_btag");
+//
+//    addVartoStore("Chi2_min");
+//    addVartoStore("goodHT");
+//    addVartoStore("invmass_2ndTop");
+//    addVartoStore("H_mass");
+//
+//    addVartoStore("RelHT");          // Cut 1
+//    addVartoStore("Chi2_max");       // Cut 2
+//    addVartoStore("dRHbb_chi2");     // Cut 3
+//    addVartoStore("Chi2_min_H");     // Cut 4
+//    addVartoStore("dRWjj_chi2");     // Cut 5
+//    addVartoStore("dRbW_chi2");      // Cut 6
+//
+//    // Candidates
+//    addVartoStore("Chi2_min_W");
+//    addVartoStore("Chi2_min_Top");
+//    addVartoStore("mindR_dRbb");
+//    addVartoStore("mindR_mbb");
+//    addVartoStore("Top_mass");
+//    addVartoStore("W_mass");
+//    addVartoStore("invmass_WH");
+//    addVartoStore("invmass_Tprime");
+//    addVartoStore("invmass_leadjets");//etc
+//    addVartoStore("R_TopH");
+//    addVartoStore("R_2ndTopW");
+//    addVartoStore("newRelHT");
+//    addVartoStore("dRTprimeoj_chi2");
+//    addVartoStore("dRHTop_chi2");
+//    addVartoStore("dEtaWH_chi2");
+//    addVartoStore("dPhiHTop_chi2");
+//    addVartoStore("Rpt_Top2ndTop");
+//    addVartoStore("Rpt_HTopTprime");
+//    addVartoStore("Rpt_TprimeHTprimeTop");
+//
+    }
 
 }
 //.================================Histogram Definitions===========================================//
@@ -433,7 +416,7 @@ void TprimeHadAnalyzer::genStudy()
   }
 
   // HLT
-  // from AN 2021_140/v4
+  // from AN 2021_140/v4 + additional
   if (!isDefined("HLT_PFHT400_SixJet30_DoubleBTagCSV_p056")) _rlm = _rlm.Define("HLT_PFHT400_SixJet30_DoubleBTagCSV_p056", "false");
   if (!isDefined("HLT_PFHT450_SixJet40_BTagCSV_p056")) _rlm = _rlm.Define("HLT_PFHT450_SixJet40_BTagCSV_p056", "false");
   if (!isDefined("HLT_PFHT900")) _rlm = _rlm.Define("HLT_PFHT900", "false");
@@ -455,9 +438,8 @@ void TprimeHadAnalyzer::genStudy()
   if (!isDefined("HLT_PFHT430_SixPFJet40_PFBTagDeepCSV_1p5")) _rlm = _rlm.Define("HLT_PFHT430_SixPFJet40_PFBTagDeepCSV_1p5", "false"); 
   if (!isDefined("HLT_PFHT330PT30_QuadPFJet_75_60_45_40_TriplePFBTagDeepCSV_4p5")) _rlm = _rlm.Define("HLT_PFHT330PT30_QuadPFJet_75_60_45_40_TriplePFBTagDeepCSV_4p5", "false"); 
 
-  // huh
-  //if (!isDefined("HLT_PFHT400_SixPFJet32_DoublePFBTagDeepCSV_2p94")) _rlm = _rlm.Define("HLT_PFHT400_SixPFJet32_DoublePFBTagDeepCSV_2p94", "false"); 
-  //if (!isDefined("HLT_PFHT450_SixPFJet36_PFBTagDeepCSV_1p59")) _rlm = _rlm.Define("HLT_PFHT450_SixPFJet36_PFBTagDeepCSV_1p59", "false"); 
+  if (!isDefined("HLT_PFHT400_SixPFJet32_DoublePFBTagDeepCSV_2p94")) _rlm = _rlm.Define("HLT_PFHT400_SixPFJet32_DoublePFBTagDeepCSV_2p94", "false"); 
+  if (!isDefined("HLT_PFHT450_SixPFJet36_PFBTagDeepCSV_1p59")) _rlm = _rlm.Define("HLT_PFHT450_SixPFJet36_PFBTagDeepCSV_1p59", "false"); 
   // ^ huh it wasnt used
 
   if(_year==2015 || _year==2016){        //2016era
@@ -479,7 +461,8 @@ void TprimeHadAnalyzer::genStudy()
           _rlm = _rlm.Define("HLT","HLT_PFHT380_SixPFJet32_DoublePFBTagCSV_2p2 || HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2 || HLT_PFHT430_SixPFJet40_BTagCSV_p080 || HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5 || HLT_HT300PT30_QuadJet_75_60_45_40_TripleCSV_p07 || HLT_HT300PT30_QuadJet_75_60_45_40_TriplePFBTagCSV_3p0 || HLT_PFHT1050 || HLT_PFJet500");
 
       }else if(_year==2018){
-          _rlm = _rlm.Define("HLT","HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2 || HLT_PFHT400_FivePFJet_100_100_60_30_30_DoublePFBTagDeepCSV_4p5 || HLT_PFHT430_SixPFJet40_PFBTagDeepCSV_1p5 || HLT_PFHT330PT30_QuadPFJet_75_60_45_40_TriplePFBTagDeepCSV_4p5 || HLT_PFHT1050 || HLT_PFJet500");
+//          _rlm = _rlm.Define("HLT","HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2 || HLT_PFHT400_FivePFJet_100_100_60_30_30_DoublePFBTagDeepCSV_4p5 || HLT_PFHT430_SixPFJet40_PFBTagDeepCSV_1p5 || HLT_PFHT330PT30_QuadPFJet_75_60_45_40_TriplePFBTagDeepCSV_4p5 || HLT_PFHT1050 || HLT_PFJet500");
+          _rlm = _rlm.Define("HLT","HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2 || HLT_PFHT400_FivePFJet_100_100_60_30_30_DoublePFBTagDeepCSV_4p5 || HLT_PFHT430_SixPFJet40_PFBTagDeepCSV_1p5 || HLT_PFHT330PT30_QuadPFJet_75_60_45_40_TriplePFBTagDeepCSV_4p5 || HLT_PFHT1050 || HLT_PFJet500 || HLT_PFHT400_SixPFJet32_DoublePFBTagDeepCSV_2p94 || HLT_PFHT450_SixPFJet36_PFBTagDeepCSV_1p59");
       }
   }
 
@@ -518,7 +501,6 @@ void TprimeHadAnalyzer::selectJets()
   // and need to resort by new pt: _rlm = _rlm.Define("sorted_Jet_pt", ::sort_discriminant, {"Jet_pt_nom","Jet_pt_nom"})
   //_rlm = _rlm.Define("Jet_idx","")
 
-  //well JER here  
   if(!_isData){
               _rlm = _rlm.Define("MCorData", "-1.0");
               auto getJERCptResolution=[this](floats &etas, floats &pts, floats &rhos)->floats
@@ -550,15 +532,10 @@ void TprimeHadAnalyzer::selectJets()
   }
   
   //presel for overlap
-  //_rlm = _rlm.Define("pre_goodJets", "Jet_jetId > 1 && Jet_pt >= 30 && abs(Jet_eta) <= 4.5");
-  // w JER
-  //_rlm = _rlm.Define("pre_goodJets", "Jet_jetId > 1 && Jet_pt_smear_nom >= 30 && abs(Jet_eta) <= 4.5");
-  // w PU JetId
-  _rlm = _rlm.Define("pre_goodJets", "Jet_jetId > 1 && Jet_pt_smear_nom >= 30 && abs(Jet_eta) <= 4.5 && (Jet_pt_smear_nom > 50 || Jet_puId > 0)");
+  _rlm = _rlm.Define("pre_goodJets", "Jet_jetId > 1 && Jet_pt_smear_nom >= 30 && abs(Jet_eta) <= 2.5 && (Jet_pt_smear_nom > 50 || Jet_puId > 0)");
+//  _rlm = _rlm.Define("pre_goodJets", "Jet_jetId > 1 && Jet_pt_smear_nom >= 30 && abs(Jet_eta) <= 4.5 && (Jet_pt_smear_nom > 50 || Jet_puId > 0)");
   
   _rlm = _rlm.Define("pre_nselJets","Sum(pre_goodJets)")
-//             .Define("pre_selJet_pt","Jet_pt[pre_goodJets]")
-//             w JER
              .Define("pre_selJet_pt","Jet_pt_smear_nom[pre_goodJets]")
              .Define("pre_selJet_eta","Jet_eta[pre_goodJets]")
              .Define("pre_selJet_phi","Jet_phi[pre_goodJets]")
@@ -566,7 +543,6 @@ void TprimeHadAnalyzer::selectJets()
              .Define("pre_selJet_btagDeepFlavB","Jet_btagDeepFlavB[pre_goodJets]")
              .Define("pre_jet4vecs", ::generate_4vec, {"pre_selJet_pt", "pre_selJet_eta", "pre_selJet_phi", "pre_selJet_mass"});
 
-  // apparently there is no such branch in data
   if(!_isData) _rlm = _rlm.Define("pre_selJet_hadronFlavour", "Jet_hadronFlavour[pre_goodJets]");
   
   // lambda function
@@ -584,7 +560,6 @@ void TprimeHadAnalyzer::selectJets()
               auto dr = ROOT::Math::VectorUtil::DeltaR(ajet, alepton);
               if (dr < mindr) mindr = dr;
           }
-          //int out = mindr > 0.4 ? 1 : 0;
           mindrlepton.emplace_back(mindr);
       }
       return mindrlepton;
@@ -630,7 +605,7 @@ void TprimeHadAnalyzer::selectJets()
   }
 
   if(!_isData){
-  // you dont measure efficiency in data
+  // you dont measure btag efficiency in data
       _rlm = _rlm.Define("goodJetsForbtag", "goodJets && abs(pre_selJet_eta) < 2.5")
                  .Define("selJetsForbtag_pt","pre_selJet_pt[goodJetsForbtag]")
                  .Define("selJetsForbtag_eta","pre_selJet_eta[goodJetsForbtag]")
@@ -661,14 +636,14 @@ void TprimeHadAnalyzer::selectJets()
   }
 
   // for Chi2 reco
-  if(_is2M1L){
-      _rlm = _rlm.Define("goodbJets", "goodJets && abs(pre_selJet_eta) < 2.5 && is_deepJet_L");
-  }else if(_is3L){
-      _rlm = _rlm.Define("goodbJets", "goodJets && abs(pre_selJet_eta) < 2.5 && is_deepJet_L");
-  }else if(_is3M){
+  if(_is3M){
       _rlm = _rlm.Define("goodbJets", "goodJets && abs(pre_selJet_eta) < 2.5 && is_deepJet_M");
   }else if(_is3T){
       _rlm = _rlm.Define("goodbJets", "goodJets && abs(pre_selJet_eta) < 2.5 && is_deepJet_T");
+  }else{
+      std::cout << "is 2M1L ?" << _is2M1L << std::endl;
+      std::cout << "is 3L ?" << _is3L << std::endl;
+      _rlm = _rlm.Define("goodbJets", "goodJets && abs(pre_selJet_eta) < 2.5 && is_deepJet_L");
   }
 
   _rlm = _rlm.Define("selbJet_pt","pre_selJet_pt[goodbJets]")
@@ -706,6 +681,33 @@ void TprimeHadAnalyzer::selectJets()
              .Define("selTbJet_btag","pre_selJet_btagDeepFlavB[goodTbJets]")
              .Define("nselTbJets","int(selTbJet_pt.size())")
              .Define("Tbjet4vecs", ::generate_4vec, {"selTbJet_pt", "selTbJet_eta", "selTbJet_phi", "selTbJet_mass"});
+
+  if(_is2M1L){
+      _rlm = _rlm.Define("numJets4vecs","Mbjet4vecs")
+                 .Define("numJets_pt","selMbJet_pt")
+                 .Define("numJets_eta","selMbJet_eta");
+
+      _rlm = _rlm.Define("denJets4vecs","Lbjet4vecs")
+                 .Define("denJets_pt","selLbJet_pt")
+                 .Define("denJets_eta","selLbJet_eta");
+  }else if(_is3M){
+      _rlm = _rlm.Define("numJets4vecs","Tbjet4vecs")
+                 .Define("numJets_pt","selTbJet_pt")
+                 .Define("numJets_eta","selTbJet_eta");
+
+      _rlm = _rlm.Define("denJets4vecs","Mbjet4vecs")
+                 .Define("denJets_pt","selMbJet_pt")
+                 .Define("denJets_eta","selMbJet_eta");
+  }else if(_is3T){
+      _rlm = _rlm.Define("numJets4vecs","Tbjet4vecs")
+                 .Define("numJets_pt","selTbJet_pt")
+                 .Define("numJets_eta","selTbJet_eta");
+
+      _rlm = _rlm.Define("denJets4vecs","Mbjet4vecs")
+                 .Define("denJets_pt","selMbJet_pt")
+                 .Define("denJets_eta","selMbJet_eta");
+  }
+  
 
   // Function for kinematic reconstruction
   _rlm = _rlm.Define("Chi2_Tprime",::Tprime_reconstruction,{"jet4vecs","bjet4vecs"})
@@ -784,7 +786,8 @@ void TprimeHadAnalyzer::selectJets()
 
   _rlm = _rlm.Define("dRHbb_chi2","ROOT::VecOps::DeltaR(recob1_Higgs_cand_eta,recob2_Higgs_cand_eta,recob1_Higgs_cand_phi,recob2_Higgs_cand_phi)")
              .Define("dRWjj_chi2","ROOT::VecOps::DeltaR(recoj1_W_cand_eta,recoj2_W_cand_eta,recoj1_W_cand_phi,recoj2_W_cand_phi)")
-             .Define("dRbW_chi2","ROOT::VecOps::DeltaR(recoW_cand_eta,reco_otherj_cand_eta,recoW_cand_phi,reco_otherj_cand_phi)"); 
+//             .Define("dRbW_chi2","ROOT::VecOps::DeltaR(recoW_cand_eta,reco_otherj_cand_eta,recoW_cand_phi,reco_otherj_cand_phi)"); 
+             .Define("dRbW_chi2","ROOT::VecOps::DeltaR(recoW_cand_eta,recoj_bFromTop_cand_eta,recoW_cand_phi,recoj_bFromTop_cand_phi)"); 
 
   _rlm = _rlm.Define("dRTprimeoj_chi2","ROOT::VecOps::DeltaR(recoTprime_cand_eta,reco_otherj_cand_eta,recoTprime_cand_phi,reco_otherj_cand_phi)")
              .Define("dRHTop_chi2","ROOT::VecOps::DeltaR(recoHiggs_cand_eta,recoTop_cand_eta,recoHiggs_cand_phi,recoTop_cand_phi)")
@@ -801,13 +804,12 @@ void TprimeHadAnalyzer::calculateEvWeight()
 {
 
     // calculate event weight for MC only
-    //if (!_isData && !isDefined("evWeight")){
     if (!_isData){
         std::cout <<"b tagging SF"<< std::endl;
 
         auto btagWeight = [this](ints &hadflav, floats &etas, floats &pts, floats &discs, ints &wpL, ints &wpM, ints &wpT)->float
         {
-            return ::producer_btagWeight(_correction_btag1, _efficiency_btag1, _btvtype, "central", "central", hadflav, etas, pts, discs, wpL, wpM, wpT, _isTprime, _isTT, _isQCD); // defined in utility.cpp
+            return ::producer_btagWeight(_correction_btag1, _efficiency_btag1, "central", "central", hadflav, etas, pts, discs, wpL, wpM, wpT, _isTprime, _isTT, _isQCD, _isST, _isVJets, _isttH); // defined in utility.cpp
         };
 
         _rlm = _rlm.Define("btagWeight", btagWeight, {"selJetsForbtag_hadronFlavour","selJetsForbtag_eta","selJetsForbtag_pt","selJetsForbtag_btag", "WP_deepJet_L", "WP_deepJet_M", "WP_deepJet_T"});
@@ -895,12 +897,6 @@ void TprimeHadAnalyzer::setTree(TTree *t, std::string outfilename)
 
 void TprimeHadAnalyzer::setupObjects()
 {
-    // for evWeight pre-definition
-//    if (_isData && !isDefined("pugenWeight"))
-//    {
-//        std::cout << "wtf is happening, defining pugenWeight" << std::endl; 
-//        _rlm = _rlm.Define("pugenWeight","1.0");
-//    }
     // Object selection will be defined in sequence.
     // Selected objects will be stored in new vectors.
     genStudy();
@@ -908,7 +904,6 @@ void TprimeHadAnalyzer::setupObjects()
     selectJets();
     calculateEvWeight();
     //synch();
-    //removeOverlaps();
 }
 
 bool TprimeHadAnalyzer::readgoodjson(string goodjsonfname)
@@ -1016,12 +1011,6 @@ void TprimeHadAnalyzer::setupAnalysis()
     // Event weight for data it's always one. For MC, it depends on the sign
     //=====================================================================================================//
     _rlm = _rlm.Define("one", "1.0");
-    //if (_isData && !isDefined("evWeight"))
-    //{
-    //    _rlm = _rlm.Define("evWeight", [](){
-    //        return 1.0;
-    //    }, {} );
-    //}
   
     //==========================================sum of gen weight==========================================//
     //   store sum of gen weight in outputtree. 
@@ -1038,22 +1027,8 @@ void TprimeHadAnalyzer::setupAnalysis()
 
         _rlm = _rlm.Define("genEventSumw",sumofgenweight.c_str());
 
-        //_rlm = _rlm.Define("genWeight","genWeight");
         std::cout<<"Not Data! Using genWeight"<<std::endl;
     }
-    //
-
-    //for correction define evWeights as fallows
-    
-//    if  (_isData){
-//        std::cout << "isData!" << std::endl;
-//        _rlm = _rlm.Define("unitGenWeight","one");
-//        if (!isDefined("pugenWeight")){
-//            std::cout << "there is no pugenWeight, define new" << std::endl;
-//            _rlm = _rlm.Define("pugenWeight","one"); // if setupcorrection in processnanoad.py then don't define here. 
-//        }
-//        if (!isDefined("evWeight")) _rlm = _rlm.Define("evWeight","one");
-//    }
     
     defineCuts();
     defineMoreVars();

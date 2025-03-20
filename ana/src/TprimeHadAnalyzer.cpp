@@ -20,7 +20,7 @@ TprimeHadAnalyzer::TprimeHadAnalyzer(TTree *t, std::string outfilename)
 :NanoAODAnalyzerrdframe(t, outfilename)
 {
 
-    // could initiliaze the HLT names in your analyzer class here
+    //initiliaze the HLT names in your analyzer class
     //HLT2018Names = {"HLT_PFHT400_SixPFJet32_DoublePFBTagDeepCSV_2p94",
     //                "HLT_PFHT450_SixPFJet36_PFBTagDeepCSV_1p59",
     //                "HLT_PFHT330PT30_QuadPFJet_75_60_45_40_TriplePFBTagDeepCSV_4p5",
@@ -138,7 +138,6 @@ void TprimeHadAnalyzer::defineMoreVars()
     addVar({"selJet1_phi","selJet_phi[0]",""});
     addVar({"selJet1_mass","selJet_mass[0]",""});
     addVar({"selJet1_btag","selJet_btagDeepFlavB[0]",""});
-//    addVar({"selJet1_btag","selJet_btagDeepB[0]",""});
     addVar({"selJet1_e","jet4vecs[0].E()",""});
     addVar({"selJet1_px","jet4vecs[0].Px()",""});
     addVar({"selJet1_py","jet4vecs[0].Py()",""});
@@ -153,7 +152,6 @@ void TprimeHadAnalyzer::defineMoreVars()
     addVar({"selJet2_phi","selJet_phi[1]",""});
     addVar({"selJet2_mass","selJet_mass[1]",""});
     addVar({"selJet2_btag","selJet_btagDeepFlavB[1]",""});
-//    addVar({"selJet2_btag","selJet_btagDeepB[1]",""});
     addVar({"selJet2_e","jet4vecs[1].E()",""});
     addVar({"selJet2_px","jet4vecs[1].Px()",""});
     addVar({"selJet2_py","jet4vecs[1].Py()",""});
@@ -168,7 +166,6 @@ void TprimeHadAnalyzer::defineMoreVars()
     addVar({"selJet3_phi","selJet_phi[2]",""});
     addVar({"selJet3_mass","selJet_mass[2]",""});
     addVar({"selJet3_btag","selJet_btagDeepFlavB[2]",""});
-//    addVar({"selJet3_btag","selJet_btagDeepB[2]",""});
     addVar({"selJet3_e","jet4vecs[2].E()",""});
     addVar({"selJet3_px","jet4vecs[2].Px()",""});
     addVar({"selJet3_py","jet4vecs[2].Py()",""});
@@ -183,7 +180,6 @@ void TprimeHadAnalyzer::defineMoreVars()
     addVar({"selJet4_phi","selJet_phi[3]",""});
     addVar({"selJet4_mass","selJet_mass[3]",""});
     addVar({"selJet4_btag","selJet_btagDeepFlavB[3]",""});
-//    addVar({"selJet4_btag","selJet_btagDeepB[3]",""});
     addVar({"selJet4_e","jet4vecs[3].E()",""});
     addVar({"selJet4_px","jet4vecs[3].Px()",""});
     addVar({"selJet4_py","jet4vecs[3].Py()",""});
@@ -198,7 +194,6 @@ void TprimeHadAnalyzer::defineMoreVars()
     addVar({"selJet5_phi","selJet_phi[4]",""});
     addVar({"selJet5_mass","selJet_mass[4]",""});
     addVar({"selJet5_btag","selJet_btagDeepFlavB[4]",""});
-//    addVar({"selJet5_btag","selJet_btagDeepB[4]",""});
     addVar({"selJet5_e","jet4vecs[4].E()",""});
     addVar({"selJet5_px","jet4vecs[4].Px()",""});
     addVar({"selJet5_py","jet4vecs[4].Py()",""});
@@ -265,11 +260,6 @@ void TprimeHadAnalyzer::defineMoreVars()
 //  
     if(!_is2M1L && !_is3L && !_is3M && !_is3T){ 
     
-<<<<<<< HEAD
-=======
-    if(!_is2M1L && !_is3L && !_is3M && !_is3T){ 
-    
->>>>>>> d5a6f665072d6c355c0cf93001432af3eda24f95
     addVartoStore("selJetsForbtag_pt");
     addVartoStore("selJetsForbtag_eta");
     addVartoStore("selJetsForbtag_phi");
@@ -287,7 +277,6 @@ void TprimeHadAnalyzer::defineMoreVars()
     addVartoStore("nselLbJets");
     addVartoStore("nselMbJets");
     addVartoStore("nselTbJets");
-<<<<<<< HEAD
 
     // for TF
     addVartoStore("jet4vecs");
@@ -297,8 +286,6 @@ void TprimeHadAnalyzer::defineMoreVars()
     addVartoStore("numJets_eta");
     addVartoStore("denJets_pt");
     addVartoStore("denJets_eta");
-=======
->>>>>>> d5a6f665072d6c355c0cf93001432af3eda24f95
 
     // btag in binary
     addVartoStore("is_deepJet_T");
@@ -396,8 +383,6 @@ void TprimeHadAnalyzer::defineMoreVars()
 //
     }
 
-    }
-
 }
 //.================================Histogram Definitions===========================================//
 // _hist1dinfovector contains the information of histogram definitions (as TH1DModel)
@@ -409,7 +394,7 @@ void TprimeHadAnalyzer::bookHists()
 
   add1DHist( {"h_nevents", "Number of Events", 2, -0.5, 1.5}, "one", "genWeight", "");
   add1DHist( {"h_nevents_pugen", "Number of Events", 2, -0.5, 1.5}, "one", "pugenWeight", "");
-  add1DHist( {"h_nevents_weighted", "Number of Events", 2, -0.5, 1.5}, "one", "evWeight_L1btag_topPt", "0000");
+  add1DHist( {"h_nevents_weighted", "Number of Events", 2, -0.5, 1.5}, "one", "evWeight_all", "0000");
 
 }
 
@@ -476,13 +461,8 @@ void TprimeHadAnalyzer::genStudy()
           _rlm = _rlm.Define("HLT","HLT_PFHT380_SixPFJet32_DoublePFBTagCSV_2p2 || HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2 || HLT_PFHT430_SixPFJet40_BTagCSV_p080 || HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5 || HLT_HT300PT30_QuadJet_75_60_45_40_TripleCSV_p07 || HLT_HT300PT30_QuadJet_75_60_45_40_TriplePFBTagCSV_3p0 || HLT_PFHT1050 || HLT_PFJet500");
 
       }else if(_year==2018){
-<<<<<<< HEAD
 //          _rlm = _rlm.Define("HLT","HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2 || HLT_PFHT400_FivePFJet_100_100_60_30_30_DoublePFBTagDeepCSV_4p5 || HLT_PFHT430_SixPFJet40_PFBTagDeepCSV_1p5 || HLT_PFHT330PT30_QuadPFJet_75_60_45_40_TriplePFBTagDeepCSV_4p5 || HLT_PFHT1050 || HLT_PFJet500");
           _rlm = _rlm.Define("HLT","HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2 || HLT_PFHT400_FivePFJet_100_100_60_30_30_DoublePFBTagDeepCSV_4p5 || HLT_PFHT430_SixPFJet40_PFBTagDeepCSV_1p5 || HLT_PFHT330PT30_QuadPFJet_75_60_45_40_TriplePFBTagDeepCSV_4p5 || HLT_PFHT1050 || HLT_PFJet500 || HLT_PFHT400_SixPFJet32_DoublePFBTagDeepCSV_2p94 || HLT_PFHT450_SixPFJet36_PFBTagDeepCSV_1p59");
-=======
-          _rlm = _rlm.Define("HLT","HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2 || HLT_PFHT400_FivePFJet_100_100_60_30_30_DoublePFBTagDeepCSV_4p5 || HLT_PFHT430_SixPFJet40_PFBTagDeepCSV_1p5 || HLT_PFHT330PT30_QuadPFJet_75_60_45_40_TriplePFBTagDeepCSV_4p5 || HLT_PFHT1050 || HLT_PFJet500");
-//          _rlm = _rlm.Define("HLT","HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2 || HLT_PFHT400_FivePFJet_100_100_60_30_30_DoublePFBTagDeepCSV_4p5 || HLT_PFHT430_SixPFJet40_PFBTagDeepCSV_1p5 || HLT_PFHT330PT30_QuadPFJet_75_60_45_40_TriplePFBTagDeepCSV_4p5 || HLT_PFJet500");
->>>>>>> d5a6f665072d6c355c0cf93001432af3eda24f95
       }
   }
 
@@ -510,6 +490,8 @@ void TprimeHadAnalyzer::selectLeptons()
 
 void TprimeHadAnalyzer::selectJets()
 { 
+  //check the twiki page :    https://twiki.cern.ch/twiki/bin/view/CMS/JetID
+  //to find jetId working points for the purpose of  your analysis.
   
   //cout << "select good jets" << endl;
   //-------------------------------------------------------
@@ -520,50 +502,72 @@ void TprimeHadAnalyzer::selectJets()
   //_rlm = _rlm.Define("Jet_idx","")
 
   if(!_isData){
-              _rlm = _rlm.Define("MCorData", "-1.0");
-              auto getJERCptResolution=[this](floats &etas, floats &pts, floats &rhos)->floats
-              {
-                      return ::JERCptResolution(_jerc_fname, _jercptres_type, etas, pts, rhos);
-              };
 
-              auto getJERCSF=[this](floats &etas)->floats
-              {
-                      return ::JERCSF(_jerc_fname, _jercSF_type,"nom", etas);
-              };
+      _rlm = _rlm.Define("MCorData", "-1.0");
+
+      auto getJERCptResolution=[this](floats &etas, floats &pts, floats &rhos)->floats
+      {
+              return ::JERCptResolution(_jerc_fname, _jercptres_type, etas, pts, rhos);
+      };
+
+      auto getJERCSF=[this](floats &etas)->floats
+      {
+              return ::JERCSF(_jerc_fname, _jercSF_type,"nom", etas);
+      };
+
+      auto getJERCSFup=[this](floats &etas)->floats
+      {
+              return ::JERCSF(_jerc_fname, _jercSF_type,"up", etas);
+      };
+
+      auto getJERCSFdown=[this](floats &etas)->floats
+      {
+              return ::JERCSF(_jerc_fname, _jercSF_type,"down", etas);
+      };
 
       _rlm = _rlm.Define("JERCptResolution", getJERCptResolution, {"Jet_eta","Jet_pt","fixedGridRhoFastjetAll"});
       _rlm = _rlm.Define("JERCSF", getJERCSF, {"Jet_eta"});
       _rlm = _rlm.Define("GenMatchJetPtvars", ::GenMatchJetPt, {"Jet_pt", "Jet_eta", "Jet_phi", "Jet_mass", "GenJet_pt", "GenJet_eta", "GenJet_phi", "GenJet_mass", "JERCptResolution"});
-      _rlm = _rlm.Define("c_JER", ::getcJER, {"Jet_pt", "GenMatchJetPtvars", "JERCSF", "JERCptResolution"});
-      _rlm = _rlm.Define("Jet_pt_smear_nom", "c_JER*Jet_pt");
-//      _rlm = _rlm.Define("corrmet_pt_nom", ::getmetsmear, {"corrmetjson_pt", "corrmet_phi", "Jet_pt", "Jet_pt_smear_nom", "Jet_phi"}); // this is the good one
-      _rlm = _rlm.Define("rawmet_pt", "MET_pt");
-      _rlm = _rlm.Define("rawmet_phi", "MET_phi");
+
+      if(_jersys == "Up"){
+
+          _rlm = _rlm.Define("JERCSFUp", getJERCSFup, {"Jet_eta"})
+                     .Define("JERCSFUp2Sig", "JERCSF+2*(JERCSFUp-JERCSF)");
+//          _rlm = _rlm.Define("c_JER", ::getcJER, {"Jet_pt", "GenMatchJetPtvars", "JERCSFUp2Sig", "JERCptResolution"});
+          _rlm = _rlm.Define("c_JER", ::getcJER, {"Jet_pt", "GenMatchJetPtvars", "JERCSFUp", "JERCptResolution"});
+
+      }else if(_jersys == "Dn"){
+
+          _rlm = _rlm.Define("JERCSFDn", getJERCSFdown, {"Jet_eta"})
+                     .Define("JERCSFDn2Sig", "JERCSF+2*(JERCSFDn-JERCSF)");
+//          _rlm = _rlm.Define("c_JER", ::getcJER, {"Jet_pt", "GenMatchJetPtvars", "JERCSFDn2Sig", "JERCptResolution"});
+          _rlm = _rlm.Define("c_JER", ::getcJER, {"Jet_pt", "GenMatchJetPtvars", "JERCSFDn", "JERCptResolution"});
+
+      }else{
+
+          _rlm = _rlm.Define("c_JER", ::getcJER, {"Jet_pt", "GenMatchJetPtvars", "JERCSF", "JERCptResolution"});
+
+      }
+
+      _rlm = _rlm.Define("Jet_pt_smear", "c_JER*Jet_pt");
 
   }
   else{
       _rlm = _rlm.Define("MCorData", "1.0");
-      _rlm = _rlm.Define("Jet_pt_smear_nom", "Jet_pt");
+      _rlm = _rlm.Define("Jet_pt_smear", "Jet_pt");
       _rlm = _rlm.Define("run_numbers", "float(run)");
-      _rlm = _rlm.Define("rawmet_pt", "MET_pt");
-      _rlm = _rlm.Define("rawmet_phi", "MET_phi");
   }
   
   //presel for overlap
-<<<<<<< HEAD
-  _rlm = _rlm.Define("pre_goodJets", "Jet_jetId > 1 && Jet_pt_smear_nom >= 30 && abs(Jet_eta) <= 2.5 && (Jet_pt_smear_nom > 50 || Jet_puId > 0)");
-//  _rlm = _rlm.Define("pre_goodJets", "Jet_jetId > 1 && Jet_pt_smear_nom >= 30 && abs(Jet_eta) <= 4.5 && (Jet_pt_smear_nom > 50 || Jet_puId > 0)");
-=======
-  _rlm = _rlm.Define("pre_goodJets", "Jet_jetId > 1 && Jet_pt_smear_nom >= 30 && abs(Jet_eta) <= 4.5 && (Jet_pt_smear_nom > 50 || Jet_puId > 0)");
->>>>>>> d5a6f665072d6c355c0cf93001432af3eda24f95
+  _rlm = _rlm.Define("pre_goodJets", "Jet_jetId > 1 && Jet_pt_smear >= 30 && abs(Jet_eta) <= 2.5 && (Jet_pt_smear > 50 || Jet_puId > 0)");
+//  _rlm = _rlm.Define("pre_goodJets", "Jet_jetId > 1 && Jet_pt_smear >= 30 && abs(Jet_eta) <= 4.5 && (Jet_pt_smear > 50 || Jet_puId > 0)");
   
   _rlm = _rlm.Define("pre_nselJets","Sum(pre_goodJets)")
-             .Define("pre_selJet_pt","Jet_pt_smear_nom[pre_goodJets]")
+             .Define("pre_selJet_pt","Jet_pt_smear[pre_goodJets]")
              .Define("pre_selJet_eta","Jet_eta[pre_goodJets]")
              .Define("pre_selJet_phi","Jet_phi[pre_goodJets]")
              .Define("pre_selJet_mass","Jet_mass[pre_goodJets]")
              .Define("pre_selJet_btagDeepFlavB","Jet_btagDeepFlavB[pre_goodJets]")
-//             .Define("pre_selJet_btagDeepB","Jet_btagDeepB[pre_goodJets]")
              .Define("pre_jet4vecs", ::generate_4vec, {"pre_selJet_pt", "pre_selJet_eta", "pre_selJet_phi", "pre_selJet_mass"});
 
   if(!_isData) _rlm = _rlm.Define("pre_selJet_hadronFlavour", "Jet_hadronFlavour[pre_goodJets]");
@@ -602,7 +606,6 @@ void TprimeHadAnalyzer::selectJets()
              .Define("selJet_phi","pre_selJet_phi[goodJets]")
              .Define("selJet_mass","pre_selJet_mass[goodJets]")
              .Define("selJet_btagDeepFlavB","pre_selJet_btagDeepFlavB[goodJets]")
-//             .Define("selJet_btagDeepB","pre_selJet_btagDeepB[goodJets]")
 
              .Define("nselJets","int(selJet_pt.size())")
              .Define("nsel40Jets","int(selJet40_pt.size())")
@@ -622,16 +625,10 @@ void TprimeHadAnalyzer::selectJets()
       _rlm = _rlm.Define("is_deepJet_T","pre_selJet_btagDeepFlavB > 0.7476");
       _rlm = _rlm.Define("is_deepJet_M","pre_selJet_btagDeepFlavB > 0.3040");
       _rlm = _rlm.Define("is_deepJet_L","pre_selJet_btagDeepFlavB > 0.0532");
-// to be reverted, just for a quick check
   }else if(_year==2018){
       _rlm = _rlm.Define("is_deepJet_T","pre_selJet_btagDeepFlavB > 0.7100");
       _rlm = _rlm.Define("is_deepJet_M","pre_selJet_btagDeepFlavB > 0.2783");
       _rlm = _rlm.Define("is_deepJet_L","pre_selJet_btagDeepFlavB > 0.0490");
-// DeepCSV check
-//  }else if(_year==2018){
-//      _rlm = _rlm.Define("is_deepJet_T","pre_selJet_btagDeepB > 0.7665");
-//      _rlm = _rlm.Define("is_deepJet_M","pre_selJet_btagDeepB > 0.4168");
-//      _rlm = _rlm.Define("is_deepJet_L","pre_selJet_btagDeepB > 0.1208");
   }
 
   if(!_isData){
@@ -681,7 +678,6 @@ void TprimeHadAnalyzer::selectJets()
              .Define("selbJet_phi","pre_selJet_phi[goodbJets]")
              .Define("selbJet_mass","pre_selJet_mass[goodbJets]")
              .Define("selbJet_btag","pre_selJet_btagDeepFlavB[goodbJets]")
-//             .Define("selbJet_btag","pre_selJet_btagDeepB[goodbJets]")
              .Define("nselbJets","int(selbJet_pt.size())")
              .Define("bjet4vecs", ::generate_4vec, {"selbJet_pt", "selbJet_eta", "selbJet_phi", "selbJet_mass"});
 
@@ -694,7 +690,6 @@ void TprimeHadAnalyzer::selectJets()
              .Define("selLbJet_phi","pre_selJet_phi[goodLbJets]")
              .Define("selLbJet_mass","pre_selJet_mass[goodLbJets]")
              .Define("selLbJet_btag","pre_selJet_btagDeepFlavB[goodLbJets]")
-//             .Define("selLbJet_btag","pre_selJet_btagDeepB[goodLbJets]")
              .Define("nselLbJets","int(selLbJet_pt.size())")
              .Define("Lbjet4vecs", ::generate_4vec, {"selLbJet_pt", "selLbJet_eta", "selLbJet_phi", "selLbJet_mass"});
 
@@ -703,7 +698,6 @@ void TprimeHadAnalyzer::selectJets()
              .Define("selMbJet_phi","pre_selJet_phi[goodMbJets]")
              .Define("selMbJet_mass","pre_selJet_mass[goodMbJets]")
              .Define("selMbJet_btag","pre_selJet_btagDeepFlavB[goodMbJets]")
-//             .Define("selMbJet_btag","pre_selJet_btagDeepB[goodMbJets]")
              .Define("nselMbJets","int(selMbJet_pt.size())")
              .Define("Mbjet4vecs", ::generate_4vec, {"selMbJet_pt", "selMbJet_eta", "selMbJet_phi", "selMbJet_mass"});
 
@@ -712,7 +706,6 @@ void TprimeHadAnalyzer::selectJets()
              .Define("selTbJet_phi","pre_selJet_phi[goodTbJets]")
              .Define("selTbJet_mass","pre_selJet_mass[goodTbJets]")
              .Define("selTbJet_btag","pre_selJet_btagDeepFlavB[goodTbJets]")
-//             .Define("selTbJet_btag","pre_selJet_btagDeepB[goodTbJets]")
              .Define("nselTbJets","int(selTbJet_pt.size())")
              .Define("Tbjet4vecs", ::generate_4vec, {"selTbJet_pt", "selTbJet_eta", "selTbJet_phi", "selTbJet_mass"});
 
@@ -791,13 +784,11 @@ void TprimeHadAnalyzer::selectJets()
              .Define("recoj1_W_cand_pt","float(jet4vecs[Chi2_Tprime[2]].Pt())")
              .Define("recoj1_W_cand_p","float(jet4vecs[Chi2_Tprime[2]].P())")
              .Define("recoj1_W_cand_btag","selJet_btagDeepFlavB[Chi2_Tprime[2]]")
-//             .Define("recoj1_W_cand_btag","selJet_btagDeepB[Chi2_Tprime[2]]")
              .Define("recoj2_W_cand_eta","float(jet4vecs[Chi2_Tprime[3]].Eta())")
              .Define("recoj2_W_cand_phi","float(jet4vecs[Chi2_Tprime[3]].Phi())")
              .Define("recoj2_W_cand_pt","float(jet4vecs[Chi2_Tprime[3]].Pt())")
              .Define("recoj2_W_cand_p","float(jet4vecs[Chi2_Tprime[3]].P())")
              .Define("recoj2_W_cand_btag","selJet_btagDeepFlavB[Chi2_Tprime[3]]")
-//             .Define("recoj2_W_cand_btag","selJet_btagDeepB[Chi2_Tprime[3]]")
 
              .Define("recoj_bFromTop_cand_eta","float(bjet4vecs[Chi2_Tprime[4]].Eta())")
              .Define("recoj_bFromTop_cand_phi","float(bjet4vecs[Chi2_Tprime[4]].Phi())")
@@ -810,7 +801,6 @@ void TprimeHadAnalyzer::selectJets()
              .Define("reco_otherj_cand_pt","float(jet4vecs[Chi2_Tprime[5]].Pt())")
              .Define("reco_otherj_cand_p","float(jet4vecs[Chi2_Tprime[5]].P())")
              .Define("reco_otherj_cand_btag","selJet_btagDeepFlavB[Chi2_Tprime[5]]");
-//             .Define("reco_otherj_cand_btag","selJet_btagDeepB[Chi2_Tprime[5]]");
 
   // Kinematic reconstructions
   _rlm = _rlm.Define("invmass_leadjets", "(jet4vecs[0]+jet4vecs[1]+jet4vecs[2]+jet4vecs[3]+jet4vecs[4]).M()");
@@ -849,7 +839,59 @@ void TprimeHadAnalyzer::calculateEvWeight()
             return ::producer_btagWeight(_correction_btag1, _efficiency_btag1, "central", "central", hadflav, etas, pts, discs, wpL, wpM, wpT, _isTprime, _isTT, _isQCD, _isST, _isVJets, _isttH); // defined in utility.cpp
         };
 
+//        auto btagWeight = [this](ints &hadflav, floats &etas, floats &pts, floats &discs, ints &wpL, ints &wpM, ints &wpT, std::string &bcvar, std::string &lvar)->float
+//        {
+//            return ::producer_btagWeight(_correction_btag1, _efficiency_btag1, bcvar, lvar, hadflav, etas, pts, discs, wpL, wpM, wpT, _isTprime, _isTT, _isQCD, _isST, _isVJets, _isttH); // defined in utility.cpp
+//        };
+
+        auto btagWeight_hUp = [this](ints &hadflav, floats &etas, floats &pts, floats &discs, ints &wpL, ints &wpM, ints &wpT)->float
+        {
+            return ::producer_btagWeight(_correction_btag1, _efficiency_btag1, "up_correlated", "central", hadflav, etas, pts, discs, wpL, wpM, wpT, _isTprime, _isTT, _isQCD, _isST, _isVJets, _isttH); // defined in utility.cpp
+        };
+
+        auto btagWeight_hUpuncorr = [this](ints &hadflav, floats &etas, floats &pts, floats &discs, ints &wpL, ints &wpM, ints &wpT)->float
+        {
+            return ::producer_btagWeight(_correction_btag1, _efficiency_btag1, "up_uncorrelated", "central", hadflav, etas, pts, discs, wpL, wpM, wpT, _isTprime, _isTT, _isQCD, _isST, _isVJets, _isttH); // defined in utility.cpp
+        };
+
+        auto btagWeight_lUp = [this](ints &hadflav, floats &etas, floats &pts, floats &discs, ints &wpL, ints &wpM, ints &wpT)->float
+        {
+            return ::producer_btagWeight(_correction_btag1, _efficiency_btag1, "central", "up_correlated", hadflav, etas, pts, discs, wpL, wpM, wpT, _isTprime, _isTT, _isQCD, _isST, _isVJets, _isttH); // defined in utility.cpp
+        };
+
+        auto btagWeight_lUpuncorr = [this](ints &hadflav, floats &etas, floats &pts, floats &discs, ints &wpL, ints &wpM, ints &wpT)->float
+        {
+            return ::producer_btagWeight(_correction_btag1, _efficiency_btag1, "central", "up_uncorrelated", hadflav, etas, pts, discs, wpL, wpM, wpT, _isTprime, _isTT, _isQCD, _isST, _isVJets, _isttH); // defined in utility.cpp
+        };
+        auto btagWeight_hDn = [this](ints &hadflav, floats &etas, floats &pts, floats &discs, ints &wpL, ints &wpM, ints &wpT)->float
+        {
+            return ::producer_btagWeight(_correction_btag1, _efficiency_btag1, "down_correlated", "central", hadflav, etas, pts, discs, wpL, wpM, wpT, _isTprime, _isTT, _isQCD, _isST, _isVJets, _isttH); // defined in utility.cpp
+        };
+
+        auto btagWeight_hDnuncorr = [this](ints &hadflav, floats &etas, floats &pts, floats &discs, ints &wpL, ints &wpM, ints &wpT)->float
+        {
+            return ::producer_btagWeight(_correction_btag1, _efficiency_btag1, "down_uncorrelated", "central", hadflav, etas, pts, discs, wpL, wpM, wpT, _isTprime, _isTT, _isQCD, _isST, _isVJets, _isttH); // defined in utility.cpp
+        };
+
+        auto btagWeight_lDn = [this](ints &hadflav, floats &etas, floats &pts, floats &discs, ints &wpL, ints &wpM, ints &wpT)->float
+        {
+            return ::producer_btagWeight(_correction_btag1, _efficiency_btag1, "central", "down_correlated", hadflav, etas, pts, discs, wpL, wpM, wpT, _isTprime, _isTT, _isQCD, _isST, _isVJets, _isttH); // defined in utility.cpp
+        };
+
+        auto btagWeight_lDnuncorr = [this](ints &hadflav, floats &etas, floats &pts, floats &discs, ints &wpL, ints &wpM, ints &wpT)->float
+        {
+            return ::producer_btagWeight(_correction_btag1, _efficiency_btag1, "central", "down_uncorrelated", hadflav, etas, pts, discs, wpL, wpM, wpT, _isTprime, _isTT, _isQCD, _isST, _isVJets, _isttH); // defined in utility.cpp
+        };
+
         _rlm = _rlm.Define("btagWeight", btagWeight, {"selJetsForbtag_hadronFlavour","selJetsForbtag_eta","selJetsForbtag_pt","selJetsForbtag_btag", "WP_deepJet_L", "WP_deepJet_M", "WP_deepJet_T"});
+        _rlm = _rlm.Define("btagWeight_hUp", btagWeight_hUp, {"selJetsForbtag_hadronFlavour","selJetsForbtag_eta","selJetsForbtag_pt","selJetsForbtag_btag", "WP_deepJet_L", "WP_deepJet_M", "WP_deepJet_T"});
+        _rlm = _rlm.Define("btagWeight_hUpuncorr", btagWeight_hUpuncorr, {"selJetsForbtag_hadronFlavour","selJetsForbtag_eta","selJetsForbtag_pt","selJetsForbtag_btag", "WP_deepJet_L", "WP_deepJet_M", "WP_deepJet_T"});
+        _rlm = _rlm.Define("btagWeight_lUp", btagWeight_lUp, {"selJetsForbtag_hadronFlavour","selJetsForbtag_eta","selJetsForbtag_pt","selJetsForbtag_btag", "WP_deepJet_L", "WP_deepJet_M", "WP_deepJet_T"});
+        _rlm = _rlm.Define("btagWeight_lUpuncorr", btagWeight_lUpuncorr, {"selJetsForbtag_hadronFlavour","selJetsForbtag_eta","selJetsForbtag_pt","selJetsForbtag_btag", "WP_deepJet_L", "WP_deepJet_M", "WP_deepJet_T"});
+        _rlm = _rlm.Define("btagWeight_hDn", btagWeight_hDn, {"selJetsForbtag_hadronFlavour","selJetsForbtag_eta","selJetsForbtag_pt","selJetsForbtag_btag", "WP_deepJet_L", "WP_deepJet_M", "WP_deepJet_T"});
+        _rlm = _rlm.Define("btagWeight_hDnuncorr", btagWeight_hDnuncorr, {"selJetsForbtag_hadronFlavour","selJetsForbtag_eta","selJetsForbtag_pt","selJetsForbtag_btag", "WP_deepJet_L", "WP_deepJet_M", "WP_deepJet_T"});
+        _rlm = _rlm.Define("btagWeight_lDn", btagWeight_lDn, {"selJetsForbtag_hadronFlavour","selJetsForbtag_eta","selJetsForbtag_pt","selJetsForbtag_btag", "WP_deepJet_L", "WP_deepJet_M", "WP_deepJet_T"});
+        _rlm = _rlm.Define("btagWeight_lDnuncorr", btagWeight_lDnuncorr, {"selJetsForbtag_hadronFlavour","selJetsForbtag_eta","selJetsForbtag_pt","selJetsForbtag_btag", "WP_deepJet_L", "WP_deepJet_M", "WP_deepJet_T"});
 
     }else{
         std::cout <<"its data, no b tagging SF applied"<< std::endl;
@@ -866,19 +908,41 @@ void TprimeHadAnalyzer::calculateEvWeight()
         _rlm = _rlm.Define("evWeight_topPtSF", ::topPtWeight, {"GenPart_pt", "GenPart_pdgId", "GenPart_statusFlags"});
             if(_topPtReweightsys == "True"){
                 _rlm = _rlm.Define("evWeight_topPtSFUp", "evWeight_topPtSF*evWeight_topPtSF");
-                _rlm = _rlm.Define("evWeight_topPtSFDown", "1.0");
+                _rlm = _rlm.Define("evWeight_topPtSFDn", "1.0");
             }
     }else{
         _rlm = _rlm.Define("evWeight_topPtSF", "1.0");
     }
 
-    // previously
-    //_rlm = _rlm.Define("evWeight", "pugenWeight * btagWeight_DeepJetrecalc");
-    _rlm = _rlm.Define("evWeight", "pugenWeight");
-    _rlm = _rlm.Define("evWeight_L1", "pugenWeight * L1PreFiringWeight_Nom");
-    _rlm = _rlm.Define("evWeight_L1btag", "pugenWeight * btagWeight * L1PreFiringWeight_Nom");
-    _rlm = _rlm.Define("evWeight_L1_topPt", "pugenWeight * L1PreFiringWeight_Nom * evWeight_topPtSF");
-    _rlm = _rlm.Define("evWeight_L1btag_topPt", "pugenWeight * btagWeight * L1PreFiringWeight_Nom * evWeight_topPtSF");
+    _rlm = _rlm.Define("evWeight_pugen", "pugenWeight");
+    _rlm = _rlm.Define("evWeight_pugen_L1", "pugenWeight * L1PreFiringWeight_Nom");
+    _rlm = _rlm.Define("evWeight_pugen_L1_btag", "pugenWeight * L1PreFiringWeight_Nom * btagWeight");
+    _rlm = _rlm.Define("evWeight_pugen_L1_btag_topPt", "pugenWeight * L1PreFiringWeight_Nom * btagWeight * evWeight_topPtSF");
+    _rlm = _rlm.Define("evWeight_all", "pugenWeight * btagWeight * L1PreFiringWeight_Nom * evWeight_topPtSF");
+
+    _rlm = _rlm.Define("evWeight_L1Up", "pugenWeight * btagWeight * L1PreFiringWeight_Up * evWeight_topPtSF");
+    _rlm = _rlm.Define("evWeight_L1Dn", "pugenWeight * btagWeight * L1PreFiringWeight_Dn * evWeight_topPtSF");
+
+    if(_btagsys == "True"){
+    _rlm = _rlm.Define("evWeight_btaghUp", "pugenWeight * btagWeight_hUp * L1PreFiringWeight_Nom * evWeight_topPtSF");
+    _rlm = _rlm.Define("evWeight_btaglUp", "pugenWeight * btagWeight_lUp * L1PreFiringWeight_Nom * evWeight_topPtSF");
+
+    _rlm = _rlm.Define("evWeight_btaghDn", "pugenWeight * btagWeight_hDn * L1PreFiringWeight_Nom * evWeight_topPtSF");
+    _rlm = _rlm.Define("evWeight_btaglDn", "pugenWeight * btagWeight_lDn * L1PreFiringWeight_Nom * evWeight_topPtSF");
+
+        if(_btagsysuncorr == "True"){
+            _rlm = _rlm.Define("evWeight_btaghUpuncorr", "pugenWeight * btagWeight_hUpuncorr * L1PreFiringWeight_Nom * evWeight_topPtSF");
+            _rlm = _rlm.Define("evWeight_btaglUpuncorr", "pugenWeight * btagWeight_lUpuncorr * L1PreFiringWeight_Nom * evWeight_topPtSF");
+            _rlm = _rlm.Define("evWeight_btaghDnuncorr", "pugenWeight * btagWeight_hDnuncorr * L1PreFiringWeight_Nom * evWeight_topPtSF");
+            _rlm = _rlm.Define("evWeight_btaglDnuncorr", "pugenWeight * btagWeight_lDnuncorr * L1PreFiringWeight_Nom * evWeight_topPtSF");
+
+        }
+
+    }
+    if(_topPtReweightsys == "True"){
+        _rlm = _rlm.Define("evWeight_topPtUp", "pugenWeight * L1PreFiringWeight_Nom * btagWeight * evWeight_topPtSFUp");
+        _rlm = _rlm.Define("evWeight_topPtDn", "pugenWeight * L1PreFiringWeight_Nom * btagWeight * evWeight_topPtSFDn");
+    }
 
 }
 
@@ -991,49 +1055,49 @@ bool TprimeHadAnalyzer::readgoodjson(string goodjsonfname)
     }
 }
 
-void TprimeHadAnalyzer::GetJetsys(string sys){
-
-                auto getJERCptResolution=[this](floats &etas, floats &pts, floats &rhos)->floats
-                {
-                        return ::JERCptResolution(_jerc_fname, _jercptres_type, etas, pts, rhos);
-                };
-
-        //_rlm = _rlm.Define(sys, ::getsysJerc, {_jerc_fname, "Jet_pt_smear", "Jet_eta", _jercsys_total})
-        _rlm = _rlm.Define("Jet_pt_"+sys+"Up", sys+"*2*Jet_pt+Jet_pt")
-               .Define("Jet_pt_"+sys+"Down", "-"+sys+"*2*Jet_pt+Jet_pt")
-               .Define("Jet_mass_"+sys+"Up", sys+"*Jet_mass+Jet_mass")
-               .Define("Jet_mass_"+sys+"Down", "-"+sys+"*Jet_mass+Jet_mass");
-                _rlm = _rlm.Define("JERCptResolution"+sys+"Up", getJERCptResolution, {"Jet_eta","Jet_pt_"+sys+"Up","fixedGridRhoFastjetAll"});
-                _rlm = _rlm.Define("JERCptResolution"+sys+"Down", getJERCptResolution, {"Jet_eta","Jet_pt_"+sys+"Down","fixedGridRhoFastjetAll"});
-                _rlm = _rlm.Define("GenMatchJetPtvars"+sys+"Up", ::GenMatchJetPt, {"Jet_pt_"+sys+"Up", "Jet_eta", "Jet_phi", "Jet_mass_"+sys+"Up", "GenJet_pt", "GenJet_eta", "GenJet_phi", "GenJet_mass", "JERCptResolution"+sys+"Up"});
-                _rlm = _rlm.Define("GenMatchJetPtvars"+sys+"Down", ::GenMatchJetPt, {"Jet_pt_"+sys+"Down", "Jet_eta", "Jet_phi", "Jet_mass_"+sys+"Down", "GenJet_pt", "GenJet_eta", "GenJet_phi", "GenJet_mass", "JERCptResolution"+sys+"Down"});
-                _rlm = _rlm.Define("c_JER"+sys+"Up", ::getcJER, {"Jet_pt_"+sys+"Up", "GenMatchJetPtvars"+sys+"Up", "JERCSF", "JERCptResolution"+sys+"Up"});
-                _rlm = _rlm.Define("c_JER"+sys+"Down", ::getcJER, {"Jet_pt_"+sys+"Down", "GenMatchJetPtvars"+sys+"Down", "JERCSF", "JERCptResolution"+sys+"Down"});
-                _rlm = _rlm.Define("Jet_pt_smear_"+sys+"Up", "c_JER"+sys+"Up*Jet_pt_"+sys+"Up");
-                _rlm = _rlm.Define("Jet_pt_smear_"+sys+"Down", "c_JER"+sys+"Down*Jet_pt_"+sys+"Down");
-//                _rlm = _rlm.Define("corrmet_pt_"+sys+"Up", ::getmetsmear, {"corrmetjson_pt", "corrmet_phi", "Jet_pt_"+sys+"Up", "Jet_pt_smear_"+sys+"Up", "Jet_phi"});
-//                _rlm = _rlm.Define("corrmet_pt_"+sys+"Down", ::getmetsmear, {"corrmetjson_pt", "corrmet_phi", "Jet_pt_"+sys+"Down", "Jet_pt_smear_"+sys+"Down", "Jet_phi"});
-
-        _rlm = _rlm.Define("goodJets_"+sys+"Up", "goodJetsID && Jet_pt_smear_"+sys+"Up>30.0 && abs(Jet_eta)<2.5");
-        _rlm = _rlm.Define("goodJets_pt_"+sys+"Up", "Jet_pt_smear_"+sys+"Up[goodJets_"+sys+"Up]")
-               .Define("goodJets_eta_"+sys+"Up", "Jet_eta[goodJets_"+sys+"Up]")
-               .Define("goodJets_phi_"+sys+"Up", "Jet_phi[goodJets_"+sys+"Up]")
-               .Define("goodJets_mass_"+sys+"Up", "Jet_mass[goodJets_"+sys+"Up]")
-               .Define("goodJetsHT_"+sys+"Up", "Sum(goodJets_pt_"+sys+"Up)")
-               .Define("goodJets_deepjetbtag_"+sys+"Up", "Jet_btagDeepFlavB[goodJets_"+sys+"Up]")
-               .Define("goodJets_hadflav_"+sys+"Up", "Jet_hadronFlavour[goodJets_"+sys+"Up]")
-               .Define("goodJets_4vecs_"+sys+"Up", ::generate_4vec, {"goodJets_pt_"+sys+"Up", "goodJets_eta_"+sys+"Up", "goodJets_phi_"+sys+"Up", "goodJets_mass_"+sys+"Up"});
-
-        _rlm = _rlm.Define("goodJets_"+sys+"Down", "goodJetsID && Jet_pt_smear_"+sys+"Down>30.0 && abs(Jet_eta)<2.5");
-        _rlm = _rlm.Define("goodJets_pt_"+sys+"Down", "Jet_pt_smear_"+sys+"Down[goodJets_"+sys+"Down]")
-               .Define("goodJets_eta_"+sys+"Down", "Jet_eta[goodJets_"+sys+"Down]")
-               .Define("goodJets_phi_"+sys+"Down", "Jet_phi[goodJets_"+sys+"Down]")
-               .Define("goodJets_mass_"+sys+"Down", "Jet_mass[goodJets_"+sys+"Down]")
-               .Define("goodJetsHT_"+sys+"Down", "Sum(goodJets_pt_"+sys+"Down)")
-               .Define("goodJets_deepjetbtag_"+sys+"Down", "Jet_btagDeepFlavB[goodJets_"+sys+"Down]")
-               .Define("goodJets_hadflav_"+sys+"Down", "Jet_hadronFlavour[goodJets_"+sys+"Down]")
-               .Define("goodJets_4vecs_"+sys+"Down", ::generate_4vec, {"goodJets_pt_"+sys+"Down", "goodJets_eta_"+sys+"Down", "goodJets_phi_"+sys+"Down", "goodJets_mass_"+sys+"Down"});
-}
+//void TprimeHadAnalyzer::GetJetsys(string sys){
+//
+//                auto getJERCptResolution=[this](floats &etas, floats &pts, floats &rhos)->floats
+//                {
+//                        return ::JERCptResolution(_jerc_fname, _jercptres_type, etas, pts, rhos);
+//                };
+//
+//        //_rlm = _rlm.Define(sys, ::getsysJerc, {_jerc_fname, "Jet_pt_smear", "Jet_eta", _jercsys_total})
+//        _rlm = _rlm.Define("Jet_pt_"+sys+"Up", sys+"*2*Jet_pt+Jet_pt")
+//               .Define("Jet_pt_"+sys+"Dn", "-"+sys+"*2*Jet_pt+Jet_pt")
+//               .Define("Jet_mass_"+sys+"Up", sys+"*Jet_mass+Jet_mass")
+//               .Define("Jet_mass_"+sys+"Dn", "-"+sys+"*Jet_mass+Jet_mass");
+//                _rlm = _rlm.Define("JERCptResolution"+sys+"Up", getJERCptResolution, {"Jet_eta","Jet_pt_"+sys+"Up","fixedGridRhoFastjetAll"});
+//                _rlm = _rlm.Define("JERCptResolution"+sys+"Dn", getJERCptResolution, {"Jet_eta","Jet_pt_"+sys+"Dn","fixedGridRhoFastjetAll"});
+//                _rlm = _rlm.Define("GenMatchJetPtvars"+sys+"Up", ::GenMatchJetPt, {"Jet_pt_"+sys+"Up", "Jet_eta", "Jet_phi", "Jet_mass_"+sys+"Up", "GenJet_pt", "GenJet_eta", "GenJet_phi", "GenJet_mass", "JERCptResolution"+sys+"Up"});
+//                _rlm = _rlm.Define("GenMatchJetPtvars"+sys+"Dn", ::GenMatchJetPt, {"Jet_pt_"+sys+"Dn", "Jet_eta", "Jet_phi", "Jet_mass_"+sys+"Dn", "GenJet_pt", "GenJet_eta", "GenJet_phi", "GenJet_mass", "JERCptResolution"+sys+"Dn"});
+//                _rlm = _rlm.Define("c_JER"+sys+"Up", ::getcJER, {"Jet_pt_"+sys+"Up", "GenMatchJetPtvars"+sys+"Up", "JERCSF", "JERCptResolution"+sys+"Up"});
+//                _rlm = _rlm.Define("c_JER"+sys+"Dn", ::getcJER, {"Jet_pt_"+sys+"Dn", "GenMatchJetPtvars"+sys+"Dn", "JERCSF", "JERCptResolution"+sys+"Dn"});
+//                _rlm = _rlm.Define("Jet_pt_smear_"+sys+"Up", "c_JER"+sys+"Up*Jet_pt_"+sys+"Up");
+//                _rlm = _rlm.Define("Jet_pt_smear_"+sys+"Dn", "c_JER"+sys+"Dn*Jet_pt_"+sys+"Dn");
+////                _rlm = _rlm.Define("corrmet_pt_"+sys+"Up", ::getmetsmear, {"corrmetjson_pt", "corrmet_phi", "Jet_pt_"+sys+"Up", "Jet_pt_smear_"+sys+"Up", "Jet_phi"});
+////                _rlm = _rlm.Define("corrmet_pt_"+sys+"Dn", ::getmetsmear, {"corrmetjson_pt", "corrmet_phi", "Jet_pt_"+sys+"Dn", "Jet_pt_smear_"+sys+"Dn", "Jet_phi"});
+//
+//        _rlm = _rlm.Define("goodJets_"+sys+"Up", "goodJetsID && Jet_pt_smear_"+sys+"Up>30.0 && abs(Jet_eta)<2.5");
+//        _rlm = _rlm.Define("goodJets_pt_"+sys+"Up", "Jet_pt_smear_"+sys+"Up[goodJets_"+sys+"Up]")
+//               .Define("goodJets_eta_"+sys+"Up", "Jet_eta[goodJets_"+sys+"Up]")
+//               .Define("goodJets_phi_"+sys+"Up", "Jet_phi[goodJets_"+sys+"Up]")
+//               .Define("goodJets_mass_"+sys+"Up", "Jet_mass[goodJets_"+sys+"Up]")
+//               .Define("goodJetsHT_"+sys+"Up", "Sum(goodJets_pt_"+sys+"Up)")
+//               .Define("goodJets_deepjetbtag_"+sys+"Up", "Jet_btagDeepFlavB[goodJets_"+sys+"Up]")
+//               .Define("goodJets_hadflav_"+sys+"Up", "Jet_hadronFlavour[goodJets_"+sys+"Up]")
+//               .Define("goodJets_4vecs_"+sys+"Up", ::generate_4vec, {"goodJets_pt_"+sys+"Up", "goodJets_eta_"+sys+"Up", "goodJets_phi_"+sys+"Up", "goodJets_mass_"+sys+"Up"});
+//
+//        _rlm = _rlm.Define("goodJets_"+sys+"Dn", "goodJetsID && Jet_pt_smear_"+sys+"Dn>30.0 && abs(Jet_eta)<2.5");
+//        _rlm = _rlm.Define("goodJets_pt_"+sys+"Dn", "Jet_pt_smear_"+sys+"Dn[goodJets_"+sys+"Dn]")
+//               .Define("goodJets_eta_"+sys+"Dn", "Jet_eta[goodJets_"+sys+"Dn]")
+//               .Define("goodJets_phi_"+sys+"Dn", "Jet_phi[goodJets_"+sys+"Dn]")
+//               .Define("goodJets_mass_"+sys+"Dn", "Jet_mass[goodJets_"+sys+"Dn]")
+//               .Define("goodJetsHT_"+sys+"Dn", "Sum(goodJets_pt_"+sys+"Dn)")
+//               .Define("goodJets_deepjetbtag_"+sys+"Dn", "Jet_btagDeepFlavB[goodJets_"+sys+"Dn]")
+//               .Define("goodJets_hadflav_"+sys+"Dn", "Jet_hadronFlavour[goodJets_"+sys+"Dn]")
+//               .Define("goodJets_4vecs_"+sys+"Dn", ::generate_4vec, {"goodJets_pt_"+sys+"Dn", "goodJets_eta_"+sys+"Dn", "goodJets_phi_"+sys+"Dn", "goodJets_mass_"+sys+"Dn"});
+//}
 
 void TprimeHadAnalyzer::setupAnalysis()
 {

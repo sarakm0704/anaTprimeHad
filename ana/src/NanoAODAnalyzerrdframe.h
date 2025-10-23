@@ -46,6 +46,7 @@ public:
     
     //void setupCorrections(string goodjsonfname, string pufname, string putag, string btvfname, string btvtype, string jercfname, string jerctag, string jercunctag);
     //void setupCorrections(string goodjsonfname, string pufname, string putag, string btvfname, string btvtype, string fname_btagEff, string jercfname, string jerctag, string jercunctag, string jercsys_total);
+    //void setupCorrections(string goodjsonfname, string pufname, string putag, string btvfname, string fname_btagEff, string jercfname, string jerctag, string jercunctag, string jercsys_total);
     void setupCorrections(string goodjsonfname, string pufname, string putag, string btvfname, string fname_btagEff, string fname_btagRatio, string jercfname, string jerctag, string jercunctag, string jercsys_total);
     virtual void setupObjects();
     virtual void setupAnalysis();
@@ -121,6 +122,10 @@ public:
    
     std::string _jecsys; 
     std::string _jersys; 
+    std::string _btagsys; 
+    std::string _btagsysuncorr; 
+
+    vector<string> updn;
     
     //initialize HLT names
     std::string ctrlBranchName(string str_Branch);

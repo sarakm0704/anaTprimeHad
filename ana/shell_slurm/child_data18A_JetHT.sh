@@ -14,4 +14,4 @@ echo "region $1 running $2"
 
 export X509_USER_PROXY=/pbs/home/j/jechoi/x509up_u49606
 
-srun --ntasks=1 processnanoaod.py filelist/list_TTToHadronic2018.txt /sps/lyon/jechoi/tprimeHad/2018/$1/TTToHadronic ttConfig_UL18 $1 $2 > /sps/lyon/jechoi/tprimeHad/2018/$1/TTToHadronic.out
+srun --ntasks=1 processnanoaod.py filelist/list_2018A_JetHT.txt /sps/lyon/jechoi/tprimeHad/2018/$1/JetHT_A dataConfig_UL18 $1 $2 > /sps/lyon/jechoi/tprimeHad/2018/$1/JetHT_A.out

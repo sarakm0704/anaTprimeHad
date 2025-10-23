@@ -669,8 +669,6 @@ void NanoAODAnalyzerrdframe::run(bool saveAll, string outtreename)
 
 }
 
-//void NanoAODAnalyzerrdframe::setParams(int year, string runtype, int datatype)
-//void NanoAODAnalyzerrdframe::setParams(int year, string runtype, int datatype,string CutOnNom, string GENsig, string topPtReweight, string topPtReweightsys, string jecsys, string jersys, string btagsys, string btagsysuncorr, string lepidsys, string lepisosys, string leprecosys, string channels)
 void NanoAODAnalyzerrdframe::setParams(int year, string runtype, int datatype, string sampletype, string region, string topPtReweight, string topPtReweightsys, string jecsys, string jersys, string btagsys, string btagsysuncorr)
 {
     /*if(debug){
@@ -678,17 +676,20 @@ void NanoAODAnalyzerrdframe::setParams(int year, string runtype, int datatype, s
         std::cout<< "Line : "<< __LINE__ << " Function : " << __FUNCTION__ << std::endl;
         std::cout<< "================================//=================================" << std::endl;
     }*/
-    _year=year;
-    _runtype=runtype;
-    _datatype=datatype;
-    _sampletype=sampletype;
-    _region=region;
+    _year = year;
+    _runtype = runtype;
+    _datatype = datatype;
+    _sampletype = sampletype;
+    _region = region;
 
-    _topPtReweight=topPtReweight;
-    _topPtReweightsys=topPtReweightsys;
+    _topPtReweight = topPtReweight;
+    _topPtReweightsys = topPtReweightsys;
 
-    _jecsys=jecsys;
-    _jersys=jersys; 
+    _jecsys = jecsys;
+    _jersys = jersys; 
+
+    _btagsys = btagsys; 
+    _btagsysuncorr = btagsysuncorr; 
 
     if(_year==2016) {
         cout << "Analysing through Run 2016" << endl;
@@ -733,6 +734,11 @@ void NanoAODAnalyzerrdframe::setParams(int year, string runtype, int datatype, s
     }else if(_region == "3T"){
         _is3T = true;
         cout << "Running in 3T region" << endl;
+    }
+
+    // if systematics
+    if(_jecsys == "True" || _jersys == "True" || _btagsys == "True" || _topPtReweight == "True"){
+        vector<string> updn={"Up","Dn"};
     }
 
     if(_runtype.find("UL") != std::string::npos){

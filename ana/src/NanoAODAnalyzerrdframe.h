@@ -46,7 +46,7 @@ public:
     
     //void setupCorrections(string goodjsonfname, string pufname, string putag, string btvfname, string btvtype, string jercfname, string jerctag, string jercunctag);
     //void setupCorrections(string goodjsonfname, string pufname, string putag, string btvfname, string btvtype, string fname_btagEff, string jercfname, string jerctag, string jercunctag, string jercsys_total);
-    void setupCorrections(string goodjsonfname, string pufname, string putag, string btvfname, string fname_btagEff, string jercfname, string jerctag, string jercunctag, string jercsys_total);
+    void setupCorrections(string goodjsonfname, string pufname, string putag, string btvfname, string fname_btagEff, string fname_btagRatio, string jercfname, string jerctag, string jercunctag, string jercsys_total);
     virtual void setupObjects();
     virtual void setupAnalysis();
     virtual void setTree(TTree *t, string outfilename);
@@ -184,6 +184,7 @@ public:
     // btag correction
     std::unique_ptr<correction::CorrectionSet> _correction_btag1;
     std::unique_ptr<correction::CorrectionSet> _efficiency_btag1;
+    std::unique_ptr<correction::CorrectionSet> _ratio_btag;
 
     //string _btvtype;
 

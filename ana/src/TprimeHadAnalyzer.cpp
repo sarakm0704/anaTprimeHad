@@ -65,13 +65,18 @@ void TprimeHadAnalyzer::defineCuts()
     std::cout<< "-------------------------------------------------------------------" << std::endl;
 
     if(_isTprime){
-        addCuts("isHadProcess","0");
-        addCuts("METfilter && HLT && nsel40Jets >= 6","00");
+//        addCuts("isHadProcess","0");
+//        addCuts("isHbb","0");
+//        addCuts("METfilter && HLT && nsel40Jets >= 6","00");
+        addCuts("METfilter && nsel40Jets >= 6","00");
 //    }else if(_isTT || _isQCD || _isData){
     }else{
-        addCuts("METfilter && HLT","0");
+//        addCuts("METfilter && HLT","0");
+        addCuts("METfilter","0");
         addCuts("nsel40Jets >= 6","00");
     }
+//    addCuts("METfilter","0");
+//    addCuts("nsel40Jets >= 6","00");
 
     addCuts("selJet_pt[0] > 170 && selJet_pt[1] > 130 && selJet_pt[2] > 80 && goodHT > 500","000");
 
@@ -108,129 +113,131 @@ void TprimeHadAnalyzer::defineMoreVars()
 
     //defineVar("isHadTprime",::isHadWHiggs,{"p4_GenPart","GenPart_pdgId","GenPart_genPartIdxMother"});
     if(_is2M1L || _is3L || _is3M || _is3T){ 
+ 
+        cout << "add variables for NN training" << endl;
+ 
+        addVar({"Chi2_min_H","Chi2_Tprime[7]",""});
+        addVar({"Chi2_min_W","Chi2_Tprime[8]",""});
+        addVar({"Chi2_min_Top","Chi2_Tprime[9]",""});
   
-    addVar({"Chi2_min_H","Chi2_Tprime[7]",""});
-    addVar({"Chi2_min_W","Chi2_Tprime[8]",""});
-    addVar({"Chi2_min_Top","Chi2_Tprime[9]",""});
-  
-    addVar({"H_mass","Chi2_Tprime[10]",""});
-    addVar({"W_mass","Chi2_Tprime[11]",""});
-    addVar({"Top_mass","Chi2_Tprime[12]",""});
-   
-    addVar({"invmass_2ndTop","Chi2_Tprime[13]",""});
-    addVar({"invmass_2ndW","Chi2_Tprime[14]",""});
-    addVar({"invmass_WH","Chi2_Tprime[15]",""});
-    addVar({"invmass_Tprime","Chi2_Tprime[16]",""});
+        addVar({"H_mass","Chi2_Tprime[10]",""});
+        addVar({"W_mass","Chi2_Tprime[11]",""});
+        addVar({"Top_mass","Chi2_Tprime[12]",""});
 
-    addVar({"R_TopH","(Top_mass - H_mass) / (Top_mass + H_mass)",""});
-    addVar({"R_2ndTopW","(invmass_2ndTop + invmass_2ndW) / H_mass",""});
+        addVar({"invmass_2ndTop","Chi2_Tprime[13]",""});
+        addVar({"invmass_2ndW","Chi2_Tprime[14]",""});
+        addVar({"invmass_WH","Chi2_Tprime[15]",""});
+        addVar({"invmass_Tprime","Chi2_Tprime[16]",""});
 
-    defineVar("mindR_bb",::mindR_bb,{"bjet4vecs"});
-    defineVar("dRbb",::dR_bb,{"bjet4vecs"});
-    defineVar("mbb",::m_bb,{"bjet4vecs"});
-    addVar({"mindR_dRbb","mindR_bb[0]",""});
-    addVar({"mindR_mbb","mindR_bb[1]",""});
+        addVar({"R_TopH","(Top_mass - H_mass) / (Top_mass + H_mass)",""});
+        addVar({"R_2ndTopW","(invmass_2ndTop + invmass_2ndW) / H_mass",""});
+
+        defineVar("mindR_bb",::mindR_bb,{"bjet4vecs"});
+        defineVar("dRbb",::dR_bb,{"bjet4vecs"});
+        defineVar("mbb",::m_bb,{"bjet4vecs"});
+        addVar({"mindR_dRbb","mindR_bb[0]",""});
+        addVar({"mindR_mbb","mindR_bb[1]",""});
   
-    addVar({"selJet1_pt","selJet_pt[0]",""});
-    addVar({"selJet1_pt_massnom","selJet1_pt/invmass_Tprime",""});
-    addVar({"selJet1_pt_htnom","selJet1_pt/goodHT",""});
-    addVar({"selJet1_eta","selJet_eta[0]",""});
-    addVar({"selJet1_phi","selJet_phi[0]",""});
-    addVar({"selJet1_mass","selJet_mass[0]",""});
-    addVar({"selJet1_btag","selJet_btagDeepFlavB[0]",""});
-    addVar({"selJet1_e","jet4vecs[0].E()",""});
-    addVar({"selJet1_px","jet4vecs[0].Px()",""});
-    addVar({"selJet1_py","jet4vecs[0].Py()",""});
-    addVar({"selJet1_pz","jet4vecs[0].Pz()",""});
-    addVar({"selJet1_e_massnom","selJet1_e/invmass_Tprime",""});
-    addVar({"selJet1_e_htnom","selJet1_e/goodHT",""});
+        addVar({"selJet1_pt","selJet_pt[0]",""});
+        addVar({"selJet1_pt_massnom","selJet1_pt/invmass_Tprime",""});
+        addVar({"selJet1_pt_htnom","selJet1_pt/goodHT",""});
+        addVar({"selJet1_eta","selJet_eta[0]",""});
+        addVar({"selJet1_phi","selJet_phi[0]",""});
+        addVar({"selJet1_mass","selJet_mass[0]",""});
+        addVar({"selJet1_btag","selJet_btagDeepFlavB[0]",""});
+        addVar({"selJet1_e","jet4vecs[0].E()",""});
+        addVar({"selJet1_px","jet4vecs[0].Px()",""});
+        addVar({"selJet1_py","jet4vecs[0].Py()",""});
+        addVar({"selJet1_pz","jet4vecs[0].Pz()",""});
+        addVar({"selJet1_e_massnom","selJet1_e/invmass_Tprime",""});
+        addVar({"selJet1_e_htnom","selJet1_e/goodHT",""});
   
-    addVar({"selJet2_pt","selJet_pt[1]",""});
-    addVar({"selJet2_pt_massnom","selJet2_pt/invmass_Tprime",""});
-    addVar({"selJet2_pt_htnom","selJet2_pt/goodHT",""});
-    addVar({"selJet2_eta","selJet_eta[1]",""});
-    addVar({"selJet2_phi","selJet_phi[1]",""});
-    addVar({"selJet2_mass","selJet_mass[1]",""});
-    addVar({"selJet2_btag","selJet_btagDeepFlavB[1]",""});
-    addVar({"selJet2_e","jet4vecs[1].E()",""});
-    addVar({"selJet2_px","jet4vecs[1].Px()",""});
-    addVar({"selJet2_py","jet4vecs[1].Py()",""});
-    addVar({"selJet2_pz","jet4vecs[1].Pz()",""});
-    addVar({"selJet2_e_massnom","selJet2_e/invmass_Tprime",""});
-    addVar({"selJet2_e_htnom","selJet2_e/goodHT",""});
+        addVar({"selJet2_pt","selJet_pt[1]",""});
+        addVar({"selJet2_pt_massnom","selJet2_pt/invmass_Tprime",""});
+        addVar({"selJet2_pt_htnom","selJet2_pt/goodHT",""});
+        addVar({"selJet2_eta","selJet_eta[1]",""});
+        addVar({"selJet2_phi","selJet_phi[1]",""});
+        addVar({"selJet2_mass","selJet_mass[1]",""});
+        addVar({"selJet2_btag","selJet_btagDeepFlavB[1]",""});
+        addVar({"selJet2_e","jet4vecs[1].E()",""});
+        addVar({"selJet2_px","jet4vecs[1].Px()",""});
+        addVar({"selJet2_py","jet4vecs[1].Py()",""});
+        addVar({"selJet2_pz","jet4vecs[1].Pz()",""});
+        addVar({"selJet2_e_massnom","selJet2_e/invmass_Tprime",""});
+        addVar({"selJet2_e_htnom","selJet2_e/goodHT",""});
   
-    addVar({"selJet3_pt","selJet_pt[2]",""});
-    addVar({"selJet3_pt_massnom","selJet3_pt/invmass_Tprime",""});
-    addVar({"selJet3_pt_htnom","selJet3_pt/goodHT",""});
-    addVar({"selJet3_eta","selJet_eta[2]",""});
-    addVar({"selJet3_phi","selJet_phi[2]",""});
-    addVar({"selJet3_mass","selJet_mass[2]",""});
-    addVar({"selJet3_btag","selJet_btagDeepFlavB[2]",""});
-    addVar({"selJet3_e","jet4vecs[2].E()",""});
-    addVar({"selJet3_px","jet4vecs[2].Px()",""});
-    addVar({"selJet3_py","jet4vecs[2].Py()",""});
-    addVar({"selJet3_pz","jet4vecs[2].Pz()",""});
-    addVar({"selJet3_e_massnom","selJet3_e/invmass_Tprime",""});
-    addVar({"selJet3_e_htnom","selJet3_e/goodHT",""});
+        addVar({"selJet3_pt","selJet_pt[2]",""});
+        addVar({"selJet3_pt_massnom","selJet3_pt/invmass_Tprime",""});
+        addVar({"selJet3_pt_htnom","selJet3_pt/goodHT",""});
+        addVar({"selJet3_eta","selJet_eta[2]",""});
+        addVar({"selJet3_phi","selJet_phi[2]",""});
+        addVar({"selJet3_mass","selJet_mass[2]",""});
+        addVar({"selJet3_btag","selJet_btagDeepFlavB[2]",""});
+        addVar({"selJet3_e","jet4vecs[2].E()",""});
+        addVar({"selJet3_px","jet4vecs[2].Px()",""});
+        addVar({"selJet3_py","jet4vecs[2].Py()",""});
+        addVar({"selJet3_pz","jet4vecs[2].Pz()",""});
+        addVar({"selJet3_e_massnom","selJet3_e/invmass_Tprime",""});
+        addVar({"selJet3_e_htnom","selJet3_e/goodHT",""});
   
-    addVar({"selJet4_pt","selJet_pt[3]",""});
-    addVar({"selJet4_pt_massnom","selJet4_pt/invmass_Tprime",""});
-    addVar({"selJet4_pt_htnom","selJet4_pt/goodHT",""});
-    addVar({"selJet4_eta","selJet_eta[3]",""});
-    addVar({"selJet4_phi","selJet_phi[3]",""});
-    addVar({"selJet4_mass","selJet_mass[3]",""});
-    addVar({"selJet4_btag","selJet_btagDeepFlavB[3]",""});
-    addVar({"selJet4_e","jet4vecs[3].E()",""});
-    addVar({"selJet4_px","jet4vecs[3].Px()",""});
-    addVar({"selJet4_py","jet4vecs[3].Py()",""});
-    addVar({"selJet4_pz","jet4vecs[3].Pz()",""});
-    addVar({"selJet4_e_massnom","selJet4_e/invmass_Tprime",""});
-    addVar({"selJet4_e_htnom","selJet4_e/goodHT",""});
+        addVar({"selJet4_pt","selJet_pt[3]",""});
+        addVar({"selJet4_pt_massnom","selJet4_pt/invmass_Tprime",""});
+        addVar({"selJet4_pt_htnom","selJet4_pt/goodHT",""});
+        addVar({"selJet4_eta","selJet_eta[3]",""});
+        addVar({"selJet4_phi","selJet_phi[3]",""});
+        addVar({"selJet4_mass","selJet_mass[3]",""});
+        addVar({"selJet4_btag","selJet_btagDeepFlavB[3]",""});
+        addVar({"selJet4_e","jet4vecs[3].E()",""});
+        addVar({"selJet4_px","jet4vecs[3].Px()",""});
+        addVar({"selJet4_py","jet4vecs[3].Py()",""});
+        addVar({"selJet4_pz","jet4vecs[3].Pz()",""});
+        addVar({"selJet4_e_massnom","selJet4_e/invmass_Tprime",""});
+        addVar({"selJet4_e_htnom","selJet4_e/goodHT",""});
   
-    addVar({"selJet5_pt","selJet_pt[4]",""});
-    addVar({"selJet5_pt_massnom","selJet5_pt/invmass_Tprime",""});
-    addVar({"selJet5_pt_htnom","selJet5_pt/goodHT",""});
-    addVar({"selJet5_eta","selJet_eta[4]",""});
-    addVar({"selJet5_phi","selJet_phi[4]",""});
-    addVar({"selJet5_mass","selJet_mass[4]",""});
-    addVar({"selJet5_btag","selJet_btagDeepFlavB[4]",""});
-    addVar({"selJet5_e","jet4vecs[4].E()",""});
-    addVar({"selJet5_px","jet4vecs[4].Px()",""});
-    addVar({"selJet5_py","jet4vecs[4].Py()",""});
-    addVar({"selJet5_pz","jet4vecs[4].Pz()",""});
-    addVar({"selJet5_e_massnom","selJet5_e/invmass_Tprime",""});
-    addVar({"selJet5_e_htnom","selJet5_e/goodHT",""});
+        addVar({"selJet5_pt","selJet_pt[4]",""});
+        addVar({"selJet5_pt_massnom","selJet5_pt/invmass_Tprime",""});
+        addVar({"selJet5_pt_htnom","selJet5_pt/goodHT",""});
+        addVar({"selJet5_eta","selJet_eta[4]",""});
+        addVar({"selJet5_phi","selJet_phi[4]",""});
+        addVar({"selJet5_mass","selJet_mass[4]",""});
+        addVar({"selJet5_btag","selJet_btagDeepFlavB[4]",""});
+        addVar({"selJet5_e","jet4vecs[4].E()",""});
+        addVar({"selJet5_px","jet4vecs[4].Px()",""});
+        addVar({"selJet5_py","jet4vecs[4].Py()",""});
+        addVar({"selJet5_pz","jet4vecs[4].Pz()",""});
+        addVar({"selJet5_e_massnom","selJet5_e/invmass_Tprime",""});
+        addVar({"selJet5_e_htnom","selJet5_e/goodHT",""});
   
-    addVar({"selbJet1_pt","selbJet_pt[0]",""});
-    addVar({"selbJet1_pt_massnom","selbJet1_pt/invmass_Tprime",""});
-    addVar({"selbJet1_pt_htnom","selbJet1_pt/goodHT",""});
-    addVar({"selbJet1_eta","selbJet_eta[0]",""});
-    addVar({"selbJet1_phi","selbJet_phi[0]",""});
-    addVar({"selbJet1_mass","selbJet_mass[0]",""});
-    addVar({"selbJet1_btag","selbJet_btag[0]",""});
-    addVar({"selbJet1_e","bjet4vecs[0].E()",""});
-    addVar({"selbJet1_px","bjet4vecs[0].Px()",""});
-    addVar({"selbJet1_py","bjet4vecs[0].Py()",""});
-    addVar({"selbJet1_pz","bjet4vecs[0].Pz()",""});
-    addVar({"selbJet1_e_massnom","selbJet1_e/invmass_Tprime",""});
-    addVar({"selbJet1_e_htnom","selbJet1_e/goodHT",""});
+        addVar({"selbJet1_pt","selbJet_pt[0]",""});
+        addVar({"selbJet1_pt_massnom","selbJet1_pt/invmass_Tprime",""});
+        addVar({"selbJet1_pt_htnom","selbJet1_pt/goodHT",""});
+        addVar({"selbJet1_eta","selbJet_eta[0]",""});
+        addVar({"selbJet1_phi","selbJet_phi[0]",""});
+        addVar({"selbJet1_mass","selbJet_mass[0]",""});
+        addVar({"selbJet1_btag","selbJet_btag[0]",""});
+        addVar({"selbJet1_e","bjet4vecs[0].E()",""});
+        addVar({"selbJet1_px","bjet4vecs[0].Px()",""});
+        addVar({"selbJet1_py","bjet4vecs[0].Py()",""});
+        addVar({"selbJet1_pz","bjet4vecs[0].Pz()",""});
+        addVar({"selbJet1_e_massnom","selbJet1_e/invmass_Tprime",""});
+        addVar({"selbJet1_e_htnom","selbJet1_e/goodHT",""});
   
-    addVar({"selbJet2_pt","selbJet_pt[1]",""});
-    addVar({"selbJet2_pt_massnom","selbJet2_pt/invmass_Tprime",""});
-    addVar({"selbJet2_pt_htnom","selbJet2_pt/goodHT",""});
-    addVar({"selbJet2_eta","selbJet_eta[1]",""});
-    addVar({"selbJet2_phi","selbJet_phi[1]",""});
-    addVar({"selbJet2_mass","selbJet_mass[1]",""});
-    addVar({"selbJet2_btag","selbJet_btag[1]",""});
-    addVar({"selbJet2_e","bjet4vecs[1].E()",""});
-    addVar({"selbJet2_px","bjet4vecs[1].Px()",""});
-    addVar({"selbJet2_py","bjet4vecs[1].Py()",""});
-    addVar({"selbJet2_pz","bjet4vecs[1].Pz()",""});
-    addVar({"selbJet2_e_massnom","selbJet2_e/invmass_Tprime",""});
-    addVar({"selbJet2_e_htnom","selbJet2_e/goodHT",""});
+        addVar({"selbJet2_pt","selbJet_pt[1]",""});
+        addVar({"selbJet2_pt_massnom","selbJet2_pt/invmass_Tprime",""});
+        addVar({"selbJet2_pt_htnom","selbJet2_pt/goodHT",""});
+        addVar({"selbJet2_eta","selbJet_eta[1]",""});
+        addVar({"selbJet2_phi","selbJet_phi[1]",""});
+        addVar({"selbJet2_mass","selbJet_mass[1]",""});
+        addVar({"selbJet2_btag","selbJet_btag[1]",""});
+        addVar({"selbJet2_e","bjet4vecs[1].E()",""});
+        addVar({"selbJet2_px","bjet4vecs[1].Px()",""});
+        addVar({"selbJet2_py","bjet4vecs[1].Py()",""});
+        addVar({"selbJet2_pz","bjet4vecs[1].Pz()",""});
+        addVar({"selbJet2_e_massnom","selbJet2_e/invmass_Tprime",""});
+        addVar({"selbJet2_e_htnom","selbJet2_e/goodHT",""});
   
-    addVar({"goodHT_massnom","goodHT/invmass_Tprime",""});
-    addVar({"invmass_htnom","invmass_Tprime/goodHT",""});
+        addVar({"goodHT_massnom","goodHT/invmass_Tprime",""});
+        addVar({"invmass_htnom","invmass_Tprime/goodHT",""});
     }
   
     //================================Store variables in tree=======================================//
@@ -249,138 +256,169 @@ void TprimeHadAnalyzer::defineMoreVars()
     addVartoStore("genWeight");
     addVartoStore("genEventSumw");
 
-//    addVartoStore("HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2");
-//    addVartoStore("HLT_PFHT400_FivePFJet_100_100_60_30_30_DoublePFBTagDeepCSV_4p5");
-//    addVartoStore("HLT_PFHT430_SixPFJet40_PFBTagDeepCSV_1p5");
-//    addVartoStore("HLT_PFHT330PT30_QuadPFJet_75_60_45_40_TriplePFBTagDeepCSV_4p5");
-//    addVartoStore("HLT_PFHT1050");
-//    addVartoStore("HLT_PFJet500");
-//    addVartoStore("HLT_PFHT400_SixPFJet32_DoublePFBTagDeepCSV_2p94");
-//    addVartoStore("HLT_PFHT450_SixPFJet36_PFBTagDeepCSV_1p59");
-//  
+    if(_year==2018){
+        addVartoStore("HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2");
+        addVartoStore("HLT_PFHT400_FivePFJet_100_100_60_30_30_DoublePFBTagDeepCSV_4p5");
+        addVartoStore("HLT_PFHT430_SixPFJet40_PFBTagDeepCSV_1p5");
+        addVartoStore("HLT_PFHT330PT30_QuadPFJet_75_60_45_40_TriplePFBTagDeepCSV_4p5");
+        addVartoStore("HLT_PFHT1050");
+        addVartoStore("HLT_PFJet500");
+        addVartoStore("HLT_PFHT400_SixPFJet32_DoublePFBTagDeepCSV_2p94");
+        addVartoStore("HLT_PFHT450_SixPFJet36_PFBTagDeepCSV_1p59");
+    }else if(_year == 2017){
+        addVartoStore("HLT_HT300PT30_QuadJet_75_60_45_40_TripleCSV_p07");
+        addVartoStore("HLT_PFHT300PT30_QuadPFJet_75_60_45_40_TriplePFBTagCSV_3p0");
+        addVartoStore("HLT_PFHT380_SixJet32_DoubleBTagCSV_p075");
+        addVartoStore("HLT_PFHT380_SixPFJet32_DoublePFBTagCSV_2p2");
+        addVartoStore("HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2");
+        addVartoStore("HLT_PFHT430_SixJet40_BTagCSV_p080");
+        addVartoStore("HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5");
+        addVartoStore("HLT_PFHT1050");
+        addVartoStore("HLT_PFJet500");
+    }else if(_year == 2015 || _year == 2016){
+        addVartoStore("HLT_PFHT400_SixJet30_DoubleBTagCSV_p056");
+        addVartoStore("HLT_PFHT450_SixJet40_BTagCSV_p056");
+        addVartoStore("HLT_PFHT900");
+        addVartoStore("HLT_PFHT750_4JetPt70");
+        addVartoStore("HLT_PFHT750_4JetPt80");
+        addVartoStore("HLT_PFHT800_4JetPt50");
+        addVartoStore("HLT_PFHT850_4JetPt50");
+        addVartoStore("HLT_PFJet500");
+    }
+
+    addVartoStore("HLT_IsoMu24"); 
+    addVartoStore("HLT_Mu50"); 
+    addVartoStore("nMuons"); 
+  
     if(!_is2M1L && !_is3L && !_is3M && !_is3T){ 
+
+        cout << "store variables for b-tagging effMap" << endl;
     
-    addVartoStore("selJetsForbtag_pt");
-    addVartoStore("selJetsForbtag_eta");
-    addVartoStore("selJetsForbtag_phi");
-    addVartoStore("selJetsForbtag_mass");
-    addVartoStore("selJetsForbtag_btag");
-    addVartoStore("selJetsForbtag_hadronFlavour");
-    addVartoStore("nselJetsForbtag");
+        addVartoStore("selJetsForbtag_pt");
+        addVartoStore("selJetsForbtag_eta");
+        addVartoStore("selJetsForbtag_phi");
+        addVartoStore("selJetsForbtag_mass");
+        addVartoStore("selJetsForbtag_btag");
+        addVartoStore("selJetsForbtag_hadronFlavour");
+        addVartoStore("nselJetsForbtag");
 
     }else{
 
-    // DNN Study
-    // Cut0
-    addVartoStore("nselJets");
-    addVartoStore("nselbJets");
-    addVartoStore("nselLbJets");
-    addVartoStore("nselMbJets");
-    addVartoStore("nselTbJets");
+//        cout << "store variables for TF" << endl;
+////        // for TF
+//        addVartoStore("jet4vecs");
+//        addVartoStore("numJets4vecs");
+//        addVartoStore("denJets4vecs");
+//        addVartoStore("numJets_pt");
+//        addVartoStore("numJets_eta");
+//        addVartoStore("denJets_pt");
+//        addVartoStore("denJets_eta");
 
-    // for TF
-    addVartoStore("jet4vecs");
-    addVartoStore("numJets4vecs");
-    addVartoStore("denJets4vecs");
-    addVartoStore("numJets_pt");
-    addVartoStore("numJets_eta");
-    addVartoStore("denJets_pt");
-    addVartoStore("denJets_eta");
+        cout << "store variables for NN training" << endl;
 
-    // btag in binary
-    addVartoStore("is_deepJet_T");
-    addVartoStore("is_deepJet_M");
-    addVartoStore("is_deepJet_L");
+        // DNN Study
+        // Cut0
+        addVartoStore("nselJets");
+        addVartoStore("nselbJets");
+        addVartoStore("nselLbJets");
+        addVartoStore("nselMbJets");
+        addVartoStore("nselTbJets");
 
-//    addVartoStore("selJet1_pt");
-//    addVartoStore("selJet1_pt_massnom");
-//    addVartoStore("selJet1_eta");
-//    addVartoStore("selJet1_phi");
-//    addVartoStore("selJet1_e");
-//    addVartoStore("selJet1_e_massnom");
-//    addVartoStore("selJet1_btag");
-//
-//    addVartoStore("selJet2_pt");
-//    addVartoStore("selJet2_pt_massnom");
-//    addVartoStore("selJet2_eta");
-//    addVartoStore("selJet2_phi");
-//    addVartoStore("selJet2_e");
-//    addVartoStore("selJet2_e_massnom");
-//    addVartoStore("selJet2_btag");
-//
-//    addVartoStore("selJet3_pt");
-//    addVartoStore("selJet3_pt_massnom");
-//    addVartoStore("selJet3_eta");
-//    addVartoStore("selJet3_phi");
-//    addVartoStore("selJet3_e");
-//    addVartoStore("selJet3_e_massnom");
-//    addVartoStore("selJet3_btag");
-//
-//    addVartoStore("selJet4_pt");
-//    addVartoStore("selJet4_pt_massnom");
-//    addVartoStore("selJet4_eta");
-//    addVartoStore("selJet4_phi");
-//    addVartoStore("selJet4_e");
-//    addVartoStore("selJet4_e_massnom");
-//    addVartoStore("selJet4_btag");
-//
-//    addVartoStore("selJet5_pt");
-//    addVartoStore("selJet5_pt_massnom");
-//    addVartoStore("selJet5_eta");
-//    addVartoStore("selJet5_phi");
-//    addVartoStore("selJet5_e");
-//    addVartoStore("selJet5_e_massnom");
-//    addVartoStore("selJet5_btag");
-//
-//    addVartoStore("selbJet1_pt");
-//    addVartoStore("selbJet1_pt_massnom");
-//    addVartoStore("selbJet1_eta");
-//    addVartoStore("selbJet1_phi");
-//    addVartoStore("selbJet1_e");
-//    addVartoStore("selbJet1_e_massnom");
-//    addVartoStore("selbJet1_btag");
-//
-//    addVartoStore("selbJet2_pt");
-//    addVartoStore("selbJet2_pt_massnom");
-//    addVartoStore("selbJet2_eta");
-//    addVartoStore("selbJet2_phi");
-//    addVartoStore("selbJet2_e");
-//    addVartoStore("selbJet2_e_massnom");
-//    addVartoStore("selbJet2_btag");
-//
-//    addVartoStore("Chi2_min");
-//    addVartoStore("goodHT");
-//    addVartoStore("invmass_2ndTop");
-//    addVartoStore("H_mass");
-//
-//    addVartoStore("RelHT");          // Cut 1
-//    addVartoStore("Chi2_max");       // Cut 2
-//    addVartoStore("dRHbb_chi2");     // Cut 3
-//    addVartoStore("Chi2_min_H");     // Cut 4
-//    addVartoStore("dRWjj_chi2");     // Cut 5
-//    addVartoStore("dRbW_chi2");      // Cut 6
-//
-//    // Candidates
-//    addVartoStore("Chi2_min_W");
-//    addVartoStore("Chi2_min_Top");
-//    addVartoStore("mindR_dRbb");
-//    addVartoStore("mindR_mbb");
-//    addVartoStore("Top_mass");
-//    addVartoStore("W_mass");
-//    addVartoStore("invmass_WH");
-//    addVartoStore("invmass_Tprime");
-//    addVartoStore("invmass_leadjets");//etc
-//    addVartoStore("R_TopH");
-//    addVartoStore("R_2ndTopW");
-//    addVartoStore("newRelHT");
-//    addVartoStore("dRTprimeoj_chi2");
-//    addVartoStore("dRHTop_chi2");
-//    addVartoStore("dEtaWH_chi2");
-//    addVartoStore("dPhiHTop_chi2");
-//    addVartoStore("Rpt_Top2ndTop");
-//    addVartoStore("Rpt_HTopTprime");
-//    addVartoStore("Rpt_TprimeHTprimeTop");
-//
+
+        // btag in binary
+        addVartoStore("is_deepJet_T");
+        addVartoStore("is_deepJet_M");
+        addVartoStore("is_deepJet_L");
+
+        addVartoStore("selJet1_pt");
+        addVartoStore("selJet1_pt_massnom");
+        addVartoStore("selJet1_eta");
+        addVartoStore("selJet1_phi");
+        addVartoStore("selJet1_e");
+        addVartoStore("selJet1_e_massnom");
+        addVartoStore("selJet1_btag");
+
+        addVartoStore("selJet2_pt");
+        addVartoStore("selJet2_pt_massnom");
+        addVartoStore("selJet2_eta");
+        addVartoStore("selJet2_phi");
+        addVartoStore("selJet2_e");
+        addVartoStore("selJet2_e_massnom");
+        addVartoStore("selJet2_btag");
+
+        addVartoStore("selJet3_pt");
+        addVartoStore("selJet3_pt_massnom");
+        addVartoStore("selJet3_eta");
+        addVartoStore("selJet3_phi");
+        addVartoStore("selJet3_e");
+        addVartoStore("selJet3_e_massnom");
+        addVartoStore("selJet3_btag");
+
+        addVartoStore("selJet4_pt");
+        addVartoStore("selJet4_pt_massnom");
+        addVartoStore("selJet4_eta");
+        addVartoStore("selJet4_phi");
+        addVartoStore("selJet4_e");
+        addVartoStore("selJet4_e_massnom");
+        addVartoStore("selJet4_btag");
+
+        addVartoStore("selJet5_pt");
+        addVartoStore("selJet5_pt_massnom");
+        addVartoStore("selJet5_eta");
+        addVartoStore("selJet5_phi");
+        addVartoStore("selJet5_e");
+        addVartoStore("selJet5_e_massnom");
+        addVartoStore("selJet5_btag");
+
+        addVartoStore("selbJet1_pt");
+        addVartoStore("selbJet1_pt_massnom");
+        addVartoStore("selbJet1_eta");
+        addVartoStore("selbJet1_phi");
+        addVartoStore("selbJet1_e");
+        addVartoStore("selbJet1_e_massnom");
+        addVartoStore("selbJet1_btag");
+
+        addVartoStore("selbJet2_pt");
+        addVartoStore("selbJet2_pt_massnom");
+        addVartoStore("selbJet2_eta");
+        addVartoStore("selbJet2_phi");
+        addVartoStore("selbJet2_e");
+        addVartoStore("selbJet2_e_massnom");
+        addVartoStore("selbJet2_btag");
+
+        addVartoStore("Chi2_min");
+        addVartoStore("goodHT");
+        addVartoStore("invmass_2ndTop");
+        addVartoStore("H_mass");
+
+        addVartoStore("RelHT");          // Cut 1
+        addVartoStore("Chi2_max");       // Cut 2
+        addVartoStore("dRHbb_chi2");     // Cut 3
+        addVartoStore("Chi2_min_H");     // Cut 4
+        addVartoStore("dRWjj_chi2");     // Cut 5
+        addVartoStore("dRbW_chi2");      // Cut 6
+
+        // Candidates
+        addVartoStore("Chi2_min_W");
+        addVartoStore("Chi2_min_Top");
+        addVartoStore("mindR_dRbb");
+        addVartoStore("mindR_mbb");
+        addVartoStore("Top_mass");
+        addVartoStore("W_mass");
+        addVartoStore("invmass_WH");
+        addVartoStore("invmass_Tprime");
+        addVartoStore("invmass_leadjets");//etc
+        addVartoStore("R_TopH");
+        addVartoStore("R_2ndTopW");
+        addVartoStore("newRelHT");
+        addVartoStore("dRTprimeoj_chi2");
+        addVartoStore("dRHTop_chi2");
+        addVartoStore("dEtaWH_chi2");
+        addVartoStore("dPhiHTop_chi2");
+        addVartoStore("Rpt_Top2ndTop");
+        addVartoStore("Rpt_HTopTprime");
+        addVartoStore("Rpt_TprimeHTprimeTop");
+    
     }
 
 }
@@ -394,7 +432,7 @@ void TprimeHadAnalyzer::bookHists()
 
   add1DHist( {"h_nevents", "Number of Events", 2, -0.5, 1.5}, "one", "genWeight", "");
   add1DHist( {"h_nevents_pugen", "Number of Events", 2, -0.5, 1.5}, "one", "pugenWeight", "");
-  add1DHist( {"h_nevents_weighted", "Number of Events", 2, -0.5, 1.5}, "one", "evWeight_all", "0000");
+  add1DHist( {"h_nevents_weighted", "Number of Events", 2, -0.5, 1.5}, "one", "evWeight_L1btag_topPt", "0000");
 
 }
 
@@ -413,10 +451,11 @@ void TprimeHadAnalyzer::genStudy()
                  .Define("isbFromH","abs(Genbmom_pdgId)==25");
     
       _rlm = _rlm.Define("isHadProcess","Sum(isQFromW) > 1 && Sum(isbFromH) > 1");
+      _rlm = _rlm.Define("isHbb","Sum(isbFromH) > 1");
   }
 
   // HLT
-  // from AN 2021_140/v4 + additional
+  // 2016
   if (!isDefined("HLT_PFHT400_SixJet30_DoubleBTagCSV_p056")) _rlm = _rlm.Define("HLT_PFHT400_SixJet30_DoubleBTagCSV_p056", "false");
   if (!isDefined("HLT_PFHT450_SixJet40_BTagCSV_p056")) _rlm = _rlm.Define("HLT_PFHT450_SixJet40_BTagCSV_p056", "false");
   if (!isDefined("HLT_PFHT900")) _rlm = _rlm.Define("HLT_PFHT900", "false");
@@ -425,15 +464,19 @@ void TprimeHadAnalyzer::genStudy()
   if (!isDefined("HLT_PFHT800_4JetPt50")) _rlm = _rlm.Define("HLT_PFHT800_4JetPt50", "false");
   if (!isDefined("HLT_PFHT850_4JetPt50")) _rlm = _rlm.Define("HLT_PFHT850_4JetPt50", "false");
   if (!isDefined("HLT_PFJet450")) _rlm = _rlm.Define("HLT_PFJet450", "false");
+  if (!isDefined("HLT_PFJet500")) _rlm = _rlm.Define("HLT_PFJet500", "false");
 
-  if (!isDefined("HLT_PFHT380_SixPFJet32_DoublePFBTagCSV_2p2")) _rlm = _rlm.Define("HLT_PFHT380_SixPFJet32_DoublePFBTagCSV_2p2", "false");
-  if (!isDefined("HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2")) _rlm = _rlm.Define("HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2", "false");
-  if (!isDefined("HLT_PFHT430_SixPFJet40_BTagCSV_p080")) _rlm = _rlm.Define("HLT_PFHT430_SixPFJet40_BTagCSV_p080", "false"); 
-  if (!isDefined("HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5")) _rlm = _rlm.Define("HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5", "false"); 
 
+  // 2017
   if (!isDefined("HLT_HT300PT30_QuadJet_75_60_45_40_TripleCSV_p07")) _rlm = _rlm.Define("HLT_HT300PT30_QuadJet_75_60_45_40_TripleCSV_p07", "false");
-  if (!isDefined("HLT_HT300PT30_QuadJet_75_60_45_40_TriplePFBTagCSV_3p0")) _rlm = _rlm.Define("HLT_HT300PT30_QuadJet_75_60_45_40_TriplePFBTagCSV_3p0", "false");
+  if (!isDefined("HLT_PFHT300PT30_QuadPFJet_75_60_45_40_TriplePFBTagCSV_3p0")) _rlm = _rlm.Define("HLT_PFHT300PT30_QuadPFJet_75_60_45_40_TriplePFBTagCSV_3p0","false");
+  if (!isDefined("HLT_PFHT380_SixJet32_DoubleBTagCSV_p075")) _rlm = _rlm.Define("HLT_PFHT380_SixJet32_DoubleBTagCSV_p075", "false");
+  if (!isDefined("HLT_PFHT430_SixJet40_BTagCSV_p080")) _rlm = _rlm.Define("HLT_PFHT430_SixJet40_BTagCSV_p080", "false");
+  if (!isDefined("HLT_PFHT380_SixPFJet32_DoublePFBTagCSV_2p2")) _rlm = _rlm.Define("HLT_PFHT380_SixPFJet32_DoublePFBTagCSV_2p2", "false");
+  if (!isDefined("HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5")) _rlm = _rlm.Define("HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5", "false"); 
+  if (!isDefined("HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2")) _rlm = _rlm.Define("HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2", "false");
 
+  // 2018
   if (!isDefined("HLT_PFHT400_FivePFJet_100_100_60_30_30_DoublePFBTagDeepCSV_4p5")) _rlm = _rlm.Define("HLT_PFHT400_FivePFJet_100_100_60_30_30_DoublePFBTagDeepCSV_4p5", "false"); 
   if (!isDefined("HLT_PFHT430_SixPFJet40_PFBTagDeepCSV_1p5")) _rlm = _rlm.Define("HLT_PFHT430_SixPFJet40_PFBTagDeepCSV_1p5", "false"); 
   if (!isDefined("HLT_PFHT330PT30_QuadPFJet_75_60_45_40_TriplePFBTagDeepCSV_4p5")) _rlm = _rlm.Define("HLT_PFHT330PT30_QuadPFJet_75_60_45_40_TriplePFBTagDeepCSV_4p5", "false"); 
@@ -446,19 +489,21 @@ void TprimeHadAnalyzer::genStudy()
 
       _rlm = _rlm.Define("METfilter","Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_HBHENoiseFilter && Flag_HBHENoiseIsoFilter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter && Flag_BadPFMuonDzFilter && Flag_eeBadScFilter");
 
-      if(_year==2015){        //2016preVFP - APV: but for hard coded
-          _rlm = _rlm.Define("HLT","HLT_PFHT400_SixJet30_DoubleBTagCSV_p056 || HLT_PFHT450_SixJet40_BTagCSV_p056 || HLT_PFHT900 || HLT_PFHT750_4JetPt70 || HLT_PFHT750_4JetPt80 || HLT_PFHT800_4JetPt50 || HLT_PFHT850_4JetPt50 || HLT_PFJet450");
+      _rlm = _rlm.Define("HLT","HLT_PFHT400_SixJet30_DoubleBTagCSV_p056 || HLT_PFHT450_SixJet40_BTagCSV_p056 || HLT_PFHT900 || HLT_PFHT750_4JetPt70 || HLT_PFHT750_4JetPt80 || HLT_PFHT800_4JetPt50 || HLT_PFHT850_4JetPt50 || HLT_PFJet450");
 
-      }else if(_year==2016){  //2016postVFP: well its the same HLT
-          _rlm = _rlm.Define("HLT","HLT_PFHT400_SixJet30_DoubleBTagCSV_p056 || HLT_PFHT450_SixJet40_BTagCSV_p056 || HLT_PFHT900 || HLT_PFHT750_4JetPt70 || HLT_PFHT750_4JetPt80 || HLT_PFHT800_4JetPt50 || HLT_PFHT850_4JetPt50 || HLT_PFJet450");
-      }
   }
   else if (_year==2017 || _year==2018){
 
       _rlm = _rlm.Define("METfilter","Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_HBHENoiseFilter && Flag_HBHENoiseIsoFilter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter && Flag_BadPFMuonDzFilter && Flag_eeBadScFilter && Flag_ecalBadCalibFilter");
 
       if (_year==2017){
-          _rlm = _rlm.Define("HLT","HLT_PFHT380_SixPFJet32_DoublePFBTagCSV_2p2 || HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2 || HLT_PFHT430_SixPFJet40_BTagCSV_p080 || HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5 || HLT_HT300PT30_QuadJet_75_60_45_40_TripleCSV_p07 || HLT_HT300PT30_QuadJet_75_60_45_40_TriplePFBTagCSV_3p0 || HLT_PFHT1050 || HLT_PFJet500");
+//          _rlm = _rlm.Define("HLT", "HLT_HT300PT30_QuadJet_75_60_45_40_TriplePFBTagCSV_3p0 || HLT_PFHT380_SixJet32_DoubleBTagCSV_p075 || HLT_PFHT430_SixJet40_BTagCSV_p080 || HLT_PFHT380_SixPFJet32_DoublePFBTagCSV_2p2 || HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5 || HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2 || HLT_PFHT1050 || HLT_PFJet500");
+          _rlm = _rlm.Define("HLT", "HLT_HT300PT30_QuadJet_75_60_45_40_TripleCSV_p07 || HLT_PFHT300PT30_QuadPFJet_75_60_45_40_TriplePFBTagCSV_3p0 || HLT_PFHT380_SixJet32_DoubleBTagCSV_p075 || HLT_PFHT430_SixJet40_BTagCSV_p080 || HLT_PFHT380_SixPFJet32_DoublePFBTagCSV_2p2 || HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5 || HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2 || HLT_PFHT1050 || HLT_PFJet500");
+
+// hm? HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5 is prescaled
+// HLT_PFHT380_SixJet32_DoubleBTagCSV_p075 HLT_PFHT430_SixJet40_BTagCSV_p080 has 4.8 lumi, only
+// paths from AN2021-140, not reliable, though. names wrong
+// "HLT_PFHT380_SixPFJet32_DoublePFBTagCSV_2p2 || HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2 || HLT_PFHT430_SixPFJet40_BTagCSV_p080 || HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5 || HLT_HT300PT30_QuadJet_75_60_45_40_TripleCSV_p07 || HLT_HT300PT30_QuadJet_75_60_45_40_TriplePFBTagCSV_3p0 || HLT_PFHT1050 || HLT_PFJet500");
 
       }else if(_year==2018){
 //          _rlm = _rlm.Define("HLT","HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2 || HLT_PFHT400_FivePFJet_100_100_60_30_30_DoublePFBTagDeepCSV_4p5 || HLT_PFHT430_SixPFJet40_PFBTagDeepCSV_1p5 || HLT_PFHT330PT30_QuadPFJet_75_60_45_40_TriplePFBTagDeepCSV_4p5 || HLT_PFHT1050 || HLT_PFJet500");
@@ -466,18 +511,27 @@ void TprimeHadAnalyzer::genStudy()
       }
   }
 
+  _rlm = _rlm.Define("aMuons", "Muon_pt > 30 && abs(Muon_eta) < 2.4 && Muon_tightId")
+             .Define("aMuons_pt", "Muon_pt[aMuons]")
+             .Define("nMuons", "int(aMuons_pt.size())");
+
 }
 
 void TprimeHadAnalyzer::selectLeptons()
 {
 
-    _rlm = _rlm.Define("goodMuons", "Muon_pt > 20 && abs(Muon_eta) < 2.4 && Muon_tightId && Muon_miniPFRelIso_all < 0.05 && Muon_sip3d < 3 && Muon_tightCharge == 2");
+// align with B2G-24-020
+//
+//    _rlm = _rlm.Define("goodMuons", "Muon_pt > 20 && abs(Muon_eta) < 2.4 && Muon_tightId && Muon_miniPFRelIso_all < 0.05 && Muon_sip3d < 3 && Muon_tightCharge == 2");
+    _rlm = _rlm.Define("goodMuons", "Muon_pt > 30 && abs(Muon_eta) < 2.4 && Muon_tightId && Muon_miniPFRelIso_all < 0.05 && Muon_sip3d < 3");
     _rlm = _rlm.Define("goodMuons_pt", "Muon_pt[goodMuons]") 
                .Define("goodMuons_eta", "Muon_eta[goodMuons]")
                .Define("goodMuons_phi", "Muon_phi[goodMuons]")
                .Define("goodMuons_mass", "Muon_mass[goodMuons]");
 
-    _rlm = _rlm.Define("goodElectrons", "Electron_pt > 25 && abs(Electron_eta) < 2.5 && Electron_miniPFRelIso_all < 0.05 && Electron_sip3d < 2 && Electron_tightCharge == 2 && Electron_cutBased == 4");
+//    _rlm = _rlm.Define("goodElectrons", "Electron_pt > 25 && abs(Electron_eta) < 2.5 && Electron_miniPFRelIso_all < 0.05 && Electron_sip3d < 2 && Electron_tightCharge == 2 && Electron_cutBased == 4");
+    _rlm = _rlm.Define("goodElectrons", "Electron_pt > 35 && abs(Electron_eta) < 2.5 && ( ( abs(Electron_eta + Electron_deltaEtaSC) < 1.4442 ) || abs(Electron_eta + Electron_deltaEtaSC) > 1.566 ) && ( ( (abs(Electron_eta + Electron_deltaEtaSC) <= 1.479) && abs(Electron_dxy) < 0.05 && abs(Electron_dz) < 0.10 ) || ( (abs(Electron_eta + Electron_deltaEtaSC)>1.479) && abs(Electron_dxy) < 0.10 && abs(Electron_dz) < 0.20) ) && Electron_cutBased == 4");
+
     _rlm = _rlm.Define("goodElectrons_pt", "Electron_pt[goodElectrons]") 
                .Define("goodElectrons_eta", "Electron_eta[goodElectrons]")
                .Define("goodElectrons_phi", "Electron_phi[goodElectrons]")
@@ -502,68 +556,41 @@ void TprimeHadAnalyzer::selectJets()
   //_rlm = _rlm.Define("Jet_idx","")
 
   if(!_isData){
+              _rlm = _rlm.Define("MCorData", "-1.0");
+              auto getJERCptResolution=[this](floats &etas, floats &pts, floats &rhos)->floats
+              {
+                      return ::JERCptResolution(_jerc_fname, _jercptres_type, etas, pts, rhos);
+              };
 
-      _rlm = _rlm.Define("MCorData", "-1.0");
-
-      auto getJERCptResolution=[this](floats &etas, floats &pts, floats &rhos)->floats
-      {
-              return ::JERCptResolution(_jerc_fname, _jercptres_type, etas, pts, rhos);
-      };
-
-      auto getJERCSF=[this](floats &etas)->floats
-      {
-              return ::JERCSF(_jerc_fname, _jercSF_type,"nom", etas);
-      };
-
-      auto getJERCSFup=[this](floats &etas)->floats
-      {
-              return ::JERCSF(_jerc_fname, _jercSF_type,"up", etas);
-      };
-
-      auto getJERCSFdown=[this](floats &etas)->floats
-      {
-              return ::JERCSF(_jerc_fname, _jercSF_type,"down", etas);
-      };
+              auto getJERCSF=[this](floats &etas)->floats
+              {
+                      return ::JERCSF(_jerc_fname, _jercSF_type,"nom", etas);
+              };
 
       _rlm = _rlm.Define("JERCptResolution", getJERCptResolution, {"Jet_eta","Jet_pt","fixedGridRhoFastjetAll"});
       _rlm = _rlm.Define("JERCSF", getJERCSF, {"Jet_eta"});
       _rlm = _rlm.Define("GenMatchJetPtvars", ::GenMatchJetPt, {"Jet_pt", "Jet_eta", "Jet_phi", "Jet_mass", "GenJet_pt", "GenJet_eta", "GenJet_phi", "GenJet_mass", "JERCptResolution"});
-
-      if(_jersys == "Up"){
-
-          _rlm = _rlm.Define("JERCSFUp", getJERCSFup, {"Jet_eta"})
-                     .Define("JERCSFUp2Sig", "JERCSF+2*(JERCSFUp-JERCSF)");
-//          _rlm = _rlm.Define("c_JER", ::getcJER, {"Jet_pt", "GenMatchJetPtvars", "JERCSFUp2Sig", "JERCptResolution"});
-          _rlm = _rlm.Define("c_JER", ::getcJER, {"Jet_pt", "GenMatchJetPtvars", "JERCSFUp", "JERCptResolution"});
-
-      }else if(_jersys == "Dn"){
-
-          _rlm = _rlm.Define("JERCSFDn", getJERCSFdown, {"Jet_eta"})
-                     .Define("JERCSFDn2Sig", "JERCSF+2*(JERCSFDn-JERCSF)");
-//          _rlm = _rlm.Define("c_JER", ::getcJER, {"Jet_pt", "GenMatchJetPtvars", "JERCSFDn2Sig", "JERCptResolution"});
-          _rlm = _rlm.Define("c_JER", ::getcJER, {"Jet_pt", "GenMatchJetPtvars", "JERCSFDn", "JERCptResolution"});
-
-      }else{
-
-          _rlm = _rlm.Define("c_JER", ::getcJER, {"Jet_pt", "GenMatchJetPtvars", "JERCSF", "JERCptResolution"});
-
-      }
-
-      _rlm = _rlm.Define("Jet_pt_smear", "c_JER*Jet_pt");
+      _rlm = _rlm.Define("c_JER", ::getcJER, {"Jet_pt", "GenMatchJetPtvars", "JERCSF", "JERCptResolution"});
+      _rlm = _rlm.Define("Jet_pt_smear_nom", "c_JER*Jet_pt");
+//      _rlm = _rlm.Define("corrmet_pt_nom", ::getmetsmear, {"corrmetjson_pt", "corrmet_phi", "Jet_pt", "Jet_pt_smear_nom", "Jet_phi"}); // this is the good one
+      _rlm = _rlm.Define("rawmet_pt", "MET_pt");
+      _rlm = _rlm.Define("rawmet_phi", "MET_phi");
 
   }
   else{
       _rlm = _rlm.Define("MCorData", "1.0");
-      _rlm = _rlm.Define("Jet_pt_smear", "Jet_pt");
+      _rlm = _rlm.Define("Jet_pt_smear_nom", "Jet_pt");
       _rlm = _rlm.Define("run_numbers", "float(run)");
+      _rlm = _rlm.Define("rawmet_pt", "MET_pt");
+      _rlm = _rlm.Define("rawmet_phi", "MET_phi");
   }
   
   //presel for overlap
-  _rlm = _rlm.Define("pre_goodJets", "Jet_jetId > 1 && Jet_pt_smear >= 30 && abs(Jet_eta) <= 2.5 && (Jet_pt_smear > 50 || Jet_puId > 0)");
-//  _rlm = _rlm.Define("pre_goodJets", "Jet_jetId > 1 && Jet_pt_smear >= 30 && abs(Jet_eta) <= 4.5 && (Jet_pt_smear > 50 || Jet_puId > 0)");
+//  _rlm = _rlm.Define("pre_goodJets", "Jet_jetId > 1 && Jet_pt_smear_nom >= 30 && abs(Jet_eta) <= 4.5 && (Jet_pt_smear_nom > 50 || Jet_puId > 0)");
+  _rlm = _rlm.Define("pre_goodJets", "Jet_jetId > 1 && Jet_pt_smear_nom >= 30 && abs(Jet_eta) <= 2.5 && (Jet_pt_smear_nom > 50 || Jet_puId > 0)");
   
   _rlm = _rlm.Define("pre_nselJets","Sum(pre_goodJets)")
-             .Define("pre_selJet_pt","Jet_pt_smear[pre_goodJets]")
+             .Define("pre_selJet_pt","Jet_pt_smear_nom[pre_goodJets]")
              .Define("pre_selJet_eta","Jet_eta[pre_goodJets]")
              .Define("pre_selJet_phi","Jet_phi[pre_goodJets]")
              .Define("pre_selJet_mass","Jet_mass[pre_goodJets]")
@@ -772,12 +799,16 @@ void TprimeHadAnalyzer::selectJets()
              .Define("recob1_Higgs_cand_phi","float(bjet4vecs[Chi2_Tprime[0]].Phi())")
              .Define("recob1_Higgs_cand_pt","float(bjet4vecs[Chi2_Tprime[0]].Pt())")
              .Define("recob1_Higgs_cand_p","float(bjet4vecs[Chi2_Tprime[0]].P())")
-             .Define("recob1_Higgs_cand_btag","selbJet_btag[Chi2_Tprime[0]]")
+//             .Define("recob1_Higgs_cand_isL","bool(selbJet_btag[Chi2_Tprime[0]] > 0.0490)")
+//             .Define("recob1_Higgs_cand_isM","bool(selbJet_btag[Chi2_Tprime[0]] > 0.2783)")
+//             .Define("recob1_Higgs_cand_isT","bool(selbJet_btag[Chi2_Tprime[0]] > 0.7100)")
              .Define("recob2_Higgs_cand_eta","float(bjet4vecs[Chi2_Tprime[1]].Eta())")
              .Define("recob2_Higgs_cand_phi","float(bjet4vecs[Chi2_Tprime[1]].Phi())")
              .Define("recob2_Higgs_cand_pt","float(bjet4vecs[Chi2_Tprime[1]].Pt())")
              .Define("recob2_Higgs_cand_p","float(bjet4vecs[Chi2_Tprime[1]].P())")
-             .Define("recob2_Higgs_cand_btag","selbJet_btag[Chi2_Tprime[1]]")
+//             .Define("recob2_Higgs_cand_isL","bool(selbJet_btag[Chi2_Tprime[1]] > 0.0490)")
+//             .Define("recob2_Higgs_cand_isM","bool(selbJet_btag[Chi2_Tprime[1]] > 0.2783)")
+//             .Define("recob2_Higgs_cand_isT","bool(selbJet_btag[Chi2_Tprime[1]] > 0.7100)")
 
              .Define("recoj1_W_cand_eta","float(jet4vecs[Chi2_Tprime[2]].Eta())")
              .Define("recoj1_W_cand_phi","float(jet4vecs[Chi2_Tprime[2]].Phi())")
@@ -794,13 +825,57 @@ void TprimeHadAnalyzer::selectJets()
              .Define("recoj_bFromTop_cand_phi","float(bjet4vecs[Chi2_Tprime[4]].Phi())")
              .Define("recoj_bFromTop_cand_pt","float(bjet4vecs[Chi2_Tprime[4]].Pt())")
              .Define("recoj_bFromTop_cand_p","float(bjet4vecs[Chi2_Tprime[4]].P())")
-             .Define("recoj_bFromTop_cand_btag","selbJet_btag[Chi2_Tprime[4]]")
+//             .Define("recoj_bFromTop_cand_isL","bool(selbJet_btag[Chi2_Tprime[4]] > 0.0490)")
+//             .Define("recoj_bFromTop_cand_isM","bool(selbJet_btag[Chi2_Tprime[4]] > 0.2783)")
+//             .Define("recoj_bFromTop_cand_isT","bool(selbJet_btag[Chi2_Tprime[4]] > 0.7100)")
 
              .Define("reco_otherj_cand_eta","float(jet4vecs[Chi2_Tprime[5]].Eta())")
              .Define("reco_otherj_cand_phi","float(jet4vecs[Chi2_Tprime[5]].Phi())")
              .Define("reco_otherj_cand_pt","float(jet4vecs[Chi2_Tprime[5]].Pt())")
              .Define("reco_otherj_cand_p","float(jet4vecs[Chi2_Tprime[5]].P())")
              .Define("reco_otherj_cand_btag","selJet_btagDeepFlavB[Chi2_Tprime[5]]");
+
+  if(_year==2015){        //2016preVFP - APV
+      _rlm = _rlm.Define("recob1_Higgs_cand_isT","bool(selbJet_btag[Chi2_Tprime[0]] > 0.6502)")
+                 .Define("recob1_Higgs_cand_isM","bool(selbJet_btag[Chi2_Tprime[0]] > 0.2598)")
+                 .Define("recob1_Higgs_cand_isL","bool(selbJet_btag[Chi2_Tprime[0]] > 0.0508)")
+                 .Define("recob2_Higgs_cand_isT","bool(selbJet_btag[Chi2_Tprime[1]] > 0.6502)")
+                 .Define("recob2_Higgs_cand_isM","bool(selbJet_btag[Chi2_Tprime[1]] > 0.2598)")
+                 .Define("recob2_Higgs_cand_isL","bool(selbJet_btag[Chi2_Tprime[1]] > 0.0508)")
+                 .Define("recoj_bFromTop_cand_isT","bool(selbJet_btag[Chi2_Tprime[4]] > 0.6502)")
+                 .Define("recoj_bFromTop_cand_isM","bool(selbJet_btag[Chi2_Tprime[4]] > 0.2598)")
+                 .Define("recoj_bFromTop_cand_isL","bool(selbJet_btag[Chi2_Tprime[4]] > 0.0508)");
+  }else if (_year==2016){ //postVFP
+      _rlm = _rlm.Define("recob1_Higgs_cand_isT","bool(selbJet_btag[Chi2_Tprime[0]] > 0.6377)")
+                 .Define("recob1_Higgs_cand_isM","bool(selbJet_btag[Chi2_Tprime[0]] > 0.2489)")
+                 .Define("recob1_Higgs_cand_isL","bool(selbJet_btag[Chi2_Tprime[0]] > 0.0480)")
+                 .Define("recob2_Higgs_cand_isT","bool(selbJet_btag[Chi2_Tprime[1]] > 0.6377)")
+                 .Define("recob2_Higgs_cand_isM","bool(selbJet_btag[Chi2_Tprime[1]] > 0.2489)")
+                 .Define("recob2_Higgs_cand_isL","bool(selbJet_btag[Chi2_Tprime[1]] > 0.0480)")
+                 .Define("recoj_bFromTop_cand_isT","bool(selbJet_btag[Chi2_Tprime[4]] > 0.6377)")
+                 .Define("recoj_bFromTop_cand_isM","bool(selbJet_btag[Chi2_Tprime[4]] > 0.2489)")
+                 .Define("recoj_bFromTop_cand_isL","bool(selbJet_btag[Chi2_Tprime[4]] > 0.0480)");
+  }else if (_year==2017){
+      _rlm = _rlm.Define("recob1_Higgs_cand_isT","bool(selbJet_btag[Chi2_Tprime[0]] > 0.7476)")
+                 .Define("recob1_Higgs_cand_isM","bool(selbJet_btag[Chi2_Tprime[0]] > 0.3040)")
+                 .Define("recob1_Higgs_cand_isL","bool(selbJet_btag[Chi2_Tprime[0]] > 0.0532)")
+                 .Define("recob2_Higgs_cand_isT","bool(selbJet_btag[Chi2_Tprime[1]] > 0.7476)")
+                 .Define("recob2_Higgs_cand_isM","bool(selbJet_btag[Chi2_Tprime[1]] > 0.3040)")
+                 .Define("recob2_Higgs_cand_isL","bool(selbJet_btag[Chi2_Tprime[1]] > 0.0532)")
+                 .Define("recoj_bFromTop_cand_isT","bool(selbJet_btag[Chi2_Tprime[4]] > 0.7476)")
+                 .Define("recoj_bFromTop_cand_isM","bool(selbJet_btag[Chi2_Tprime[4]] > 0.3040)")
+                 .Define("recoj_bFromTop_cand_isL","bool(selbJet_btag[Chi2_Tprime[4]] > 0.0532)");
+  }else if(_year==2018){
+      _rlm = _rlm.Define("recob1_Higgs_cand_isT","bool(selbJet_btag[Chi2_Tprime[0]] > 0.7100)")
+                 .Define("recob1_Higgs_cand_isM","bool(selbJet_btag[Chi2_Tprime[0]] > 0.2783)")
+                 .Define("recob1_Higgs_cand_isL","bool(selbJet_btag[Chi2_Tprime[0]] > 0.0490)")
+                 .Define("recob2_Higgs_cand_isT","bool(selbJet_btag[Chi2_Tprime[1]] > 0.7100)")
+                 .Define("recob2_Higgs_cand_isM","bool(selbJet_btag[Chi2_Tprime[1]] > 0.2783)")
+                 .Define("recob2_Higgs_cand_isL","bool(selbJet_btag[Chi2_Tprime[1]] > 0.0490)")
+                 .Define("recoj_bFromTop_cand_isT","bool(selbJet_btag[Chi2_Tprime[4]] > 0.7100)")
+                 .Define("recoj_bFromTop_cand_isM","bool(selbJet_btag[Chi2_Tprime[4]] > 0.2783)")
+                 .Define("recoj_bFromTop_cand_isL","bool(selbJet_btag[Chi2_Tprime[4]] > 0.0490)");
+  }
 
   // Kinematic reconstructions
   _rlm = _rlm.Define("invmass_leadjets", "(jet4vecs[0]+jet4vecs[1]+jet4vecs[2]+jet4vecs[3]+jet4vecs[4]).M()");
@@ -832,71 +907,46 @@ void TprimeHadAnalyzer::calculateEvWeight()
 
     // calculate event weight for MC only
     if (!_isData){
-        std::cout <<"b tagging SF"<< std::endl;
+//        _rlm = _rlm.Define("btagTFWeight", "1.0");
+
+        //std::cout <<"b tagging SF"<< std::endl;
+//        _rlm = _rlm.Define("btagWeight", "1.0");
 
         auto btagWeight = [this](ints &hadflav, floats &etas, floats &pts, floats &discs, ints &wpL, ints &wpM, ints &wpT)->float
         {
             return ::producer_btagWeight(_correction_btag1, _efficiency_btag1, "central", "central", hadflav, etas, pts, discs, wpL, wpM, wpT, _isTprime, _isTT, _isQCD, _isST, _isVJets, _isttH); // defined in utility.cpp
         };
 
-//        auto btagWeight = [this](ints &hadflav, floats &etas, floats &pts, floats &discs, ints &wpL, ints &wpM, ints &wpT, std::string &bcvar, std::string &lvar)->float
-//        {
-//            return ::producer_btagWeight(_correction_btag1, _efficiency_btag1, bcvar, lvar, hadflav, etas, pts, discs, wpL, wpM, wpT, _isTprime, _isTT, _isQCD, _isST, _isVJets, _isttH); // defined in utility.cpp
-//        };
-
-        auto btagWeight_hUp = [this](ints &hadflav, floats &etas, floats &pts, floats &discs, ints &wpL, ints &wpM, ints &wpT)->float
-        {
-            return ::producer_btagWeight(_correction_btag1, _efficiency_btag1, "up_correlated", "central", hadflav, etas, pts, discs, wpL, wpM, wpT, _isTprime, _isTT, _isQCD, _isST, _isVJets, _isttH); // defined in utility.cpp
-        };
-
-        auto btagWeight_hUpuncorr = [this](ints &hadflav, floats &etas, floats &pts, floats &discs, ints &wpL, ints &wpM, ints &wpT)->float
-        {
-            return ::producer_btagWeight(_correction_btag1, _efficiency_btag1, "up_uncorrelated", "central", hadflav, etas, pts, discs, wpL, wpM, wpT, _isTprime, _isTT, _isQCD, _isST, _isVJets, _isttH); // defined in utility.cpp
-        };
-
-        auto btagWeight_lUp = [this](ints &hadflav, floats &etas, floats &pts, floats &discs, ints &wpL, ints &wpM, ints &wpT)->float
-        {
-            return ::producer_btagWeight(_correction_btag1, _efficiency_btag1, "central", "up_correlated", hadflav, etas, pts, discs, wpL, wpM, wpT, _isTprime, _isTT, _isQCD, _isST, _isVJets, _isttH); // defined in utility.cpp
-        };
-
-        auto btagWeight_lUpuncorr = [this](ints &hadflav, floats &etas, floats &pts, floats &discs, ints &wpL, ints &wpM, ints &wpT)->float
-        {
-            return ::producer_btagWeight(_correction_btag1, _efficiency_btag1, "central", "up_uncorrelated", hadflav, etas, pts, discs, wpL, wpM, wpT, _isTprime, _isTT, _isQCD, _isST, _isVJets, _isttH); // defined in utility.cpp
-        };
-        auto btagWeight_hDn = [this](ints &hadflav, floats &etas, floats &pts, floats &discs, ints &wpL, ints &wpM, ints &wpT)->float
-        {
-            return ::producer_btagWeight(_correction_btag1, _efficiency_btag1, "down_correlated", "central", hadflav, etas, pts, discs, wpL, wpM, wpT, _isTprime, _isTT, _isQCD, _isST, _isVJets, _isttH); // defined in utility.cpp
-        };
-
-        auto btagWeight_hDnuncorr = [this](ints &hadflav, floats &etas, floats &pts, floats &discs, ints &wpL, ints &wpM, ints &wpT)->float
-        {
-            return ::producer_btagWeight(_correction_btag1, _efficiency_btag1, "down_uncorrelated", "central", hadflav, etas, pts, discs, wpL, wpM, wpT, _isTprime, _isTT, _isQCD, _isST, _isVJets, _isttH); // defined in utility.cpp
-        };
-
-        auto btagWeight_lDn = [this](ints &hadflav, floats &etas, floats &pts, floats &discs, ints &wpL, ints &wpM, ints &wpT)->float
-        {
-            return ::producer_btagWeight(_correction_btag1, _efficiency_btag1, "central", "down_correlated", hadflav, etas, pts, discs, wpL, wpM, wpT, _isTprime, _isTT, _isQCD, _isST, _isVJets, _isttH); // defined in utility.cpp
-        };
-
-        auto btagWeight_lDnuncorr = [this](ints &hadflav, floats &etas, floats &pts, floats &discs, ints &wpL, ints &wpM, ints &wpT)->float
-        {
-            return ::producer_btagWeight(_correction_btag1, _efficiency_btag1, "central", "down_uncorrelated", hadflav, etas, pts, discs, wpL, wpM, wpT, _isTprime, _isTT, _isQCD, _isST, _isVJets, _isttH); // defined in utility.cpp
-        };
-
         _rlm = _rlm.Define("btagWeight", btagWeight, {"selJetsForbtag_hadronFlavour","selJetsForbtag_eta","selJetsForbtag_pt","selJetsForbtag_btag", "WP_deepJet_L", "WP_deepJet_M", "WP_deepJet_T"});
-        _rlm = _rlm.Define("btagWeight_hUp", btagWeight_hUp, {"selJetsForbtag_hadronFlavour","selJetsForbtag_eta","selJetsForbtag_pt","selJetsForbtag_btag", "WP_deepJet_L", "WP_deepJet_M", "WP_deepJet_T"});
-        _rlm = _rlm.Define("btagWeight_hUpuncorr", btagWeight_hUpuncorr, {"selJetsForbtag_hadronFlavour","selJetsForbtag_eta","selJetsForbtag_pt","selJetsForbtag_btag", "WP_deepJet_L", "WP_deepJet_M", "WP_deepJet_T"});
-        _rlm = _rlm.Define("btagWeight_lUp", btagWeight_lUp, {"selJetsForbtag_hadronFlavour","selJetsForbtag_eta","selJetsForbtag_pt","selJetsForbtag_btag", "WP_deepJet_L", "WP_deepJet_M", "WP_deepJet_T"});
-        _rlm = _rlm.Define("btagWeight_lUpuncorr", btagWeight_lUpuncorr, {"selJetsForbtag_hadronFlavour","selJetsForbtag_eta","selJetsForbtag_pt","selJetsForbtag_btag", "WP_deepJet_L", "WP_deepJet_M", "WP_deepJet_T"});
-        _rlm = _rlm.Define("btagWeight_hDn", btagWeight_hDn, {"selJetsForbtag_hadronFlavour","selJetsForbtag_eta","selJetsForbtag_pt","selJetsForbtag_btag", "WP_deepJet_L", "WP_deepJet_M", "WP_deepJet_T"});
-        _rlm = _rlm.Define("btagWeight_hDnuncorr", btagWeight_hDnuncorr, {"selJetsForbtag_hadronFlavour","selJetsForbtag_eta","selJetsForbtag_pt","selJetsForbtag_btag", "WP_deepJet_L", "WP_deepJet_M", "WP_deepJet_T"});
-        _rlm = _rlm.Define("btagWeight_lDn", btagWeight_lDn, {"selJetsForbtag_hadronFlavour","selJetsForbtag_eta","selJetsForbtag_pt","selJetsForbtag_btag", "WP_deepJet_L", "WP_deepJet_M", "WP_deepJet_T"});
-        _rlm = _rlm.Define("btagWeight_lDnuncorr", btagWeight_lDnuncorr, {"selJetsForbtag_hadronFlavour","selJetsForbtag_eta","selJetsForbtag_pt","selJetsForbtag_btag", "WP_deepJet_L", "WP_deepJet_M", "WP_deepJet_T"});
 
     }else{
         std::cout <<"its data, no b tagging SF applied"<< std::endl;
         _rlm = _rlm.Define("btagWeight", "1.0");
+//        _rlm = _rlm.Define("btagTFWeight", "1.0");
+
+//        std::cout <<"b tagging TF"<< std::endl;
+//
+//        auto btagTFWeight = [this](float p1, float p2, float p3, float eta1, float eta2, float eta3, bool is1bM, bool is1bL, bool is2bM, bool is2bL, bool is3bM, bool is3bL)->float
+//        {
+//            return ::producer_btagTFWeight(_ratio_btag, p1, p2, p3, eta1, eta2, eta3, is1bM, is1bL, is2bM, is2bL, is3bM, is3bL, _is2M1L, _is3M, _is3T); // defined in utility.cpp
+//        };
+//
+//        _rlm = _rlm.Define("btagTFWeight", btagTFWeight, {"recob1_Higgs_cand_p","recob2_Higgs_cand_p","recoj_bFromTop_cand_p","recob1_Higgs_cand_eta","recob2_Higgs_cand_eta","recoj_bFromTop_cand_eta","recob1_Higgs_cand_isM","recob1_Higgs_cand_isL","recob2_Higgs_cand_isM","recob2_Higgs_cand_isL","recoj_bFromTop_cand_isM","recoj_bFromTop_cand_isL"});
+//        _rlm = _rlm.Define("btagTFWeight", btagTFWeight, {"recob1_Higgs_cand_pt","recob2_Higgs_cand_pt","recoj_bFromTop_cand_pt","recob1_Higgs_cand_eta","recob2_Higgs_cand_eta","recoj_bFromTop_cand_eta","recob1_Higgs_cand_isM","recob1_Higgs_cand_isL","recob2_Higgs_cand_isM","recob2_Higgs_cand_isL","recoj_bFromTop_cand_isM","recoj_bFromTop_cand_isL"});
+
     }
+
+    // here OUT
+    std::cout <<"b tagging TF"<< std::endl;
+
+    auto btagTFWeight = [this](float p1, float p2, float p3, float eta1, float eta2, float eta3, bool is1bM, bool is1bL, bool is2bM, bool is2bL, bool is3bM, bool is3bL)->float
+    {
+        return ::producer_btagTFWeight(_ratio_btag, p1, p2, p3, eta1, eta2, eta3, is1bM, is1bL, is2bM, is2bL, is3bM, is3bL, _is2M1L, _is3M, _is3T); // defined in utility.cpp
+    };
+
+    // apply TF anyway
+    _rlm = _rlm.Define("btagTFWeight", btagTFWeight, {"recob1_Higgs_cand_p","recob2_Higgs_cand_p","recoj_bFromTop_cand_p","recob1_Higgs_cand_eta","recob2_Higgs_cand_eta","recoj_bFromTop_cand_eta","recob1_Higgs_cand_isM","recob1_Higgs_cand_isL","recob2_Higgs_cand_isM","recob2_Higgs_cand_isL","recoj_bFromTop_cand_isM","recoj_bFromTop_cand_isL"});
+//    again once I get TF
 
     int _case = 1;
     std::vector<std::string> Jets_vars_names = {"selJetsForbtag_hadronFlavour", "selJetsForbtag_eta", "selJetsForbtag_pt", "selJetsForbtag_btag"};  
@@ -908,41 +958,19 @@ void TprimeHadAnalyzer::calculateEvWeight()
         _rlm = _rlm.Define("evWeight_topPtSF", ::topPtWeight, {"GenPart_pt", "GenPart_pdgId", "GenPart_statusFlags"});
             if(_topPtReweightsys == "True"){
                 _rlm = _rlm.Define("evWeight_topPtSFUp", "evWeight_topPtSF*evWeight_topPtSF");
-                _rlm = _rlm.Define("evWeight_topPtSFDn", "1.0");
+                _rlm = _rlm.Define("evWeight_topPtSFDown", "1.0");
             }
     }else{
         _rlm = _rlm.Define("evWeight_topPtSF", "1.0");
     }
 
-    _rlm = _rlm.Define("evWeight_pugen", "pugenWeight");
-    _rlm = _rlm.Define("evWeight_pugen_L1", "pugenWeight * L1PreFiringWeight_Nom");
-    _rlm = _rlm.Define("evWeight_pugen_L1_btag", "pugenWeight * L1PreFiringWeight_Nom * btagWeight");
-    _rlm = _rlm.Define("evWeight_pugen_L1_btag_topPt", "pugenWeight * L1PreFiringWeight_Nom * btagWeight * evWeight_topPtSF");
-    _rlm = _rlm.Define("evWeight_all", "pugenWeight * btagWeight * L1PreFiringWeight_Nom * evWeight_topPtSF");
-
-    _rlm = _rlm.Define("evWeight_L1Up", "pugenWeight * btagWeight * L1PreFiringWeight_Up * evWeight_topPtSF");
-    _rlm = _rlm.Define("evWeight_L1Dn", "pugenWeight * btagWeight * L1PreFiringWeight_Dn * evWeight_topPtSF");
-
-    if(_btagsys == "True"){
-    _rlm = _rlm.Define("evWeight_btaghUp", "pugenWeight * btagWeight_hUp * L1PreFiringWeight_Nom * evWeight_topPtSF");
-    _rlm = _rlm.Define("evWeight_btaglUp", "pugenWeight * btagWeight_lUp * L1PreFiringWeight_Nom * evWeight_topPtSF");
-
-    _rlm = _rlm.Define("evWeight_btaghDn", "pugenWeight * btagWeight_hDn * L1PreFiringWeight_Nom * evWeight_topPtSF");
-    _rlm = _rlm.Define("evWeight_btaglDn", "pugenWeight * btagWeight_lDn * L1PreFiringWeight_Nom * evWeight_topPtSF");
-
-        if(_btagsysuncorr == "True"){
-            _rlm = _rlm.Define("evWeight_btaghUpuncorr", "pugenWeight * btagWeight_hUpuncorr * L1PreFiringWeight_Nom * evWeight_topPtSF");
-            _rlm = _rlm.Define("evWeight_btaglUpuncorr", "pugenWeight * btagWeight_lUpuncorr * L1PreFiringWeight_Nom * evWeight_topPtSF");
-            _rlm = _rlm.Define("evWeight_btaghDnuncorr", "pugenWeight * btagWeight_hDnuncorr * L1PreFiringWeight_Nom * evWeight_topPtSF");
-            _rlm = _rlm.Define("evWeight_btaglDnuncorr", "pugenWeight * btagWeight_lDnuncorr * L1PreFiringWeight_Nom * evWeight_topPtSF");
-
-        }
-
-    }
-    if(_topPtReweightsys == "True"){
-        _rlm = _rlm.Define("evWeight_topPtUp", "pugenWeight * L1PreFiringWeight_Nom * btagWeight * evWeight_topPtSFUp");
-        _rlm = _rlm.Define("evWeight_topPtDn", "pugenWeight * L1PreFiringWeight_Nom * btagWeight * evWeight_topPtSFDn");
-    }
+    // previously
+    _rlm = _rlm.Define("evWeight", "pugenWeight");
+    _rlm = _rlm.Define("evWeight_L1", "pugenWeight * L1PreFiringWeight_Nom");
+    _rlm = _rlm.Define("evWeight_L1btag", "pugenWeight * btagWeight * L1PreFiringWeight_Nom");
+    _rlm = _rlm.Define("evWeight_L1_topPt", "pugenWeight * L1PreFiringWeight_Nom * evWeight_topPtSF");
+    _rlm = _rlm.Define("evWeight_L1btag_topPt", "pugenWeight * btagWeight * L1PreFiringWeight_Nom * evWeight_topPtSF");
+    _rlm = _rlm.Define("evWeight_L1btag_topPt_TF", "pugenWeight * btagWeight * L1PreFiringWeight_Nom * evWeight_topPtSF * btagTFWeight");
 
 }
 
@@ -1055,49 +1083,49 @@ bool TprimeHadAnalyzer::readgoodjson(string goodjsonfname)
     }
 }
 
-//void TprimeHadAnalyzer::GetJetsys(string sys){
-//
-//                auto getJERCptResolution=[this](floats &etas, floats &pts, floats &rhos)->floats
-//                {
-//                        return ::JERCptResolution(_jerc_fname, _jercptres_type, etas, pts, rhos);
-//                };
-//
-//        //_rlm = _rlm.Define(sys, ::getsysJerc, {_jerc_fname, "Jet_pt_smear", "Jet_eta", _jercsys_total})
-//        _rlm = _rlm.Define("Jet_pt_"+sys+"Up", sys+"*2*Jet_pt+Jet_pt")
-//               .Define("Jet_pt_"+sys+"Dn", "-"+sys+"*2*Jet_pt+Jet_pt")
-//               .Define("Jet_mass_"+sys+"Up", sys+"*Jet_mass+Jet_mass")
-//               .Define("Jet_mass_"+sys+"Dn", "-"+sys+"*Jet_mass+Jet_mass");
-//                _rlm = _rlm.Define("JERCptResolution"+sys+"Up", getJERCptResolution, {"Jet_eta","Jet_pt_"+sys+"Up","fixedGridRhoFastjetAll"});
-//                _rlm = _rlm.Define("JERCptResolution"+sys+"Dn", getJERCptResolution, {"Jet_eta","Jet_pt_"+sys+"Dn","fixedGridRhoFastjetAll"});
-//                _rlm = _rlm.Define("GenMatchJetPtvars"+sys+"Up", ::GenMatchJetPt, {"Jet_pt_"+sys+"Up", "Jet_eta", "Jet_phi", "Jet_mass_"+sys+"Up", "GenJet_pt", "GenJet_eta", "GenJet_phi", "GenJet_mass", "JERCptResolution"+sys+"Up"});
-//                _rlm = _rlm.Define("GenMatchJetPtvars"+sys+"Dn", ::GenMatchJetPt, {"Jet_pt_"+sys+"Dn", "Jet_eta", "Jet_phi", "Jet_mass_"+sys+"Dn", "GenJet_pt", "GenJet_eta", "GenJet_phi", "GenJet_mass", "JERCptResolution"+sys+"Dn"});
-//                _rlm = _rlm.Define("c_JER"+sys+"Up", ::getcJER, {"Jet_pt_"+sys+"Up", "GenMatchJetPtvars"+sys+"Up", "JERCSF", "JERCptResolution"+sys+"Up"});
-//                _rlm = _rlm.Define("c_JER"+sys+"Dn", ::getcJER, {"Jet_pt_"+sys+"Dn", "GenMatchJetPtvars"+sys+"Dn", "JERCSF", "JERCptResolution"+sys+"Dn"});
-//                _rlm = _rlm.Define("Jet_pt_smear_"+sys+"Up", "c_JER"+sys+"Up*Jet_pt_"+sys+"Up");
-//                _rlm = _rlm.Define("Jet_pt_smear_"+sys+"Dn", "c_JER"+sys+"Dn*Jet_pt_"+sys+"Dn");
-////                _rlm = _rlm.Define("corrmet_pt_"+sys+"Up", ::getmetsmear, {"corrmetjson_pt", "corrmet_phi", "Jet_pt_"+sys+"Up", "Jet_pt_smear_"+sys+"Up", "Jet_phi"});
-////                _rlm = _rlm.Define("corrmet_pt_"+sys+"Dn", ::getmetsmear, {"corrmetjson_pt", "corrmet_phi", "Jet_pt_"+sys+"Dn", "Jet_pt_smear_"+sys+"Dn", "Jet_phi"});
-//
-//        _rlm = _rlm.Define("goodJets_"+sys+"Up", "goodJetsID && Jet_pt_smear_"+sys+"Up>30.0 && abs(Jet_eta)<2.5");
-//        _rlm = _rlm.Define("goodJets_pt_"+sys+"Up", "Jet_pt_smear_"+sys+"Up[goodJets_"+sys+"Up]")
-//               .Define("goodJets_eta_"+sys+"Up", "Jet_eta[goodJets_"+sys+"Up]")
-//               .Define("goodJets_phi_"+sys+"Up", "Jet_phi[goodJets_"+sys+"Up]")
-//               .Define("goodJets_mass_"+sys+"Up", "Jet_mass[goodJets_"+sys+"Up]")
-//               .Define("goodJetsHT_"+sys+"Up", "Sum(goodJets_pt_"+sys+"Up)")
-//               .Define("goodJets_deepjetbtag_"+sys+"Up", "Jet_btagDeepFlavB[goodJets_"+sys+"Up]")
-//               .Define("goodJets_hadflav_"+sys+"Up", "Jet_hadronFlavour[goodJets_"+sys+"Up]")
-//               .Define("goodJets_4vecs_"+sys+"Up", ::generate_4vec, {"goodJets_pt_"+sys+"Up", "goodJets_eta_"+sys+"Up", "goodJets_phi_"+sys+"Up", "goodJets_mass_"+sys+"Up"});
-//
-//        _rlm = _rlm.Define("goodJets_"+sys+"Dn", "goodJetsID && Jet_pt_smear_"+sys+"Dn>30.0 && abs(Jet_eta)<2.5");
-//        _rlm = _rlm.Define("goodJets_pt_"+sys+"Dn", "Jet_pt_smear_"+sys+"Dn[goodJets_"+sys+"Dn]")
-//               .Define("goodJets_eta_"+sys+"Dn", "Jet_eta[goodJets_"+sys+"Dn]")
-//               .Define("goodJets_phi_"+sys+"Dn", "Jet_phi[goodJets_"+sys+"Dn]")
-//               .Define("goodJets_mass_"+sys+"Dn", "Jet_mass[goodJets_"+sys+"Dn]")
-//               .Define("goodJetsHT_"+sys+"Dn", "Sum(goodJets_pt_"+sys+"Dn)")
-//               .Define("goodJets_deepjetbtag_"+sys+"Dn", "Jet_btagDeepFlavB[goodJets_"+sys+"Dn]")
-//               .Define("goodJets_hadflav_"+sys+"Dn", "Jet_hadronFlavour[goodJets_"+sys+"Dn]")
-//               .Define("goodJets_4vecs_"+sys+"Dn", ::generate_4vec, {"goodJets_pt_"+sys+"Dn", "goodJets_eta_"+sys+"Dn", "goodJets_phi_"+sys+"Dn", "goodJets_mass_"+sys+"Dn"});
-//}
+void TprimeHadAnalyzer::GetJetsys(string sys){
+
+                auto getJERCptResolution=[this](floats &etas, floats &pts, floats &rhos)->floats
+                {
+                        return ::JERCptResolution(_jerc_fname, _jercptres_type, etas, pts, rhos);
+                };
+
+        //_rlm = _rlm.Define(sys, ::getsysJerc, {_jerc_fname, "Jet_pt_smear", "Jet_eta", _jercsys_total})
+        _rlm = _rlm.Define("Jet_pt_"+sys+"Up", sys+"*2*Jet_pt+Jet_pt")
+               .Define("Jet_pt_"+sys+"Down", "-"+sys+"*2*Jet_pt+Jet_pt")
+               .Define("Jet_mass_"+sys+"Up", sys+"*Jet_mass+Jet_mass")
+               .Define("Jet_mass_"+sys+"Down", "-"+sys+"*Jet_mass+Jet_mass");
+                _rlm = _rlm.Define("JERCptResolution"+sys+"Up", getJERCptResolution, {"Jet_eta","Jet_pt_"+sys+"Up","fixedGridRhoFastjetAll"});
+                _rlm = _rlm.Define("JERCptResolution"+sys+"Down", getJERCptResolution, {"Jet_eta","Jet_pt_"+sys+"Down","fixedGridRhoFastjetAll"});
+                _rlm = _rlm.Define("GenMatchJetPtvars"+sys+"Up", ::GenMatchJetPt, {"Jet_pt_"+sys+"Up", "Jet_eta", "Jet_phi", "Jet_mass_"+sys+"Up", "GenJet_pt", "GenJet_eta", "GenJet_phi", "GenJet_mass", "JERCptResolution"+sys+"Up"});
+                _rlm = _rlm.Define("GenMatchJetPtvars"+sys+"Down", ::GenMatchJetPt, {"Jet_pt_"+sys+"Down", "Jet_eta", "Jet_phi", "Jet_mass_"+sys+"Down", "GenJet_pt", "GenJet_eta", "GenJet_phi", "GenJet_mass", "JERCptResolution"+sys+"Down"});
+                _rlm = _rlm.Define("c_JER"+sys+"Up", ::getcJER, {"Jet_pt_"+sys+"Up", "GenMatchJetPtvars"+sys+"Up", "JERCSF", "JERCptResolution"+sys+"Up"});
+                _rlm = _rlm.Define("c_JER"+sys+"Down", ::getcJER, {"Jet_pt_"+sys+"Down", "GenMatchJetPtvars"+sys+"Down", "JERCSF", "JERCptResolution"+sys+"Down"});
+                _rlm = _rlm.Define("Jet_pt_smear_"+sys+"Up", "c_JER"+sys+"Up*Jet_pt_"+sys+"Up");
+                _rlm = _rlm.Define("Jet_pt_smear_"+sys+"Down", "c_JER"+sys+"Down*Jet_pt_"+sys+"Down");
+//                _rlm = _rlm.Define("corrmet_pt_"+sys+"Up", ::getmetsmear, {"corrmetjson_pt", "corrmet_phi", "Jet_pt_"+sys+"Up", "Jet_pt_smear_"+sys+"Up", "Jet_phi"});
+//                _rlm = _rlm.Define("corrmet_pt_"+sys+"Down", ::getmetsmear, {"corrmetjson_pt", "corrmet_phi", "Jet_pt_"+sys+"Down", "Jet_pt_smear_"+sys+"Down", "Jet_phi"});
+
+        _rlm = _rlm.Define("goodJets_"+sys+"Up", "goodJetsID && Jet_pt_smear_"+sys+"Up>30.0 && abs(Jet_eta)<2.5");
+        _rlm = _rlm.Define("goodJets_pt_"+sys+"Up", "Jet_pt_smear_"+sys+"Up[goodJets_"+sys+"Up]")
+               .Define("goodJets_eta_"+sys+"Up", "Jet_eta[goodJets_"+sys+"Up]")
+               .Define("goodJets_phi_"+sys+"Up", "Jet_phi[goodJets_"+sys+"Up]")
+               .Define("goodJets_mass_"+sys+"Up", "Jet_mass[goodJets_"+sys+"Up]")
+               .Define("goodJetsHT_"+sys+"Up", "Sum(goodJets_pt_"+sys+"Up)")
+               .Define("goodJets_deepjetbtag_"+sys+"Up", "Jet_btagDeepFlavB[goodJets_"+sys+"Up]")
+               .Define("goodJets_hadflav_"+sys+"Up", "Jet_hadronFlavour[goodJets_"+sys+"Up]")
+               .Define("goodJets_4vecs_"+sys+"Up", ::generate_4vec, {"goodJets_pt_"+sys+"Up", "goodJets_eta_"+sys+"Up", "goodJets_phi_"+sys+"Up", "goodJets_mass_"+sys+"Up"});
+
+        _rlm = _rlm.Define("goodJets_"+sys+"Down", "goodJetsID && Jet_pt_smear_"+sys+"Down>30.0 && abs(Jet_eta)<2.5");
+        _rlm = _rlm.Define("goodJets_pt_"+sys+"Down", "Jet_pt_smear_"+sys+"Down[goodJets_"+sys+"Down]")
+               .Define("goodJets_eta_"+sys+"Down", "Jet_eta[goodJets_"+sys+"Down]")
+               .Define("goodJets_phi_"+sys+"Down", "Jet_phi[goodJets_"+sys+"Down]")
+               .Define("goodJets_mass_"+sys+"Down", "Jet_mass[goodJets_"+sys+"Down]")
+               .Define("goodJetsHT_"+sys+"Down", "Sum(goodJets_pt_"+sys+"Down)")
+               .Define("goodJets_deepjetbtag_"+sys+"Down", "Jet_btagDeepFlavB[goodJets_"+sys+"Down]")
+               .Define("goodJets_hadflav_"+sys+"Down", "Jet_hadronFlavour[goodJets_"+sys+"Down]")
+               .Define("goodJets_4vecs_"+sys+"Down", ::generate_4vec, {"goodJets_pt_"+sys+"Down", "goodJets_eta_"+sys+"Down", "goodJets_phi_"+sys+"Down", "goodJets_mass_"+sys+"Down"});
+}
 
 void TprimeHadAnalyzer::setupAnalysis()
 {

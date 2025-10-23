@@ -137,6 +137,8 @@ float btv_effMap( std::unique_ptr<correction::CorrectionSet>& eff, std::string w
 
 float producer_btagWeight(std::unique_ptr<correction::CorrectionSet>& cset, std::unique_ptr<correction::CorrectionSet>& eff, std::string sys, std::string sysl, ints &hadflav, floats &etas, floats &pts, floats &discs, ints &wpL, ints &wpM, ints &wpT, bool isTp, bool isTT, bool isQCD, bool isST, bool isVJets, bool isttH);
 
+float producer_btagTFWeight(std::unique_ptr<correction::CorrectionSet>& ratio, float p1, float p2, float p3, float eta1, float eta2, float eta3, bool is1bM, bool is1bL, bool is2bM, bool is2bL, bool is3bM, bool is3bL, bool is2M1L, bool is3M, bool is3T);
+
 float pucorrection(std::unique_ptr<correction::CorrectionSet> &cset, std::string name, std::string syst, float ntruepileup);
 
 floats PrintVector(floats myvector);

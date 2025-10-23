@@ -61,7 +61,7 @@ void NanoAODAnalyzerrdframe::setTree(TTree *t, std::string outfilename)
 }
 
 
-void NanoAODAnalyzerrdframe::setupCorrections(string goodjsonfname, string pufname, string putag, string btvfname, string fname_btagEff, string jercfname, string jerctag, string jercunctag, string jercsys_total)
+void NanoAODAnalyzerrdframe::setupCorrections(string goodjsonfname, string pufname, string putag, string btvfname, string fname_btagEff, string fname_btagRatio, string jercfname, string jerctag, string jercunctag, string jercsys_total)
 {
     cout << "set up Corrections!" << endl;
     if (_isData) {
@@ -119,7 +119,32 @@ void NanoAODAnalyzerrdframe::setupCorrections(string goodjsonfname, string pufna
                     return x*y;
             }, {"genWeight", "puWeight"});
         }
+
+        // add anyway
+        // load ratio map
+        _ratio_btag = correction::CorrectionSet::from_file(fname_btagRatio);
+        if (!_ratio_btag) {
+            cout << "no ratio_btag" << endl;
+        }
+        if (!_ratio_btag->validate()) {
+            cout << "cannot validate ratio_btag" << endl;
+        }
+        assert(_ratio_btag->validate());
+
+    }else{
+
+        // load ratio map
+        _ratio_btag = correction::CorrectionSet::from_file(fname_btagRatio);
+        if (!_ratio_btag) {
+            cout << "no ratio_btag" << endl;
+        }
+        if (!_ratio_btag->validate()) {
+            cout << "cannot validate ratio_btag" << endl;
+        }
+        assert(_ratio_btag->validate());
+
     }
+
     _jerctag = jerctag;
     _jercunctag = jercunctag;
 

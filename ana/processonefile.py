@@ -16,14 +16,23 @@ from importlib import import_module
 from argparse import ArgumentParser
 
 if __name__=='__main__':
-    parser = ArgumentParser(usage="%prog inputfile outputfile jobconfmod")
+    #parser = ArgumentParser(usage="%prog inputfile outputfile jobconfmod")
+    # try here
+    parser = ArgumentParser(usage="%prog inputfile outputfile jobconfmod region sampletype")
     parser.add_argument("infile")
     parser.add_argument("outfile")
     parser.add_argument("jobconfmod")
+    #try here
+    parser.add_argument("region")
+    parser.add_argument("sampletype")
+
     args = parser.parse_args()
     infile = args.infile
     outfile = args.outfile
     jobconfmod = args.jobconfmod
+
+    region = str(args.region)
+    sampletype = str(args.sampletype)
 
     # load job configuration python module and get bjects
     mod = import_module(jobconfmod)
@@ -39,7 +48,7 @@ if __name__=='__main__':
     # load compiled C++ library into ROOT/python
     cppyy.load_reflection_info("libcorrectionlib.so")
     cppyy.load_reflection_info("libMathMore.so")
-    cppyy.load_reflection_info("libnanoaodrdframe.so")
+    cppyy.load_reflection_info("libnanoadrdframe.so")
     t = ROOT.TChain(intreename)
     t.Add(infile)
     print("Inside process one file..!!")
@@ -51,13 +60,16 @@ if __name__=='__main__':
     # w/ Di
     #aproc.setParams(config['year'], config['runtype'],config['datatype'], config['jecsys'], config['jersys'])
     # somewhat different
-    aproc.setParams(config['year'], config['runtype'], config['datatype'], config['sampletype'], config['region'], config['topPtReweight'], config['topPtReweightsys'], config['jecsys'], config['jersys'], config['btagsys'], config['btagsysuncorr'])
+    #aproc.setParams(config['year'], config['runtype'], config['datatype'], config['sampletype'], config['region'], config['topPtReweight'], config['topPtReweightsys'], config['jecsys'], config['jersys'], config['btagsys'], config['btagsysuncorr'])
+    # try here
+    aproc.setParams(config['year'], config['runtype'], config['datatype'], sampletype, region, config['topPtReweight'], config['topPtReweightsys'], config['jecsys'], config['jersys'], config['btagsys'], config['btagsysuncorr'])
 
     #aproc.setParams(config[year])
     # setup JSONS for corrections
     #aproc.setupCorrections(config['goodjson'], config['pileupfname'], config['pileuptag']\
     #    , config['btvfname'], config['btvtype'], config['jercfname'], config['jerctag'], config['jercunctag'])
-    aproc.setupCorrections(config['goodjson'], config['pileupfname'], config['pileuptag'], config['btvfname'], config['btvtype'], config['fname_btagEff'], config['jercfname'], config['jerctag'], config['jercunctag'], config['jercsys_total'])
+    # hi
+    aproc.setupCorrections(config['goodjson'], config['pileupfname'], config['pileuptag'], config['btvfname'], config['fname_btagEff'], config['fname_btagRatio'], config['jercfname'], config['jerctag'], config['jercunctag'], config['jercsys_total'])
     # prepare for processing
     aproc.setupObjects()
     aproc.setupAnalysis()

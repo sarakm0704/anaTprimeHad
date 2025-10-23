@@ -13,7 +13,13 @@ config = {
         # is ReReco or Ultra Legacy
         'runtype': 'UL',
         'datatype': -1,
-
+        # sample descriptions
+        'topPtReweight': "False",
+        'topPtReweightsys': "none",
+        'jecsys': "Total",
+        'jersys': "none",
+        'btagsys': "none",
+        'btagsysuncorr': "none",
         #for correction
         # good json file
         'goodjson': 'data/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt',
@@ -22,18 +28,16 @@ config = {
         'pileuptag': 'Collisions18_UltraLegacy_goldenJSON',
         # json filename for BTV correction
         'btvfname': 'data/BTV/2018_UL/btagging.json',
-        # BTV correction type
-        'btvtype': 'deepJet_shape',
+        # BTV efficiency map
+        'fname_btagEff': 'data/BTV/2018_UL/2018_btagEff_VLQ_FH.json',
+        'fname_btagRatio': 'data/BTV/2018_UL/2018_btagTF_VLQ_FH.json',
         # json file name for JERC
-        'jercfname': 'data/JERC/UL18_jerc.json',
-        ## conbined correction type for jets
-        #'jerctag': 'Summer19UL18_V5_MC_L1L2L3Res_AK4PFchs', 
+        'jercfname': 'data/JERC/jetUL18_jerc.json',
+        # conbined correction type for jets
         'jerctag': 'Summer19UL18_JRV2_MC_PtResolution_AK4PFchs', 
-        ## jet uncertainty 
-        #'jercunctag': 'Summer19UL18_V5_MC_Total_AK4PFchs', 
+        # jet uncertainty 
         'jercunctag': 'Summer19UL18_JRV2_MC_ScaleFactor_AK4PFchs', 
-        'jercsys_total': 'Summer19UL18_V5_MC_Regrouped_Total_AK4PFchs',
-        
+        'jercsys_total': 'Summer19UL18_V5_MC_Regrouped_Total_AK4PFchs'
         }
 
 # processing options

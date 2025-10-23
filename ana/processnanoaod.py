@@ -32,12 +32,14 @@ def function_calling_PostProcessor(outdir, rootfileshere, jobconfmod):
         rootfname = re.split('\/', afile)[-1]
         withoutext = re.split('\.root', rootfname)[0]
         outfname = outdir + '/' + withoutext + '_analyzed.root'
-        subprocess.run(["./processonefile.py", afile, outfname, jobconfmod])
+        #subprocess.run(["./processonefile.py", afile, outfname, jobconfmod])
+        # try here
+        subprocess.run(["./processonefile.py", afile, outfname, jobconfmod, region, sampletype])
     pass
 
 
 class Nanoaodprocessor:
-    def __init__(self, inlist, outdir, jobconfmod, procflags, config):
+    def __init__(self, inlist, outdir, jobconfmod, region, sampletype, procflags, config):
         self.outdir = outdir
         self.inlist = inlist
         self.jobconfmod = jobconfmod
@@ -49,13 +51,17 @@ class Nanoaodprocessor:
         self.nrootfiles =procflags['nrootfiles']
         self.year =config['year']
         self.runtype =config['runtype']
-        self.datatype = config['datatype']
-        self.sampletype = config['sampletype']
-        self.region = config['region']
+        self.datatype =config['datatype']
+        #self.sampletype = config['sampletype']
+        #self.region = config['region']
+        # try here
+        #self.sampletype = sampletype
+        self.region = region
+        self.sampletype = sampletype
         print("year=", self.year)
         print("data=", self.datatype)
-        print("sample=", self.sampletype)
         print("region=", self.region)
+        print("sample=", self.sampletype)
 
     def process(self):
         self._processROOTfiles(self.inlist, self.outdir)
@@ -68,7 +74,8 @@ class Nanoaodprocessor:
         flist = open(inputlist).read().splitlines()
         print(f"flist = {flist}")
         # then put xrootd
-        inputdirectory = 'root://xrootd-cms.infn.it/'
+        #inputdirectory = 'root://xrootd-cms.infn.it/'
+        inputdirectory = 'root://cms-xrd-global.cern.ch/'
         rootfileshere = []
         subdirs = []
         outsubdirs = []
@@ -151,7 +158,9 @@ class Nanoaodprocessor:
                     rootfname = re.split('\/', afile)[-1]
                     withoutext = re.split('\.root', rootfname)[0]
                     outfname = outputdirectory +'/'+ withoutext + '_analyzed.root'
-                    subprocess.run(["./processonefile.py", afile, outfname, self.jobconfmod])
+#                    subprocess.run(["./processonefile.py", afile, outfname, self.jobconfmod])
+# try here
+                    subprocess.run(["./processonefile.py", afile, outfname, self.jobconfmod, self.region, self.sampletype])
 
                     # the following works, but memory usage of this process grows with time.. Don't know how to solve it.
                     """
@@ -174,7 +183,7 @@ class Nanoaodprocessor:
             for indir, outdir in zip(subdirs, outsubdirs):
                 self._processROOTfiles(indir, outdir)
 
-def Nanoaodprocessor_singledir(indir, outputroot, procflags, config):
+def Nanoaodprocessor_singledir(indir, outputroot, procflags, config, region, sampletype):
     """Runs nanoaod analyzer over ROOT files in indir (but doesn't search recursively)
     and run outputs into a signel ROOT file.
 
@@ -227,8 +236,9 @@ def Nanoaodprocessor_singledir(indir, outputroot, procflags, config):
     #aproc = ROOT.BaseAnalyser(t, outputroot)
     aproc = ROOT.TprimeHadAnalyzer(t, outputroot)
     #aproc = ROOT.GJetAnalyzer(t, outputroot)
-    #aproc.setParams(config['year'], config['runtype'],config['datatype']) 
-    aproc.setParams(config['year'], config['runtype'],config['datatype'], config['sampletype'], config['region'], config['topPtReweight'], config['topPtReweightsys'], config['jecsys'], config['jersys'], config['btagsys'], config['btagsysuncorr'])
+    #aproc.setParams(config['year'], config['runtype'],config['datatype'], config['sampletype'], config['region'], config['topPtReweight'], config['topPtReweightsys'], config['jecsys'], config['jersys'], config['btagsys'], config['btagsysuncorr'])
+    # try here
+    aproc.setParams(config['year'], config['runtype'],config['datatype'], sampletype, region, config['topPtReweight'], config['topPtReweightsys'], config['jecsys'], config['jersys'], config['btagsys'], config['btagsysuncorr'])
     #
     #if your input root file already has good json, various corrections applied with
     #object clean up, you should skip the corrections step
@@ -237,7 +247,8 @@ def Nanoaodprocessor_singledir(indir, outputroot, procflags, config):
     if not skipcorrections:
     #    aproc.setupCorrections(config['goodjson'], config['pileupfname'], config['pileuptag']\
     #    , config['btvfname'], config['btvtype'], config['jercfname'], config['jerctag'], config['jercunctag'])
-        aproc.setupCorrections(config['goodjson'], config['pileupfname'], config['pileuptag'], config['btvfname'], config['btvtype'], config['fname_btagEff'], config['jercfname'], config['jerctag'], config['jercunctag'], config['jercsys_total'])
+    # hi
+        aproc.setupCorrections(config['goodjson'], config['pileupfname'], config['pileuptag'], config['btvfname'], config['fname_btagEff'], config['fname_btagRatio'], config['jercfname'], config['jerctag'], config['jercunctag'], config['jercsys_total'])
     #sys.stdout.flush() #to force printout in right order 
     #aproc.setupObjects()
     else:
@@ -281,24 +292,30 @@ if __name__=='__main__':
     # inputDir and lower directories contain input NanoAOD files
     # outputDir is where the outputs will be created
 
-    parser = ArgumentParser(usage="%prog inputDir outputDir jobconfmod")
+    #parser = ArgumentParser(usage="%prog inputDir outputDir jobconfmod")
+    # try here
+    parser = ArgumentParser(usage="%prog inputDir outputDir jobconfmod region sampletype")
 
     parser.add_argument("indir")
     parser.add_argument("outdir")
     parser.add_argument("jobconfmod")
+    # try here
+    parser.add_argument("region")
+    parser.add_argument("sampletype")
     args = parser.parse_args()
-
 
     indir = args.indir
     outdir = args.outdir
     jobconfmod = args.jobconfmod
+    region = str(args.region)
+    sampletype = str(args.sampletype)
 
     print(f"indir = {indir}")
 
     # load compiled C++ library into ROOT/python
     cppyy.load_reflection_info("libcorrectionlib.so")
     cppyy.load_reflection_info("libMathMore.so")
-    cppyy.load_reflection_info("libnanoaodrdframe.so")
+    cppyy.load_reflection_info("libnanoadrdframe.so")
 
     # read in configurations from job configuration python module
     mod = import_module(jobconfmod)
@@ -307,8 +324,8 @@ if __name__=='__main__':
 
     if not procflags['allinone']:
         print("not allinone")
-        n=Nanoaodprocessor(indir, outdir, jobconfmod, procflags, config)
+        n=Nanoaodprocessor(indir, outdir, jobconfmod, region, sampletype, procflags, config)
         n.process()
     else:
         print("allinone")
-        Nanoaodprocessor_singledir(indir, outdir, procflags, config) # although it says outdir, it should really be a output ROOT file name
+        Nanoaodprocessor_singledir(indir, outdir, procflags, config, region, sampletype) # although it says outdir, it should really be a output ROOT file name

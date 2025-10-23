@@ -1,5 +1,5 @@
 ##!/bin/bash
-DIR="/pbs/home/j/jechoi/work/vlq/CMSSW_14_1_2/src/trgEff/"
+DIR="/pbs/home/j/jechoi/work/vlq/CMSSW_14_1_2/src/ana/"
 #
 ###### data
 ##sbatch -J SingleMuon_UL18A_3T --chdir=$DIR -t 2-00:00 -n 1 --mem 16G -L sps shell_slurm/data18A_SingleMuon.sh 3T Data
@@ -65,7 +65,7 @@ DIR="/pbs/home/j/jechoi/work/vlq/CMSSW_14_1_2/src/trgEff/"
 ###sbatch -J SingleMuon_UL16GpostVFP_2M1L --chdir=$DIR -t 2-00:00 -n 1 --mem 16G -L sps shell_slurm/2016/data16G_postVFP_SingleMuon.sh 2M1L Data
 ###sbatch -J SingleMuon_UL16HpostVFP_2M1L --chdir=$DIR -t 2-00:00 -n 1 --mem 16G -L sps shell_slurm/2016/data16H_postVFP_SingleMuon.sh 2M1L Data
 #
-#sbatch -J JetHT_UL18A_3T --chdir=$DIR -t 2-00:00 -n 1 --mem 16G -L sps shell_slurm/child_data18A_JetHT.sh 3T Data
+sbatch -J JetHT_UL18A_3T --chdir=$DIR -t 2-00:00 -n 1 --mem 16G -L sps shell_slurm/child_data18A_JetHT.sh 3T Data
 #sbatch -J JetHT_UL18B_3T --chdir=$DIR -t 2-00:00 -n 1 --mem 16G -L sps shell_slurm/child_data18B_JetHT.sh 3T Data
 #sbatch -J JetHT_UL18C_3T --chdir=$DIR -t 2-00:00 -n 1 --mem 16G -L sps shell_slurm/child_data18C_JetHT.sh 3T Data
 #sbatch -J JetHT_UL18D_3T --chdir=$DIR -t 2-00:00 -n 1 --mem 16G -L sps shell_slurm/child_data18D_JetHT.sh 3T Data
@@ -82,16 +82,16 @@ DIR="/pbs/home/j/jechoi/work/vlq/CMSSW_14_1_2/src/trgEff/"
 #
 ##### mc
 sbatch -J Tprime_3T_UL18 --chdir=$DIR -t 2-00:00 -n 7 --mem 35G -L sps shell_slurm/child_tprime18.sh 3T Tprime
-sbatch -J Tprime_3M_UL18 --chdir=$DIR -t 2-00:00 -n 7 --mem 35G -L sps shell_slurm/child_tprime18.sh 3M Tprime
-sbatch -J Tprime_2M1L_UL18 --chdir=$DIR -t 2-00:00 -n 7 --mem 35G -L sps shell_slurm/child_tprime18.sh 2M1L Tprime
+#sbatch -J Tprime_3M_UL18 --chdir=$DIR -t 2-00:00 -n 7 --mem 35G -L sps shell_slurm/child_tprime18.sh 3M Tprime
+#sbatch -J Tprime_2M1L_UL18 --chdir=$DIR -t 2-00:00 -n 7 --mem 35G -L sps shell_slurm/child_tprime18.sh 2M1L Tprime
 ###
 #sbatch -J TTToHadronic_2M1L_UL18 --chdir=$DIR -t 2-00:00 -n 1 --mem 16G -L sps shell_slurm/child_tthad18.sh 2M1L TTToHadronic
 #sbatch -J TTToHadronic_3M_UL18 --chdir=$DIR -t 2-00:00 -n 1 --mem 16G -L sps shell_slurm/child_tthad18.sh 3M TTToHadronic
-#sbatch -J TTToHadronic_3T_UL18 --chdir=$DIR -t 2-00:00 -n 1 --mem 16G -L sps shell_slurm/child_tthad18.sh 3T TTToHadronic
+sbatch -J TTToHadronic_3T_UL18 --chdir=$DIR -t 2-00:00 -n 1 --mem 16G -L sps shell_slurm/child_tthad18.sh 3T TTToHadronic
 #
 #sbatch -J QCD_BGenFilter_0_3T_UL18 --chdir=$DIR -t 1-00:00 -n 1 --mem 16G -L sps shell_slurm/child_qcd18_BGenFilter_0.sh 3T QCD
 #sbatch -J QCD_BGenFilter_1_3T_UL18 --chdir=$DIR -t 1-00:00 -n 1 --mem 16G -L sps shell_slurm/child_qcd18_BGenFilter_1.sh 3T QCD
-#sbatch -J QCD_BGenFilter_2_3T_UL18 --chdir=$DIR -t 1-00:00 -n 1 --mem 16G -L sps shell_slurm/child_qcd18_BGenFilter_2.sh 3T QCD
+sbatch -J QCD_BGenFilter_2_3T_UL18 --chdir=$DIR -t 1-00:00 -n 1 --mem 16G -L sps shell_slurm/child_qcd18_BGenFilter_2.sh 3T QCD
 #sbatch -J QCD_BGenFilter_3_3T_UL18 --chdir=$DIR -t 1-00:00 -n 1 --mem 16G -L sps shell_slurm/child_qcd18_BGenFilter_3.sh 3T QCD
 #sbatch -J QCD_BGenFilter_4_3T_UL18 --chdir=$DIR -t 1-00:00 -n 1 --mem 16G -L sps shell_slurm/child_qcd18_BGenFilter_4.sh 3T QCD
 #sbatch -J QCD_BGenFilter_5_3T_UL18 --chdir=$DIR -t 1-00:00 -n 1 --mem 16G -L sps shell_slurm/child_qcd18_BGenFilter_5.sh 3T QCD
